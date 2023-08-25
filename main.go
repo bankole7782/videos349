@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -68,6 +69,8 @@ func main() {
 
 	instructionsBox := container.NewVBox()
 
+	bottomBar := container.NewHBox()
+
 	updateInstructionsBox := func() {
 		instructionsBox.RemoveAll()
 
@@ -90,6 +93,7 @@ func main() {
 		}
 
 		for k, instructionsDesc := range instructions {
+
 			outStr := "kind: " + instructionsDesc["kind"] + "\n"
 			for inputName, inputValue := range instructionsDesc {
 				if inputName == "kind" {
@@ -113,6 +117,36 @@ func main() {
 			instructionsBox.Add(innerBox)
 		}
 
+	}
+
+	updateBottomBar := func() {
+		removeBtnLists := make([]string, 0)
+		for k := range instructions {
+			removeBtnLists = append(removeBtnLists, strconv.Itoa(k+1))
+		}
+
+		// update bottom bar
+		assetsSelect := widget.NewSelect(removeBtnLists, nil)
+		removeAssetBtn := widget.NewButton("Remove", func() {
+			selected, _ := strconv.Atoi(assetsSelect.Selected)
+
+			// instructions = append(instructions[selected-1:], instructions[selected:]...)
+			instructions = slices.Delete(instructions, selected-1, selected)
+
+			removeBtnLists := make([]string, 0)
+			for k := range instructions {
+				removeBtnLists = append(removeBtnLists, strconv.Itoa(k+1))
+			}
+
+			assetsSelect.Options = removeBtnLists
+			assetsSelect.Refresh()
+			updateInstructionsBox()
+		})
+
+		bottomBar.RemoveAll()
+		bottomBar.Add(widget.NewLabel("Remove Asset"))
+		bottomBar.Add(assetsSelect)
+		bottomBar.Add(removeAssetBtn)
 	}
 
 	addImageBtn := widget.NewButton("Add Image", func() {
@@ -143,6 +177,7 @@ func main() {
 
 				instructions = append(instructions, inputs)
 				updateInstructionsBox()
+				updateBottomBar()
 			}
 		}
 
@@ -154,7 +189,7 @@ func main() {
 	topBar.Add(aboutBtn)
 	h1 := widget.NewLabelWithStyle("Instructions", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	windowBox := container.NewBorder(container.NewVBox(topBar, widget.NewSeparator(), h1),
-		nil, nil, nil, container.NewScroll(instructionsBox),
+		bottomBar, nil, nil, container.NewScroll(instructionsBox),
 	)
 	myWindow.SetContent(windowBox)
 	myWindow.Resize(fyne.NewSize(1000, 600))
