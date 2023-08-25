@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -124,12 +125,30 @@ func main() {
 
 			innerBox := container.NewHBox(
 				widget.NewLabel(strconv.Itoa(k+1)),
-				widget.NewLabel(outStr), innerBtnsBox,
+				widget.NewLabel(outStr[:len(outStr)-1]), innerBtnsBox,
 			)
 			instructionsBox.Add(innerBox)
 		}
 
 	}
+
+	inChannel := make(chan bool)
+	renderDialogObj := dialog.NewProgressInfinite("Rendering", "Rendering your video.\nPlease Wait.", myWindow)
+
+	go func() {
+		for {
+			<-inChannel
+			time.Sleep(5 * time.Second)
+			renderDialogObj.Hide()
+		}
+	}()
+
+	renderBtn := widget.NewButton("Render", func() {
+		inChannel <- true
+		renderDialogObj.Show()
+	})
+
+	renderBtn.Importance = widget.HighImportance
 
 	updateBottomBar := func() {
 		removeBtnLists := make([]string, 0)
@@ -159,6 +178,9 @@ func main() {
 		bottomBar.Add(widget.NewLabel("Remove Asset"))
 		bottomBar.Add(assetsSelect)
 		bottomBar.Add(removeAssetBtn)
+
+		bottomBar.Add(widget.NewSeparator())
+		bottomBar.Add(renderBtn)
 	}
 
 	addImageBtn := widget.NewButton("Add Image", func() {
@@ -260,7 +282,7 @@ func main() {
 	topBar.Add(aboutBtn)
 	h1 := widget.NewLabelWithStyle("Instructions", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
 	windowBox := container.NewBorder(container.NewVBox(container.NewCenter(topBar), widget.NewSeparator(), h1),
-		bottomBar, nil, nil, container.NewScroll(instructionsBox),
+		container.NewCenter(bottomBar), nil, nil, container.NewScroll(instructionsBox),
 	)
 	myWindow.SetContent(windowBox)
 	myWindow.Resize(fyne.NewSize(1000, 600))
