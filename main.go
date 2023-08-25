@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"image"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -76,7 +78,6 @@ func main() {
 
 		viewImageAssetBtn := func(i int) *widget.Button {
 			val := i
-
 			return widget.NewButton("View Image Asset", func() {
 				imagePath := instructions[val]["image file"]
 				openFileInDefaultViewer(imagePath)
@@ -85,10 +86,17 @@ func main() {
 
 		viewAudioAssetBtn := func(i int) *widget.Button {
 			val := i
-
 			return widget.NewButton("View Audio Asset", func() {
 				imagePath := instructions[val]["sound file (optional)"]
 				openFileInDefaultViewer(imagePath)
+			})
+		}
+
+		viewVideoAssetBtn := func(i int) *widget.Button {
+			val := i
+			return widget.NewButton("View Video Asset", func() {
+				videoPath := instructions[val]["video file"]
+				openFileInDefaultViewer(videoPath)
 			})
 		}
 
@@ -108,6 +116,10 @@ func main() {
 				if instructionsDesc["sound file (optional)"] != "" {
 					innerBtnsBox.Add(viewAudioAssetBtn(k))
 				}
+			}
+
+			if instructionsDesc["kind"] == "video" {
+				innerBtnsBox.Add(viewVideoAssetBtn(k))
 			}
 
 			innerBox := container.NewHBox(
@@ -184,11 +196,70 @@ func main() {
 		dialog.ShowCustomConfirm("Add Image Configuration", "Add", "Close", imageForm, callBack, myWindow)
 	})
 
+	addVideoBtn := widget.NewButton("Add Video", func() {
+
+		endEntry := widget.NewEntry()
+		updateEndEntry := func(selected string) {
+			fullPath := filepath.Join(rootPath, selected)
+			cmd := exec.Command("ffprobe", "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
+				"-show_entries", "format=duration", fullPath)
+
+			out, err := cmd.Output()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			trueOut := strings.TrimSpace(string(out))
+			seconds, _ := strconv.ParseFloat(trueOut, 64)
+			tmp := int(math.Ceil(seconds))
+			endEntry.SetText(SecondsToTimeFormat(tmp))
+		}
+
+		videoFiles := getFilesOfType(rootPath, ".mp4")
+		mkvFiles := getFilesOfType(rootPath, ".mkv")
+		webmFiles := getFilesOfType(rootPath, ".webm")
+		videoFiles = append(videoFiles, mkvFiles...)
+		videoFiles = append(videoFiles, webmFiles...)
+
+		videoForm := widget.NewForm()
+
+		videoForm.Append("video file", widget.NewSelect(videoFiles, updateEndEntry))
+		beginEntry := widget.NewEntry()
+		beginEntry.SetText("0:0")
+		videoForm.Append("begin (mm:ss)", beginEntry)
+		videoForm.Append("end (mm:ss)", endEntry)
+		callBack := func(ok bool) {
+			if ok {
+				inputs := getFormInputs(videoForm.Items)
+
+				// "video file" is compulsory
+				if inputs["video file"] == "" {
+					return
+				}
+				// complete the paths
+				for k, v := range inputs {
+					if strings.Contains(k, "file") && v != "" {
+						inputs[k] = filepath.Join(rootPath, v)
+					}
+				}
+				inputs["kind"] = "video"
+
+				instructions = append(instructions, inputs)
+				updateInstructionsBox()
+				updateBottomBar()
+			}
+		}
+
+		dialog.ShowCustomConfirm("Add Video Configuration", "Add", "Close", videoForm, callBack, myWindow)
+	})
+
 	topBar.Add(addImageBtn)
+	topBar.Add(addVideoBtn)
 
 	topBar.Add(aboutBtn)
 	h1 := widget.NewLabelWithStyle("Instructions", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
-	windowBox := container.NewBorder(container.NewVBox(topBar, widget.NewSeparator(), h1),
+	windowBox := container.NewBorder(container.NewVBox(container.NewCenter(topBar), widget.NewSeparator(), h1),
 		bottomBar, nil, nil, container.NewScroll(instructionsBox),
 	)
 	myWindow.SetContent(windowBox)
