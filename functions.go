@@ -62,3 +62,25 @@ func UntestedRandomString(length int) string {
 	}
 	return string(b)
 }
+
+func GetFFMPEGCommand() string {
+	var cmdPath string
+	begin := os.Getenv("SNAP")
+	cmdPath = "ffmpeg"
+	if begin != "" && !strings.HasPrefix(begin, "/snap/go/") {
+		cmdPath = filepath.Join(begin, "bin", "ffmpeg")
+	}
+
+	return cmdPath
+}
+
+func GetFFPCommand() string {
+	var cmdPath string
+	begin := os.Getenv("SNAP")
+	cmdPath = "ffprobe"
+	if begin != "" && !strings.HasPrefix(begin, "/snap/go/") {
+		cmdPath = filepath.Join(begin, "bin", "ffprobe")
+	}
+
+	return cmdPath
+}

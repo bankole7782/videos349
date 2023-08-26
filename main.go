@@ -25,6 +25,8 @@ func main() {
 	app := app.New()
 	myWindow := app.NewWindow("Videos349: A video editor")
 
+	ffprobe := GetFFPCommand()
+
 	rootPath, err := GetRootPath()
 	if err != nil {
 		panic(err)
@@ -223,7 +225,7 @@ func main() {
 		endEntry := widget.NewEntry()
 		updateEndEntry := func(selected string) {
 			fullPath := filepath.Join(rootPath, selected)
-			cmd := exec.Command("ffprobe", "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
+			cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
 				"-show_entries", "format=duration", fullPath)
 
 			out, err := cmd.Output()
