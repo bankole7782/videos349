@@ -55,11 +55,21 @@ func render(instructions []map[string]string) string {
 				return "error occured."
 			}
 
+			// join audio to video
 			if instructionDesc["sound file (optional)"] != "" {
-				tmpImageVideoPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+				tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
 
-				// join audio to video
-				_, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", instructionDesc["sound file (optional)"],
+				endSeconds, _ := strconv.Atoi(instructionDesc["length (in seconds)"])
+				audioLength := SecondsToTimeFormat(endSeconds)
+				out, err := exec.Command(ffmpeg, "-ss", "0:0", "-to", audioLength, "-i",
+					instructionDesc["sound file (optional)"], "-c", "copy", tmpAudioPath).CombinedOutput()
+				if err != nil {
+					fmt.Println(string(out))
+					return "error occured"
+				}
+
+				tmpImageVideoPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+				_, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", tmpAudioPath,
 					"-pix_fmt", "yuv420p", tmpImageVideoPath2).CombinedOutput()
 				if err != nil {
 					return "error occured"
