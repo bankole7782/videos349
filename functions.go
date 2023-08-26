@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -47,4 +49,16 @@ func SecondsToTimeFormat(seconds int) string {
 	leftSeconds := math.Mod(float64(seconds), 60)
 
 	return fmt.Sprintf("%d:%d", minutes, int(leftSeconds))
+}
+
+const letters = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+func UntestedRandomString(length int) string {
+	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = letters[seededRand.Intn(len(letters))]
+	}
+	return string(b)
 }

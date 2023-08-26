@@ -4,6 +4,7 @@ go 1.21.0
 
 require (
 	fyne.io/fyne/v2 v2.3.5
+	github.com/disintegration/imaging v1.6.2
 	github.com/pkg/errors v0.8.1
 )
 

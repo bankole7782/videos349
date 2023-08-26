@@ -12,7 +12,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -138,8 +137,9 @@ func main() {
 	go func() {
 		for {
 			<-inChannel
-			time.Sleep(5 * time.Second)
+			render(instructions)
 			renderDialogObj.Hide()
+			dialog.ShowInformation("Done Rendering", "Open the working directory to view your video", myWindow)
 		}
 	}()
 
