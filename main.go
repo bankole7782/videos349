@@ -65,7 +65,7 @@ func main() {
 			widget.NewLabelWithStyle("Brought to You with Love by", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 			saeBtn,
 		)
-		dialog.ShowCustom("About keys117", "Close", boxes, myWindow)
+		dialog.ShowCustom("About Videos349", "Close", boxes, myWindow)
 	})
 	topBar := container.NewHBox(openWDBtn)
 
@@ -278,6 +278,8 @@ func main() {
 		dialog.ShowCustomConfirm("Add Video Configuration", "Add", "Close", videoForm, callBack, myWindow)
 	})
 
+	addImageBtn.Importance = widget.HighImportance
+	addVideoBtn.Importance = widget.HighImportance
 	topBar.Add(addImageBtn)
 	topBar.Add(addVideoBtn)
 
