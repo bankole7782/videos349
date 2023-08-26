@@ -15,6 +15,19 @@ import (
 
 func render(instructions []map[string]string) string {
 	rootPath, _ := GetRootPath()
+
+	defer func() {
+		dirFIs, _ := os.ReadDir(rootPath)
+
+		for _, dirFI := range dirFIs {
+			if strings.HasPrefix(dirFI.Name(), ".") && dirFI.IsDir() {
+				os.RemoveAll(filepath.Join(rootPath, dirFI.Name()))
+			} else if strings.HasPrefix(dirFI.Name(), ".") && !dirFI.IsDir() {
+				os.Remove(filepath.Join(rootPath, dirFI.Name()))
+			}
+		}
+	}()
+
 	videoParts := make([]string, 0)
 	for _, instructionDesc := range instructions {
 		// treat images
@@ -57,7 +70,6 @@ func render(instructions []map[string]string) string {
 		// treat videos
 		if instructionDesc["kind"] == "video" {
 			videoPath := instructionDesc["video file"]
-			fmt.Println(videoPath)
 			if !strings.HasSuffix(videoPath, ".mp4") {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 				out, err := exec.Command("ffmpeg", "-i", videoPath, "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
@@ -102,6 +114,18 @@ func render(instructions []map[string]string) string {
 
 			videoParts = append(videoParts, videoPath)
 		}
+	}
+
+	for i, videoPart := range videoParts {
+		// convert to 24 fps
+		tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+		out, err := exec.Command("ffmpeg", "-i", videoPart, "-filter:v",
+			"fps=24", tmpVideoPath).CombinedOutput()
+		if err != nil {
+			fmt.Println(out)
+			return "error occurred."
+		}
+		videoParts[i] = tmpVideoPath
 	}
 
 	tmpVideosTxtPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".txt")
