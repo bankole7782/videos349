@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"time"
@@ -24,6 +25,11 @@ var objCoords map[int]g143.RectSpecs
 var currentWindowFrame image.Image
 
 func main() {
+	_, err := GetRootPath()
+	if err != nil {
+		panic(err)
+	}
+
 	runtime.LockOSThread()
 
 	objCoords = make(map[int]g143.RectSpecs)
@@ -31,8 +37,9 @@ func main() {
 	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
 	allDraws(window)
 
-	// // respond to the mouse
-	// window.SetMouseButtonCallback(mouseBtnCallback)
+	// respond to the mouse
+	window.SetMouseButtonCallback(mouseBtnCallback)
+	// respond to the keyboard
 	// window.SetKeyCallback(keyCallback)
 
 	for !window.ShouldClose() {
@@ -134,4 +141,46 @@ func allDraws(window *glfw.Window) {
 	// save the frame
 	currentWindowFrame = ggCtx.Image()
 
+}
+
+func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	if action != glfw.Release {
+		return
+	}
+
+	xPos, yPos := window.GetCursorPos()
+	xPosInt := int(xPos)
+	yPosInt := int(yPos)
+
+	// wWidth, wHeight := window.GetSize()
+
+	// var widgetRS g143.RectSpecs
+	var widgetCode int
+
+	for code, RS := range objCoords {
+		if g143.InRectSpecs(RS, xPosInt, yPosInt) {
+			// widgetRS = RS
+			widgetCode = code
+			break
+		}
+	}
+
+	if widgetCode == 0 {
+		return
+	}
+
+	switch widgetCode {
+	case AddImgBtn:
+		// ggCtx := gg.NewContextForImage(currentWindowFrame)
+	case AddVidBtn:
+
+	case OpenWDBtn:
+		rootPath, _ := GetRootPath()
+
+		if runtime.GOOS == "windows" {
+			exec.Command("cmd", "/C", "start", rootPath).Run()
+		} else if runtime.GOOS == "linux" {
+			exec.Command("xdg-open", rootPath).Run()
+		}
+	}
 }
