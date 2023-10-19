@@ -237,6 +237,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		}
 
 		instructions = append(instructions, map[string]string{
+			"kind":           "image",
 			"image":          vaiInputsStore["image"],
 			"duration":       vaiInputsStore["duration"],
 			"audio_optional": vaiInputsStore["audio_optional"],

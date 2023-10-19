@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"time"
 
 	g143 "github.com/bankole7782/graphics143"
@@ -14,8 +15,8 @@ import (
 )
 
 const (
-	fps = 10
-
+	fps       = 10
+	fontSize  = 20
 	AddImgBtn = 1
 	AddVidBtn = 2
 	OpenWDBtn = 3
@@ -137,6 +138,55 @@ func allDraws(window *glfw.Window) {
 	ggCtx.SetHexColor("#fff")
 	ggCtx.DrawString(owdStr, 30+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
 
+	// draw end of topbar demarcation
+	ggCtx.SetHexColor("#999")
+	ggCtx.DrawRectangle(10, float64(openWDBtnRS.OriginY+openWDBtnRS.Height+10), float64(wWidth)-20, 3)
+	ggCtx.Fill()
+
+	currentY := openWDBtnRS.OriginY + openWDBtnRS.Height + 10 + 10
+	currentX := 20
+	// show instructions
+	for i, instr := range instructions {
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(strconv.Itoa(i+1)+"  ["+instr["kind"]+"]", float64(currentX), float64(currentY)+fontSize)
+
+		// view image asset
+		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+		viaStrW, _ := ggCtx.MeasureString(viaStr)
+
+		ggCtx.SetHexColor("#5F699F")
+		ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
+
+		// duration
+		durStr := "duration: " + instr["duration"]
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
+
+		// view audio asset optional
+		if instr["audio_optional"] != "" {
+			vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
+			vaaStrW, _ := ggCtx.MeasureString(vaaStr)
+			ggCtx.SetHexColor("#74A299")
+
+			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
+			ggCtx.Fill()
+
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
+		}
+
+		newX := currentX + int(viaStrW) + 20
+		if newX > (wWidth - int(viaStrW)) {
+			currentY += 160
+			currentX = 20
+		} else {
+			currentX += int(viaStrW) + 20 + 10
+		}
+	}
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
@@ -144,7 +194,6 @@ func allDraws(window *glfw.Window) {
 
 	// save the frame
 	currentWindowFrame = ggCtx.Image()
-
 }
 
 func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
