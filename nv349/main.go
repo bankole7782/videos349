@@ -23,6 +23,9 @@ const (
 
 var objCoords map[int]g143.RectSpecs
 var currentWindowFrame image.Image
+var instructions []map[string]string
+
+// var tmpFrame image.Image
 
 func main() {
 	_, err := GetRootPath()
@@ -33,6 +36,7 @@ func main() {
 	runtime.LockOSThread()
 
 	objCoords = make(map[int]g143.RectSpecs)
+	instructions = make([]map[string]string, 0)
 
 	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
 	allDraws(window)
@@ -119,7 +123,7 @@ func allDraws(window *glfw.Window) {
 	// Open Working Directory button
 	owdStr := "Open Working Directory"
 	owdStrWidth, owdStrHeight := ggCtx.MeasureString(owdStr)
-	openWDBtnWidth := owdStrWidth + 30
+	openWDBtnWidth := owdStrWidth + 60
 	openWDBtnHeight := owdStrHeight + 30
 	ggCtx.SetHexColor("#56845A")
 	openWDBtnOriginX := float64(addVidBtnRS.OriginX+addVidBtnRS.Width) + 40
@@ -131,7 +135,7 @@ func allDraws(window *glfw.Window) {
 	objCoords[OpenWDBtn] = openWDBtnRS
 
 	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(owdStr, 15+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
+	ggCtx.DrawString(owdStr, 30+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
@@ -171,7 +175,11 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 
 	switch widgetCode {
 	case AddImgBtn:
-		// ggCtx := gg.NewContextForImage(currentWindowFrame)
+		// tmpFrame = currentWindowFrame
+		drawViewAddImage(window, currentWindowFrame)
+		window.SetMouseButtonCallback(viewAddImageMouseCallback)
+		window.SetKeyCallback(vaikeyCallback)
+
 	case AddVidBtn:
 
 	case OpenWDBtn:
