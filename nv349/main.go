@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -162,6 +161,10 @@ func allDraws(window *glfw.Window) {
 			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
 			ggCtx.Fill()
 
+			viabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+				Width: int(viaStrW) + 20, Height: fontSize + 10}
+			objCoords[1000+(i+1)] = viabRS
+
 			ggCtx.SetHexColor("#fff")
 			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
 
@@ -178,6 +181,9 @@ func allDraws(window *glfw.Window) {
 
 				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
 				ggCtx.Fill()
+				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
+					Width: int(vaaStrW) + 20, Height: fontSize + 10}
+				objCoords[2000+(i+1)] = vaabRS
 
 				ggCtx.SetHexColor("#fff")
 				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
@@ -191,6 +197,9 @@ func allDraws(window *glfw.Window) {
 			ggCtx.SetHexColor("#5F699F")
 			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
 			ggCtx.Fill()
+			vvabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+				Width: int(viaStrW) + 20, Height: fontSize + 10}
+			objCoords[3000+(i+1)] = vvabRS
 
 			ggCtx.SetHexColor("#fff")
 			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
@@ -259,11 +268,20 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 
 	case OpenWDBtn:
 		rootPath, _ := GetRootPath()
+		externalLaunch(rootPath)
 
-		if runtime.GOOS == "windows" {
-			exec.Command("cmd", "/C", "start", rootPath).Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", rootPath).Run()
-		}
 	}
+
+	// for generated buttons
+	if widgetCode > 1000 && widgetCode < 2000 {
+		instrNum := widgetCode - 1000
+		externalLaunch(instructions[instrNum-1]["image"])
+	} else if widgetCode > 2000 && widgetCode < 3000 {
+		instrNum := widgetCode - 2000
+		externalLaunch(instructions[instrNum-1]["audio_optional"])
+	} else if widgetCode > 3000 {
+		instrNum := widgetCode - 3000
+		externalLaunch(instructions[instrNum-1]["video"])
+	}
+
 }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -116,4 +117,12 @@ func lengthOfVideo(p string) string {
 	seconds, _ := strconv.ParseFloat(trueOut, 64)
 	tmp := int(math.Ceil(seconds))
 	return SecondsToTimeFormat(tmp)
+}
+
+func externalLaunch(p string) {
+	if runtime.GOOS == "windows" {
+		exec.Command("cmd", "/C", "start", p).Run()
+	} else if runtime.GOOS == "linux" {
+		exec.Command("xdg-open", p).Run()
+	}
 }
