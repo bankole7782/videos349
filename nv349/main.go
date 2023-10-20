@@ -19,6 +19,7 @@ const (
 	AddImgBtn = 11
 	AddVidBtn = 12
 	OpenWDBtn = 13
+	RenderBtn = 14
 )
 
 var objCoords map[int]g143.RectSpecs
@@ -26,6 +27,8 @@ var currentWindowFrame image.Image
 var instructions []map[string]string
 
 // var tmpFrame image.Image
+var inChannel chan bool
+var clearAfterRender bool
 
 func main() {
 	_, err := GetRootPath()
@@ -37,9 +40,18 @@ func main() {
 
 	objCoords = make(map[int]g143.RectSpecs)
 	instructions = make([]map[string]string, 0)
+	inChannel = make(chan bool)
 
 	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
 	allDraws(window)
+
+	go func() {
+		for {
+			<-inChannel
+			render(instructions)
+			clearAfterRender = true
+		}
+	}()
 
 	// respond to the mouse
 	window.SetMouseButtonCallback(mouseBtnCallback)
@@ -49,6 +61,18 @@ func main() {
 	for !window.ShouldClose() {
 		t := time.Now()
 		glfw.PollEvents()
+
+		if clearAfterRender {
+			// clear the UI and redraw
+			instructions = make([]map[string]string, 0)
+			allDraws(window)
+			drawEndRenderView(window, currentWindowFrame)
+			time.Sleep(5 * time.Second)
+			allDraws(window)
+			// register the ViewMain mouse callback
+			window.SetMouseButtonCallback(mouseBtnCallback)
+			clearAfterRender = false
+		}
 
 		time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
@@ -137,6 +161,22 @@ func allDraws(window *glfw.Window) {
 	ggCtx.SetHexColor("#fff")
 	ggCtx.DrawString(owdStr, 30+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
 
+	// Render button
+	rbStr := "Render Video"
+	rbStrW, rbStrH := ggCtx.MeasureString(rbStr)
+	renderBtnW := rbStrW + 60
+	renderBtnH := rbStrH + 30
+	ggCtx.SetHexColor("#B19644")
+	renderBtnX := openWDBtnRS.OriginX + openWDBtnRS.Width + 20
+	ggCtx.DrawRoundedRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH, renderBtnH/2)
+	ggCtx.Fill()
+
+	rbRS := g143.RectSpecs{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
+		Height: int(renderBtnH)}
+	objCoords[RenderBtn] = rbRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(rbStr, float64(rbRS.OriginX)+30, 10+rbStrH+15)
 	// draw end of topbar demarcation
 	ggCtx.SetHexColor("#999")
 	ggCtx.DrawRectangle(10, float64(openWDBtnRS.OriginY+openWDBtnRS.Height+10), float64(wWidth)-20, 3)
@@ -270,6 +310,11 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 		rootPath, _ := GetRootPath()
 		externalLaunch(rootPath)
 
+	case RenderBtn:
+		drawRenderView(window, currentWindowFrame)
+		window.SetMouseButtonCallback(nil)
+		window.SetKeyCallback(nil)
+		inChannel <- true
 	}
 
 	// for generated buttons
