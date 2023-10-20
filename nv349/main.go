@@ -150,33 +150,56 @@ func allDraws(window *glfw.Window) {
 		ggCtx.SetHexColor("#444")
 		ggCtx.DrawString(strconv.Itoa(i+1)+"  ["+instr["kind"]+"]", float64(currentX), float64(currentY)+fontSize)
 
-		// view image asset
 		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
 		viaStrW, _ := ggCtx.MeasureString(viaStr)
 
-		ggCtx.SetHexColor("#5F699F")
-		ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
-		ggCtx.Fill()
+		if instr["kind"] == "image" {
+			// view image asset
+			viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+			viaStrW, _ := ggCtx.MeasureString(viaStr)
 
-		ggCtx.SetHexColor("#fff")
-		ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
-
-		// duration
-		durStr := "duration: " + instr["duration"]
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
-
-		// view audio asset optional
-		if instr["audio_optional"] != "" {
-			vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
-			vaaStrW, _ := ggCtx.MeasureString(vaaStr)
-			ggCtx.SetHexColor("#74A299")
-
-			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
+			ggCtx.SetHexColor("#5F699F")
+			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
 			ggCtx.Fill()
 
 			ggCtx.SetHexColor("#fff")
-			ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
+			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
+
+			// duration
+			durStr := "duration: " + instr["duration"]
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
+
+			// view audio asset optional
+			if instr["audio_optional"] != "" {
+				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
+				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
+				ggCtx.SetHexColor("#74A299")
+
+				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
+				ggCtx.Fill()
+
+				ggCtx.SetHexColor("#fff")
+				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
+			}
+
+		} else if instr["kind"] == "video" {
+			// view video asset
+			viaStr := "View Video Asset #" + strconv.Itoa(i+1)
+			viaStrW, _ := ggCtx.MeasureString(viaStr)
+
+			ggCtx.SetHexColor("#5F699F")
+			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
+			ggCtx.Fill()
+
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
+
+			// duration
+			durStr := "begin: " + instr["begin"] + " | end: " + instr["end"]
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
+
 		}
 
 		newX := currentX + int(viaStrW) + 20

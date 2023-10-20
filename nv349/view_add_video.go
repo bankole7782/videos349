@@ -24,6 +24,7 @@ var vavInputsStore map[string]string
 
 var beginInputEnteredTxt string = "0:00"
 var endInputEnteredTxt string = "0:00"
+var selectedInput int
 
 func drawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	vavObjCoords = make(map[int]g143.RectSpecs)
@@ -174,6 +175,29 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
+	clearIndicators := func(window *glfw.Window, currentFrame image.Image) {
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+
+		beginInputRS := vavObjCoords[VAV_BeginInput]
+		endInputRS := vavObjCoords[VAV_EndInput]
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawCircle(float64(beginInputRS.OriginX)+float64(beginInputRS.Width)+20, float64(beginInputRS.OriginY)+15, 20)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawCircle(float64(endInputRS.OriginX)+float64(endInputRS.Width)+20, float64(endInputRS.OriginY)+15, 20)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+	}
+
 	switch widgetCode {
 	case VAV_CloseBtn:
 		allDraws(window)
@@ -228,9 +252,144 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		currentWindowFrame = ggCtx.Image()
 
+	case VAV_BeginInput:
+		selectedInput = VAV_BeginInput
+
+		clearIndicators(window, currentWindowFrame)
+
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+
+	case VAV_EndInput:
+		selectedInput = VAV_EndInput
+		clearIndicators(window, currentWindowFrame)
+
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+
+	case VAV_AddBtn:
+		if vavInputsStore["video"] == "" {
+			return
+		}
+
+		instructions = append(instructions, map[string]string{
+			"kind":  "video",
+			"video": vavInputsStore["video"],
+			"begin": beginInputEnteredTxt,
+			"end":   endInputEnteredTxt,
+		})
+
+		allDraws(window)
+
+		// register the ViewMain mouse callback
+		window.SetMouseButtonCallback(mouseBtnCallback)
+		// unregister the keyCallback
+		window.SetKeyCallback(nil)
+
 	}
+
 }
 
 func vavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if action != glfw.Release {
+		return
+	}
 
+	wWidth, wHeight := window.GetSize()
+
+	if selectedInput == VAV_BeginInput {
+		beginInputRS := vavObjCoords[VAV_BeginInput]
+
+		// enforce number types, semicolon and backspace
+		if isKeyNumeric(key) {
+			beginInputEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeySemicolon {
+			beginInputEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(beginInputEnteredTxt) != 0 {
+			beginInputEnteredTxt = beginInputEnteredTxt[:len(beginInputEnteredTxt)-1]
+		}
+
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+		// load font
+		fontPath := getDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(beginInputRS.OriginX), float64(beginInputRS.OriginY), float64(beginInputRS.Width),
+			float64(beginInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(beginInputEnteredTxt, float64(beginInputRS.OriginX+10), float64(beginInputRS.OriginY)+fontSize)
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+
+	} else if selectedInput == VAV_EndInput {
+		endInputRS := vavObjCoords[VAV_EndInput]
+
+		// enforce number types, semicolon and backspace
+		if isKeyNumeric(key) {
+			endInputEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeySemicolon {
+			endInputEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(endInputEnteredTxt) != 0 {
+			endInputEnteredTxt = endInputEnteredTxt[:len(endInputEnteredTxt)-1]
+		}
+
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+		// load font
+		fontPath := getDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(endInputRS.OriginX), float64(endInputRS.OriginY), float64(endInputRS.Width),
+			float64(endInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(endInputEnteredTxt, float64(endInputRS.OriginX+10), float64(endInputRS.OriginY)+fontSize)
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+
+	}
 }
