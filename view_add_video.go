@@ -3,12 +3,12 @@ package main
 import (
 	"image"
 	"path/filepath"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/sqweek/dialog"
 )
 
 const (
@@ -207,9 +207,12 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAV_PickVideo:
-		filePath, err := dialog.File().Filter("Video MP4", "mp4").Filter("Video MKV", "mkv").
-			Filter("Video WEBM", "webm").Load()
-		if err != nil {
+		filePath := pickFileUbuntu()
+		if filePath == "" {
+			return
+		}
+		if !strings.HasSuffix(filePath, ".mp4") && !strings.HasSuffix(filePath, ".mkv") &&
+			!strings.HasSuffix(filePath, ".webm") {
 			return
 		}
 		vavInputsStore["video"] = filePath
@@ -218,7 +221,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 		// load font
 		fontPath := getDefaultFontPath()
-		err = ggCtx.LoadFontFace(fontPath, 20)
+		err := ggCtx.LoadFontFace(fontPath, 20)
 		if err != nil {
 			panic(err)
 		}

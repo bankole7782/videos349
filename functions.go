@@ -126,3 +126,15 @@ func externalLaunch(p string) {
 		exec.Command("xdg-open", p).Run()
 	}
 }
+
+func pickFileUbuntu() string {
+	cmd := exec.Command("zenity", "--file-selection")
+
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	return strings.TrimSpace(string(out))
+}

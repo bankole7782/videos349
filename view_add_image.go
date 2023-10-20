@@ -3,12 +3,12 @@ package main
 import (
 	"image"
 	"path/filepath"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/sqweek/dialog"
 )
 
 const (
@@ -168,8 +168,11 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAI_SelectImg:
-		filename, err := dialog.File().Filter("PNG Image", "png").Filter("JPG Image", "jpg").Load()
-		if err != nil {
+		filename := pickFileUbuntu()
+		if filename == "" {
+			return
+		}
+		if !strings.HasSuffix(filename, ".png") && !strings.HasSuffix(filename, ".jpg") {
 			return
 		}
 		vaiInputsStore["image"] = filename
@@ -194,8 +197,11 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		currentWindowFrame = ggCtx.Image()
 
 	case VAI_SelectAudio:
-		filePath, err := dialog.File().Filter("Audio file", "mp3").Load()
-		if err != nil {
+		filePath := pickFileUbuntu()
+		if filePath == "" {
+			return
+		}
+		if !strings.HasSuffix(filePath, ".mp3") {
 			return
 		}
 		vaiInputsStore["audio_optional"] = filePath
@@ -204,7 +210,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 		// load font
 		fontPath := getDefaultFontPath()
-		err = ggCtx.LoadFontFace(fontPath, 20)
+		err := ggCtx.LoadFontFace(fontPath, 20)
 		if err != nil {
 			panic(err)
 		}
