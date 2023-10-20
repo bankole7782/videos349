@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	VAI_SelectImg   = 1
-	VAI_SelectAudio = 2
-	VAI_DurInput    = 3
-	VAI_AddBtn      = 4
-	VAI_CloseBtn    = 5
+	VAI_SelectImg   = 21
+	VAI_SelectAudio = 22
+	VAI_DurInput    = 23
+	VAI_AddBtn      = 24
+	VAI_CloseBtn    = 25
 )
 
 var vaiObjCoords map[int]g143.RectSpecs

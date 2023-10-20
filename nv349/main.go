@@ -17,9 +17,9 @@ import (
 const (
 	fps       = 10
 	fontSize  = 20
-	AddImgBtn = 1
-	AddVidBtn = 2
-	OpenWDBtn = 3
+	AddImgBtn = 11
+	AddVidBtn = 12
+	OpenWDBtn = 13
 )
 
 var objCoords map[int]g143.RectSpecs
@@ -230,6 +230,9 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 		window.SetKeyCallback(vaikeyCallback)
 
 	case AddVidBtn:
+		drawViewAddVideo(window, currentWindowFrame)
+		window.SetMouseButtonCallback(viewAddVideoMouseCallback)
+		window.SetKeyCallback(vavkeyCallback)
 
 	case OpenWDBtn:
 		rootPath, _ := GetRootPath()
