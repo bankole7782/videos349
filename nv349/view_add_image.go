@@ -234,6 +234,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			vaiInputsStore["duration"] = "5"
 		} else {
 			vaiInputsStore["duration"] = vaiEnteredText
+			vaiEnteredText = ""
 		}
 
 		instructions = append(instructions, map[string]string{
