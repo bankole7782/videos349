@@ -4,5 +4,5 @@ import (
 	_ "embed"
 )
 
-//go:embed sae_logo.png
-var SaeLogoBytes []byte
+//go:embed Roboto-Light.ttf
+var DefaultFont []byte

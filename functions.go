@@ -5,11 +5,14 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/pkg/errors"
 )
 
@@ -83,4 +86,43 @@ func GetFFPCommand() string {
 	}
 
 	return cmdPath
+}
+
+func isKeyNumeric(key glfw.Key) bool {
+	numKeys := []glfw.Key{glfw.Key0, glfw.Key1, glfw.Key2, glfw.Key3, glfw.Key4,
+		glfw.Key5, glfw.Key6, glfw.Key7, glfw.Key8, glfw.Key9}
+
+	for _, numKey := range numKeys {
+		if key == numKey {
+			return true
+		}
+	}
+
+	return false
+}
+
+func lengthOfVideo(p string) string {
+	ffprobe := GetFFPCommand()
+
+	cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
+		"-show_entries", "format=duration", p)
+
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	trueOut := strings.TrimSpace(string(out))
+	seconds, _ := strconv.ParseFloat(trueOut, 64)
+	tmp := int(math.Ceil(seconds))
+	return SecondsToTimeFormat(tmp)
+}
+
+func externalLaunch(p string) {
+	if runtime.GOOS == "windows" {
+		exec.Command("cmd", "/C", "start", p).Run()
+	} else if runtime.GOOS == "linux" {
+		exec.Command("xdg-open", p).Run()
+	}
 }

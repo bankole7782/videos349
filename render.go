@@ -37,9 +37,9 @@ func render(instructions []map[string]string) string {
 		if instructionDesc["kind"] == "image" {
 			tmpFramesPath := filepath.Join(rootPath, "."+UntestedRandomString(10))
 			os.MkdirAll(tmpFramesPath, 0777)
-			endSeconds, _ := strconv.Atoi(instructionDesc["length (in seconds)"])
+			endSeconds, _ := strconv.Atoi(instructionDesc["duration"])
 			for seconds := 0; seconds < endSeconds; seconds++ {
-				img, err := imaging.Open(instructionDesc["image file"])
+				img, err := imaging.Open(instructionDesc["image"])
 				if err != nil {
 					panic(err)
 				}
@@ -56,10 +56,10 @@ func render(instructions []map[string]string) string {
 			}
 
 			// join audio to video
-			if instructionDesc["sound file (optional)"] != "" {
+			if instructionDesc["audio_optional"] != "" {
 				tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
 
-				endSeconds, _ := strconv.Atoi(instructionDesc["length (in seconds)"])
+				endSeconds, _ := strconv.Atoi(instructionDesc["duration"])
 				audioLength := SecondsToTimeFormat(endSeconds)
 				out, err := exec.Command(ffmpeg, "-ss", "0:0", "-to", audioLength, "-i",
 					instructionDesc["sound file (optional)"], "-c", "copy", tmpAudioPath).CombinedOutput()
@@ -82,7 +82,7 @@ func render(instructions []map[string]string) string {
 
 		// treat videos
 		if instructionDesc["kind"] == "video" {
-			videoPath := instructionDesc["video file"]
+			videoPath := instructionDesc["video"]
 			if !strings.HasSuffix(videoPath, ".mp4") {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 				out, err := exec.Command(ffmpeg, "-i", videoPath, "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
@@ -112,9 +112,9 @@ func render(instructions []map[string]string) string {
 			videoLength := SecondsToTimeFormat(tmp)
 
 			// check and do triming
-			if instructionDesc["begin (mm:ss)"] != "0:0" || instructionDesc["end (mm:ss)"] != videoLength {
+			if instructionDesc["begin"] != "0:00" || instructionDesc["end"] != videoLength {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				out, err := exec.Command(ffmpeg, "-ss", instructionDesc["begin (mm:ss)"], "-to", instructionDesc["end (mm:ss)"],
+				out, err := exec.Command(ffmpeg, "-ss", instructionDesc["begin"], "-to", instructionDesc["end"],
 					"-i", videoPath, "-c", "copy", "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
 				if err != nil {
 					fmt.Println(string(out))

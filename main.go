@@ -1,343 +1,332 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"image"
-	"math"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
-	"slices"
 	"strconv"
-	"strings"
+	"time"
 
-	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/widget"
+	g143 "github.com/bankole7782/graphics143"
+	"github.com/fogleman/gg"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
+const (
+	fps       = 10
+	fontSize  = 20
+	AddImgBtn = 11
+	AddVidBtn = 12
+	OpenWDBtn = 13
+	RenderBtn = 14
+)
+
+var objCoords map[int]g143.RectSpecs
+var currentWindowFrame image.Image
+var instructions []map[string]string
+
+// var tmpFrame image.Image
+var inChannel chan bool
+var clearAfterRender bool
+
 func main() {
-	app := app.New()
-	myWindow := app.NewWindow("Videos349: A video editor")
-
-	ffprobe := GetFFPCommand()
-
-	rootPath, err := GetRootPath()
+	_, err := GetRootPath()
 	if err != nil {
 		panic(err)
 	}
 
-	openWDBtn := widget.NewButton("Open Working Directory", func() {
-		if runtime.GOOS == "windows" {
-			exec.Command("cmd", "/C", "start", rootPath).Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", rootPath).Run()
-		}
-	})
+	runtime.LockOSThread()
 
-	openFileInDefaultViewer := func(p string) {
-		if runtime.GOOS == "windows" {
-			exec.Command("cmd", "/C", "start", p).Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", p).Run()
-		}
-	}
+	objCoords = make(map[int]g143.RectSpecs)
+	instructions = make([]map[string]string, 0)
+	inChannel = make(chan bool)
 
-	saeBtn := widget.NewButton("sae.ng", func() {
-		openFileInDefaultViewer("https://sae.ng")
-	})
-
-	aboutBtn := widget.NewButton("About Us", func() {
-		img, _, err := image.Decode(bytes.NewReader(SaeLogoBytes))
-		if err != nil {
-			panic(err)
-		}
-		logoImage := canvas.NewImageFromImage(img)
-		logoImage.FillMode = canvas.ImageFillOriginal
-
-		boxes := container.NewVBox(
-			container.NewCenter(logoImage),
-			widget.NewLabelWithStyle("Brought to You with Love by", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
-			saeBtn,
-		)
-		dialog.ShowCustom("About Videos349", "Close", boxes, myWindow)
-	})
-	topBar := container.NewHBox(openWDBtn)
-
-	instructions := make([]map[string]string, 0)
-
-	instructionsBox := container.NewVBox()
-
-	bottomBar := container.NewHBox()
-
-	updateInstructionsBox := func() {
-		instructionsBox.RemoveAll()
-
-		viewImageAssetBtn := func(i int) *widget.Button {
-			val := i
-			return widget.NewButton("View Image Asset", func() {
-				imagePath := instructions[val]["image file"]
-				openFileInDefaultViewer(imagePath)
-			})
-		}
-
-		viewAudioAssetBtn := func(i int) *widget.Button {
-			val := i
-			return widget.NewButton("View Audio Asset", func() {
-				imagePath := instructions[val]["sound file (optional)"]
-				openFileInDefaultViewer(imagePath)
-			})
-		}
-
-		viewVideoAssetBtn := func(i int) *widget.Button {
-			val := i
-			return widget.NewButton("View Video Asset", func() {
-				videoPath := instructions[val]["video file"]
-				openFileInDefaultViewer(videoPath)
-			})
-		}
-
-		for k, instructionsDesc := range instructions {
-
-			outStr := "kind: " + instructionsDesc["kind"] + "\n"
-			for inputName, inputValue := range instructionsDesc {
-				if inputName == "kind" {
-					continue
-				}
-				outStr += inputName + " :" + inputValue + "\n"
-			}
-			innerBtnsBox := container.NewVBox()
-
-			if instructionsDesc["kind"] == "image" {
-				innerBtnsBox.Add(viewImageAssetBtn(k))
-				if instructionsDesc["sound file (optional)"] != "" {
-					innerBtnsBox.Add(viewAudioAssetBtn(k))
-				}
-			}
-
-			if instructionsDesc["kind"] == "video" {
-				innerBtnsBox.Add(viewVideoAssetBtn(k))
-			}
-
-			innerBox := container.NewHBox(
-				widget.NewLabel(strconv.Itoa(k+1)),
-				widget.NewLabel(outStr[:len(outStr)-1]), innerBtnsBox,
-			)
-			instructionsBox.Add(innerBox)
-		}
-
-	}
-
-	inChannel := make(chan bool)
-	renderDialogObj := dialog.NewProgressInfinite("Rendering", "Rendering your video.\nPlease Wait.", myWindow)
+	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
+	allDraws(window)
 
 	go func() {
 		for {
 			<-inChannel
 			render(instructions)
-			renderDialogObj.Hide()
-			dialog.ShowInformation("Done Rendering", "Open the working directory to view your video", myWindow)
+			clearAfterRender = true
 		}
 	}()
 
-	renderBtn := widget.NewButton("Render", func() {
-		inChannel <- true
-		renderDialogObj.Show()
-	})
+	// respond to the mouse
+	window.SetMouseButtonCallback(mouseBtnCallback)
+	// respond to the keyboard
+	// window.SetKeyCallback(keyCallback)
 
-	renderBtn.Importance = widget.HighImportance
+	for !window.ShouldClose() {
+		t := time.Now()
+		glfw.PollEvents()
 
-	updateBottomBar := func() {
-		removeBtnLists := make([]string, 0)
-		for k := range instructions {
-			removeBtnLists = append(removeBtnLists, strconv.Itoa(k+1))
+		if clearAfterRender {
+			// clear the UI and redraw
+			instructions = make([]map[string]string, 0)
+			allDraws(window)
+			drawEndRenderView(window, currentWindowFrame)
+			time.Sleep(5 * time.Second)
+			allDraws(window)
+			// register the ViewMain mouse callback
+			window.SetMouseButtonCallback(mouseBtnCallback)
+			clearAfterRender = false
 		}
 
-		// update bottom bar
-		assetsSelect := widget.NewSelect(removeBtnLists, nil)
-		removeAssetBtn := widget.NewButton("Remove", func() {
-			selected, _ := strconv.Atoi(assetsSelect.Selected)
-
-			// instructions = append(instructions[selected-1:], instructions[selected:]...)
-			instructions = slices.Delete(instructions, selected-1, selected)
-
-			removeBtnLists := make([]string, 0)
-			for k := range instructions {
-				removeBtnLists = append(removeBtnLists, strconv.Itoa(k+1))
-			}
-
-			assetsSelect.Options = removeBtnLists
-			assetsSelect.Refresh()
-			updateInstructionsBox()
-		})
-
-		bottomBar.RemoveAll()
-		bottomBar.Add(widget.NewLabel("Remove Asset"))
-		bottomBar.Add(assetsSelect)
-		bottomBar.Add(removeAssetBtn)
-
-		bottomBar.Add(widget.NewSeparator())
-		bottomBar.Add(renderBtn)
+		time.Sleep(time.Second/time.Duration(fps) - time.Since(t))
 	}
 
-	addImageBtn := widget.NewButton("Add Image", func() {
-		pngFiles := getFilesOfType(rootPath, ".png")
-		mp3Files := getFilesOfType(rootPath, ".mp3")
-		imageForm := widget.NewForm()
-		imageForm.Append("image file", widget.NewSelect(pngFiles, nil))
-		imageForm.Append("sound file (optional)", widget.NewSelect(mp3Files, nil))
-		lengthEntry := widget.NewEntry()
-		lengthEntry.SetText("5")
-		imageForm.Append("length (in seconds)", lengthEntry)
-
-		callBack := func(ok bool) {
-			if ok {
-				inputs := getFormInputs(imageForm.Items)
-
-				// "image file" is compulsory
-				if inputs["image file"] == "" {
-					return
-				}
-				// complete the paths
-				for k, v := range inputs {
-					if strings.Contains(k, "file") && v != "" {
-						inputs[k] = filepath.Join(rootPath, v)
-					}
-				}
-				inputs["kind"] = "image"
-
-				instructions = append(instructions, inputs)
-				updateInstructionsBox()
-				updateBottomBar()
-			}
-		}
-
-		dialog.ShowCustomConfirm("Add Image Configuration", "Add", "Close", imageForm, callBack, myWindow)
-	})
-
-	addVideoBtn := widget.NewButton("Add Video", func() {
-
-		endEntry := widget.NewEntry()
-		updateEndEntry := func(selected string) {
-			fullPath := filepath.Join(rootPath, selected)
-			cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
-				"-show_entries", "format=duration", fullPath)
-
-			out, err := cmd.Output()
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-
-			trueOut := strings.TrimSpace(string(out))
-			seconds, _ := strconv.ParseFloat(trueOut, 64)
-			tmp := int(math.Ceil(seconds))
-			endEntry.SetText(SecondsToTimeFormat(tmp))
-		}
-
-		videoFiles := getFilesOfType(rootPath, ".mp4")
-		mkvFiles := getFilesOfType(rootPath, ".mkv")
-		webmFiles := getFilesOfType(rootPath, ".webm")
-		videoFiles = append(videoFiles, mkvFiles...)
-		videoFiles = append(videoFiles, webmFiles...)
-
-		videoForm := widget.NewForm()
-
-		videoForm.Append("video file", widget.NewSelect(videoFiles, updateEndEntry))
-		beginEntry := widget.NewEntry()
-		beginEntry.SetText("0:0")
-		videoForm.Append("begin (mm:ss)", beginEntry)
-		videoForm.Append("end (mm:ss)", endEntry)
-		callBack := func(ok bool) {
-			if ok {
-				inputs := getFormInputs(videoForm.Items)
-
-				// "video file" is compulsory
-				if inputs["video file"] == "" {
-					return
-				}
-				// complete the paths
-				for k, v := range inputs {
-					if strings.Contains(k, "file") && v != "" {
-						inputs[k] = filepath.Join(rootPath, v)
-					}
-				}
-				inputs["kind"] = "video"
-
-				instructions = append(instructions, inputs)
-				updateInstructionsBox()
-				updateBottomBar()
-			}
-		}
-
-		dialog.ShowCustomConfirm("Add Video Configuration", "Add", "Close", videoForm, callBack, myWindow)
-	})
-
-	addImageBtn.Importance = widget.HighImportance
-	addVideoBtn.Importance = widget.HighImportance
-	topBar.Add(addImageBtn)
-	topBar.Add(addVideoBtn)
-
-	topBar.Add(aboutBtn)
-	h1 := widget.NewLabelWithStyle("Instructions", fyne.TextAlignLeading, fyne.TextStyle{Bold: true})
-	windowBox := container.NewBorder(container.NewVBox(container.NewCenter(topBar), widget.NewSeparator(), h1),
-		container.NewCenter(bottomBar), nil, nil, container.NewScroll(instructionsBox),
-	)
-	myWindow.SetContent(windowBox)
-	myWindow.Resize(fyne.NewSize(1000, 600))
-	myWindow.ShowAndRun()
 }
 
-func getFormInputs(content []*widget.FormItem) map[string]string {
-	inputs := make(map[string]string)
-	for _, formItem := range content {
-		entryWidget, ok := formItem.Widget.(*widget.Entry)
-		if ok {
-			inputs[formItem.Text] = entryWidget.Text
-			continue
-		}
-
-		selectWidget, ok := formItem.Widget.(*widget.Select)
-		if ok {
-			inputs[formItem.Text] = selectWidget.Selected
-		}
-	}
-
-	return inputs
+func getDefaultFontPath() string {
+	fontPath := filepath.Join(os.TempDir(), "v349_font.ttf")
+	os.WriteFile(fontPath, DefaultFont, 0777)
+	return fontPath
 }
 
-func getFilesOfType(rootPath, ext string) []string {
-	dirFIs, err := os.ReadDir(rootPath)
+func allDraws(window *glfw.Window) {
+	wWidth, wHeight := window.GetSize()
+
+	// frame buffer
+	ggCtx := gg.NewContext(wWidth, wHeight)
+
+	// background rectangle
+	ggCtx.DrawRectangle(0, 0, float64(wWidth), float64(wHeight))
+	ggCtx.SetHexColor("#ffffff")
+	ggCtx.Fill()
+
+	// // intro text
+	fontPath := getDefaultFontPath()
+	err := ggCtx.LoadFontFace(fontPath, 20)
 	if err != nil {
 		panic(err)
 	}
-	files := make([]string, 0)
-	for _, dirFI := range dirFIs {
-		if !dirFI.IsDir() && !strings.HasPrefix(dirFI.Name(), ".") && strings.HasSuffix(dirFI.Name(), ext) {
-			files = append(files, dirFI.Name())
-		}
 
-		if dirFI.IsDir() && !strings.HasPrefix(dirFI.Name(), ".") {
-			innerDirFIs, _ := os.ReadDir(filepath.Join(rootPath, dirFI.Name()))
-			innerFiles := make([]string, 0)
+	// add image button
+	addImgStr := "Add Image"
+	addImgStrWidth, addImgStrHeight := ggCtx.MeasureString(addImgStr)
+	addImgBtnWidth := addImgStrWidth + 80
+	addImgBtnHeight := addImgStrHeight + 30
+	ggCtx.SetHexColor("#B75F5F")
+	ggCtx.DrawRoundedRectangle(10, 10, addImgBtnWidth, addImgBtnHeight, addImgBtnHeight/2)
+	ggCtx.Fill()
 
-			for _, innerDirFI := range innerDirFIs {
-				if !innerDirFI.IsDir() && !strings.HasPrefix(innerDirFI.Name(), ".") && strings.HasSuffix(innerDirFI.Name(), ext) {
-					innerFiles = append(innerFiles, filepath.Join(dirFI.Name(), innerDirFI.Name()))
-				}
+	addImgBtnRS := g143.RectSpecs{Width: int(addImgBtnWidth), Height: int(addImgBtnHeight),
+		OriginX: 10, OriginY: 10}
+	objCoords[AddImgBtn] = addImgBtnRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(addImgStr, 30, 10+addImgStrHeight+15)
+
+	ggCtx.SetHexColor("#633232")
+	ggCtx.DrawCircle(10+addImgBtnWidth-40, 10+addImgBtnHeight/2, 10)
+	ggCtx.Fill()
+
+	// Add Video Button
+	addVidStr := "Add Video"
+	addVidStrWidth, addVidStrHeight := ggCtx.MeasureString(addVidStr)
+	addVidBtnWidth := addVidStrWidth + 80
+	addVidBtnHeight := addVidStrHeight + 30
+	ggCtx.SetHexColor("#81577F")
+	addVidBtnOriginX := float64(addImgBtnRS.Width+addImgBtnRS.OriginX) + 10 // gutter
+	ggCtx.DrawRoundedRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight, addVidBtnHeight/2)
+	ggCtx.Fill()
+
+	addVidBtnRS := g143.RectSpecs{Width: int(addVidBtnWidth), Height: int(addVidBtnHeight),
+		OriginX: int(addVidBtnOriginX), OriginY: 10}
+	objCoords[AddVidBtn] = addVidBtnRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(addVidStr, 30+float64(addVidBtnRS.OriginX), 10+addImgStrHeight+15)
+
+	ggCtx.SetHexColor("#633260")
+	ggCtx.DrawCircle(float64(addVidBtnRS.OriginX)+addVidBtnWidth-30, 10+addVidBtnHeight/2, 10)
+	ggCtx.Fill()
+
+	// Open Working Directory button
+	owdStr := "Open Working Directory"
+	owdStrWidth, owdStrHeight := ggCtx.MeasureString(owdStr)
+	openWDBtnWidth := owdStrWidth + 60
+	openWDBtnHeight := owdStrHeight + 30
+	ggCtx.SetHexColor("#56845A")
+	openWDBtnOriginX := float64(addVidBtnRS.OriginX+addVidBtnRS.Width) + 40
+	ggCtx.DrawRoundedRectangle(openWDBtnOriginX, 10, openWDBtnWidth, openWDBtnHeight, openWDBtnHeight/2)
+	ggCtx.Fill()
+
+	openWDBtnRS := g143.RectSpecs{Width: int(openWDBtnWidth), Height: int(openWDBtnHeight),
+		OriginX: int(openWDBtnOriginX), OriginY: 10}
+	objCoords[OpenWDBtn] = openWDBtnRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(owdStr, 30+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
+
+	// Render button
+	rbStr := "Render Video"
+	rbStrW, rbStrH := ggCtx.MeasureString(rbStr)
+	renderBtnW := rbStrW + 60
+	renderBtnH := rbStrH + 30
+	ggCtx.SetHexColor("#B19644")
+	renderBtnX := openWDBtnRS.OriginX + openWDBtnRS.Width + 20
+	ggCtx.DrawRoundedRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH, renderBtnH/2)
+	ggCtx.Fill()
+
+	rbRS := g143.RectSpecs{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
+		Height: int(renderBtnH)}
+	objCoords[RenderBtn] = rbRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(rbStr, float64(rbRS.OriginX)+30, 10+rbStrH+15)
+	// draw end of topbar demarcation
+	ggCtx.SetHexColor("#999")
+	ggCtx.DrawRectangle(10, float64(openWDBtnRS.OriginY+openWDBtnRS.Height+10), float64(wWidth)-20, 3)
+	ggCtx.Fill()
+
+	currentY := openWDBtnRS.OriginY + openWDBtnRS.Height + 10 + 10
+	currentX := 20
+	// show instructions
+	for i, instr := range instructions {
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(strconv.Itoa(i+1)+"  ["+instr["kind"]+"]", float64(currentX), float64(currentY)+fontSize)
+
+		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+		viaStrW, _ := ggCtx.MeasureString(viaStr)
+
+		if instr["kind"] == "image" {
+			// view image asset
+			viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+			viaStrW, _ := ggCtx.MeasureString(viaStr)
+
+			ggCtx.SetHexColor("#5F699F")
+			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
+			ggCtx.Fill()
+
+			viabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+				Width: int(viaStrW) + 20, Height: fontSize + 10}
+			objCoords[1000+(i+1)] = viabRS
+
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
+
+			// duration
+			durStr := "duration: " + instr["duration"]
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
+
+			// view audio asset optional
+			if instr["audio_optional"] != "" {
+				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
+				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
+				ggCtx.SetHexColor("#74A299")
+
+				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
+				ggCtx.Fill()
+				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
+					Width: int(vaaStrW) + 20, Height: fontSize + 10}
+				objCoords[2000+(i+1)] = vaabRS
+
+				ggCtx.SetHexColor("#fff")
+				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
 			}
 
-			if len(innerFiles) > 0 {
-				files = append(files, innerFiles...)
-			}
+		} else if instr["kind"] == "video" {
+			// view video asset
+			viaStr := "View Video Asset #" + strconv.Itoa(i+1)
+			viaStrW, _ := ggCtx.MeasureString(viaStr)
+
+			ggCtx.SetHexColor("#5F699F")
+			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, fontSize+10, 10)
+			ggCtx.Fill()
+			vvabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+				Width: int(viaStrW) + 20, Height: fontSize + 10}
+			objCoords[3000+(i+1)] = vvabRS
+
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+fontSize+30)
+
+			// duration
+			durStr := "begin: " + instr["begin"] + " | end: " + instr["end"]
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
+
 		}
 
+		newX := currentX + int(viaStrW) + 20
+		if newX > (wWidth - int(viaStrW)) {
+			currentY += 160
+			currentX = 20
+		} else {
+			currentX += int(viaStrW) + 20 + 10
+		}
+	}
+	// send the frame to glfw window
+	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	window.SwapBuffers()
+
+	// save the frame
+	currentWindowFrame = ggCtx.Image()
+}
+
+func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	if action != glfw.Release {
+		return
 	}
 
-	return files
+	xPos, yPos := window.GetCursorPos()
+	xPosInt := int(xPos)
+	yPosInt := int(yPos)
+
+	// wWidth, wHeight := window.GetSize()
+
+	// var widgetRS g143.RectSpecs
+	var widgetCode int
+
+	for code, RS := range objCoords {
+		if g143.InRectSpecs(RS, xPosInt, yPosInt) {
+			// widgetRS = RS
+			widgetCode = code
+			break
+		}
+	}
+
+	if widgetCode == 0 {
+		return
+	}
+
+	switch widgetCode {
+	case AddImgBtn:
+		// tmpFrame = currentWindowFrame
+		drawViewAddImage(window, currentWindowFrame)
+		window.SetMouseButtonCallback(viewAddImageMouseCallback)
+		window.SetKeyCallback(vaikeyCallback)
+
+	case AddVidBtn:
+		drawViewAddVideo(window, currentWindowFrame)
+		window.SetMouseButtonCallback(viewAddVideoMouseCallback)
+		window.SetKeyCallback(vavkeyCallback)
+
+	case OpenWDBtn:
+		rootPath, _ := GetRootPath()
+		externalLaunch(rootPath)
+
+	case RenderBtn:
+		drawRenderView(window, currentWindowFrame)
+		window.SetMouseButtonCallback(nil)
+		window.SetKeyCallback(nil)
+		inChannel <- true
+	}
+
+	// for generated buttons
+	if widgetCode > 1000 && widgetCode < 2000 {
+		instrNum := widgetCode - 1000
+		externalLaunch(instructions[instrNum-1]["image"])
+	} else if widgetCode > 2000 && widgetCode < 3000 {
+		instrNum := widgetCode - 2000
+		externalLaunch(instructions[instrNum-1]["audio_optional"])
+	} else if widgetCode > 3000 {
+		instrNum := widgetCode - 3000
+		externalLaunch(instructions[instrNum-1]["video"])
+	}
+
 }
