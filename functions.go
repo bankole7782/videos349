@@ -128,7 +128,7 @@ func externalLaunch(p string) {
 }
 
 func pickFileUbuntu() string {
-	cmd := exec.Command("yad", "--file")
+	cmd := exec.Command("zenity", "--file-selection")
 
 	out, err := cmd.Output()
 	if err != nil {

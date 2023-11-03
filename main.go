@@ -311,9 +311,6 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 		externalLaunch(rootPath)
 
 	case RenderBtn:
-		if len(instructions) == 0 {
-			return
-		}
 		drawRenderView(window, currentWindowFrame)
 		window.SetMouseButtonCallback(nil)
 		window.SetKeyCallback(nil)
