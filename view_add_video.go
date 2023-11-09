@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"path/filepath"
-	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
@@ -207,12 +206,8 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAV_PickVideo:
-		filePath := pickFileUbuntu()
+		filePath := pickFileUbuntu("mp4|mkv|webm")
 		if filePath == "" {
-			return
-		}
-		if !strings.HasSuffix(filePath, ".mp4") && !strings.HasSuffix(filePath, ".mkv") &&
-			!strings.HasSuffix(filePath, ".webm") {
 			return
 		}
 		vavInputsStore["video"] = filePath

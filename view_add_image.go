@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"path/filepath"
-	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
@@ -168,11 +167,8 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAI_SelectImg:
-		filename := pickFileUbuntu()
+		filename := pickFileUbuntu("png|jpg")
 		if filename == "" {
-			return
-		}
-		if !strings.HasSuffix(filename, ".png") && !strings.HasSuffix(filename, ".jpg") {
 			return
 		}
 		vaiInputsStore["image"] = filename
@@ -197,11 +193,8 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		currentWindowFrame = ggCtx.Image()
 
 	case VAI_SelectAudio:
-		filePath := pickFileUbuntu()
+		filePath := pickFileUbuntu("mp3")
 		if filePath == "" {
-			return
-		}
-		if !strings.HasSuffix(filePath, ".mp3") {
 			return
 		}
 		vaiInputsStore["audio_optional"] = filePath

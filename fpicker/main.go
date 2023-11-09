@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -21,7 +20,6 @@ const (
 )
 
 var objCoords map[int]g143.RectSpecs
-var currentWindowFrame image.Image
 
 var allFiles []string
 
@@ -134,9 +132,6 @@ func allDraws(window *glfw.Window, files []string) {
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
-
-	// save the frame
-	currentWindowFrame = ggCtx.Image()
 }
 
 func getDefaultFontPath() string {
