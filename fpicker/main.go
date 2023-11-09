@@ -167,4 +167,5 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 	}
 
 	fmt.Println(allFiles[widgetCode-1])
+	window.SetShouldClose(true)
 }

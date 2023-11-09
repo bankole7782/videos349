@@ -133,6 +133,8 @@ func drawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 }
 
 func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	rootPath, _ := GetRootPath()
+
 	if action != glfw.Release {
 		return
 	}
@@ -171,12 +173,12 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		if filename == "" {
 			return
 		}
-		vaiInputsStore["image"] = filename
+		vaiInputsStore["image"] = filepath.Join(rootPath, filename)
 
 		// show picked image
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
-		img, _ := imaging.Open(filename)
+		img, _ := imaging.Open(filepath.Join(rootPath, filename))
 		img = imaging.Fit(img, widgetRS.Width-20, widgetRS.Height-20, imaging.Lanczos)
 		ggCtx.SetHexColor("#eee")
 		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY), float64(widgetRS.Width),
@@ -193,11 +195,11 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		currentWindowFrame = ggCtx.Image()
 
 	case VAI_SelectAudio:
-		filePath := pickFileUbuntu("mp3")
-		if filePath == "" {
+		filename := pickFileUbuntu("mp3")
+		if filename == "" {
 			return
 		}
-		vaiInputsStore["audio_optional"] = filePath
+		vaiInputsStore["audio_optional"] = filepath.Join(rootPath, filename)
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
@@ -207,14 +209,13 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		if err != nil {
 			panic(err)
 		}
-		fileName := filepath.Base(filePath)
 		ggCtx.SetHexColor("#eee")
 		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY),
 			float64(widgetRS.Width), float64(widgetRS.Height), 10)
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(fileName, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(filename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

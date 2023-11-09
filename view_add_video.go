@@ -153,6 +153,8 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
+	rootPath, _ := GetRootPath()
+
 	xPos, yPos := window.GetCursorPos()
 	xPosInt := int(xPos)
 	yPosInt := int(yPos)
@@ -206,11 +208,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAV_PickVideo:
-		filePath := pickFileUbuntu("mp4|mkv|webm")
-		if filePath == "" {
+		filename := pickFileUbuntu("mp4|mkv|webm")
+		if filename == "" {
 			return
 		}
-		vavInputsStore["video"] = filePath
+		vavInputsStore["video"] = filepath.Join(rootPath, filename)
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
@@ -220,18 +222,17 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		if err != nil {
 			panic(err)
 		}
-		fileName := filepath.Base(filePath)
 		ggCtx.SetHexColor("#eee")
 		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY),
 			float64(widgetRS.Width), float64(widgetRS.Height), 10)
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(fileName, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
+		ggCtx.DrawString(filename, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
 
 		// update end str
 		endInputRS := vavObjCoords[VAV_EndInput]
-		videoLength := lengthOfVideo(filePath)
+		videoLength := lengthOfVideo(filepath.Join(rootPath, filename))
 		endInputEnteredTxt = videoLength
 
 		ggCtx.SetHexColor("#eee")
