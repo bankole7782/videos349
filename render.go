@@ -62,7 +62,7 @@ func render(instructions []map[string]string) string {
 				endSeconds, _ := strconv.Atoi(instructionDesc["duration"])
 				audioLength := SecondsToTimeFormat(endSeconds)
 				out, err := exec.Command(ffmpeg, "-ss", "0:0", "-to", audioLength, "-i",
-					instructionDesc["sound file (optional)"], "-c", "copy", tmpAudioPath).CombinedOutput()
+					instructionDesc["audio_optional"], "-c", "copy", tmpAudioPath).CombinedOutput()
 				if err != nil {
 					fmt.Println(string(out))
 					return "error occured"
@@ -75,6 +75,19 @@ func render(instructions []map[string]string) string {
 					return "error occured"
 				}
 				tmpImageVideoPath = tmpImageVideoPath2
+
+			} else {
+
+				tmp2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+				_, err = exec.Command(ffmpeg, "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+					"-i", tmpImageVideoPath, "-shortest", "-c:v", "copy", "-c:a", "aac", tmp2).CombinedOutput()
+				if err != nil {
+					fmt.Println(err)
+					return "error occured"
+				}
+
+				tmpImageVideoPath = tmp2
+
 			}
 
 			videoParts = append(videoParts, tmpImageVideoPath)
