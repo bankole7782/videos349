@@ -10,7 +10,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"github.com/pkg/errors"
@@ -54,14 +53,11 @@ func SecondsToTimeFormat(seconds int) string {
 	return fmt.Sprintf("%d:%d", minutes, int(leftSeconds))
 }
 
-const letters = "0123456789abcdefghijklmnopqrstuvwxyz"
-
 func UntestedRandomString(length int) string {
-	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
-
+	const letters = "0123456789abcdefghijklmnopqrstuvwxyz"
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = letters[seededRand.Intn(len(letters))]
+		b[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(b)
 }
