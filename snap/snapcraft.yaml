@@ -36,7 +36,7 @@ parts:
   pickers:
     # See 'snapcraft plugins'
     plugin: go
-    source: .
+    source: https://github.com/saenuma/pickers.git
     build-snaps:
       - go
     build-packages:
