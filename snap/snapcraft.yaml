@@ -33,6 +33,23 @@ parts:
       cp $SNAPCRAFT_PART_SRC/ffmpeg/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/ffmpeg
       cp $SNAPCRAFT_PART_SRC/ffmpeg/ffprobe $SNAPCRAFT_PART_INSTALL/bin/ffprobe
 
+  pickers:
+    # See 'snapcraft plugins'
+    plugin: go
+    source: .
+    build-snaps:
+      - go
+    build-packages:
+      - build-essential
+      - gcc
+      - libgl1-mesa-dev
+      - xorg-dev
+      - libc6-dev
+    override-build: |
+      set -xe
+      go mod download
+      go build -o $SNAPCRAFT_PART_INSTALL/bin/fpicker ./fpicker
+
 
 apps: 
   videos349:
