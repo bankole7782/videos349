@@ -16,6 +16,7 @@ const (
 	VAV_PickVideo  = 33
 	VAV_BeginInput = 34
 	VAV_EndInput   = 35
+	VAV_PickAudio  = 36
 )
 
 var vavObjCoords map[int]g143.RectSpecs
@@ -56,7 +57,7 @@ func drawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.DrawRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth), float64(dialogHeight))
 	ggCtx.Fill()
 
-	// Add Image
+	// Add Video Header
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("Add Video Configuration", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
 
@@ -138,6 +139,19 @@ func drawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("0:00", endInputX+10, float64(endStrY))
+
+	// add audio input
+	sfl := "audio file (optional)"
+	sflW, _ := ggCtx.MeasureString(sfl)
+	sflY := eiRS.OriginY + eiRS.Height + 10 + 20
+	ggCtx.DrawString(sfl, float64(dialogOriginX)+40, float64(sflY))
+
+	ggCtx.SetHexColor("#eee")
+	sflBtnX := sflW + 50 + float64(dialogOriginX) + 40
+	ggCtx.DrawRoundedRectangle(sflBtnX, float64(sflY)-20, float64(dialogWidth)/2, 30, 10)
+	ggCtx.Fill()
+	sflBtnRS := g143.RectSpecs{Width: dialogWidth / 2, Height: 30, OriginX: int(sflBtnX), OriginY: sflY - 20}
+	vavObjCoords[VAV_PickAudio] = sflBtnRS
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
@@ -279,6 +293,37 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.SetHexColor("#444")
 		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
 		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		currentWindowFrame = ggCtx.Image()
+
+	case VAV_PickAudio:
+		filename := pickFileUbuntu("mp3")
+		if filename == "" {
+			return
+		}
+		vavInputsStore["audio_optional"] = filepath.Join(rootPath, filename)
+
+		// write audio name
+		ggCtx := gg.NewContextForImage(currentWindowFrame)
+		// load font
+		fontPath := getDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY),
+			float64(widgetRS.Width), float64(widgetRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(filename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
