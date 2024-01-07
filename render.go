@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,7 +28,6 @@ func render(instructions []map[string]string) string {
 	}()
 
 	ffmpeg := GetFFMPEGCommand()
-	ffprobe := GetFFPCommand()
 
 	videoParts := make([]string, 0)
 	for _, instructionDesc := range instructions {
@@ -108,21 +106,7 @@ func render(instructions []map[string]string) string {
 				videoPath = tmpVideoPath
 			}
 
-			// get the length of the video
-			cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
-				"-show_entries", "format=duration", videoPath)
-
-			out, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Println(string(out))
-				fmt.Println(err)
-				return "error occured"
-			}
-
-			trueOut := strings.TrimSpace(string(out))
-			seconds, _ := strconv.ParseFloat(trueOut, 64)
-			tmp := int(math.Ceil(seconds))
-			videoLength := SecondsToTimeFormat(tmp)
+			videoLength := lengthOfVideo(videoPath)
 
 			// check and do triming
 			if instructionDesc["begin"] != "0:00" || instructionDesc["end"] != videoLength {
@@ -136,6 +120,22 @@ func render(instructions []map[string]string) string {
 				}
 
 				videoPath = tmpVideoPath
+			}
+
+			// add optional audio to video
+
+			if instructionDesc["audio_optional"] != "" {
+
+				tmpVideoPath3 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+
+				out, err := exec.Command(ffmpeg, "-i", videoPath, "-i", instructionDesc["audio_optional"],
+					"-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0", "-shortest", tmpVideoPath3).CombinedOutput()
+				if err != nil {
+					fmt.Println(string(out))
+					return "error occured"
+				}
+
+				videoPath = tmpVideoPath3
 			}
 
 			videoParts = append(videoParts, videoPath)
