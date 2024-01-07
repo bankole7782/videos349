@@ -249,6 +249,21 @@ func allDraws(window *glfw.Window) {
 			ggCtx.SetHexColor("#444")
 			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+fontSize+30+15+fontSize)
 
+			// view audio asset optional
+			if instr["audio_optional"] != "" {
+				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
+				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
+				ggCtx.SetHexColor("#74A299")
+
+				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, fontSize+10, 10)
+				ggCtx.Fill()
+				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
+					Width: int(vaaStrW) + 20, Height: fontSize + 10}
+				objCoords[2000+(i+1)] = vaabRS
+
+				ggCtx.SetHexColor("#fff")
+				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+fontSize+30+65)
+			}
 		}
 
 		newX := currentX + int(viaStrW) + 20

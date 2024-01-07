@@ -339,10 +339,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		}
 
 		instructions = append(instructions, map[string]string{
-			"kind":  "video",
-			"video": vavInputsStore["video"],
-			"begin": beginInputEnteredTxt,
-			"end":   endInputEnteredTxt,
+			"kind":           "video",
+			"video":          vavInputsStore["video"],
+			"begin":          beginInputEnteredTxt,
+			"end":            endInputEnteredTxt,
+			"audio_optional": vavInputsStore["audio_optional"],
 		})
 
 		allDraws(window)
