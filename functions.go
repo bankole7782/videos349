@@ -11,25 +11,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/pkg/errors"
 )
-
-func GetRootPath() (string, error) {
-	hd, err := os.UserHomeDir()
-	if err != nil {
-		return "", errors.Wrap(err, "os error")
-	}
-
-	dd := os.Getenv("SNAP_USER_COMMON")
-
-	if strings.HasPrefix(dd, filepath.Join(hd, "snap", "go")) || dd == "" {
-		dd = filepath.Join(hd, "Videos349")
-		os.MkdirAll(dd, 0777)
-	}
-
-	return dd, nil
-}
 
 func TimeFormatToSeconds(s string) int {
 	// calculate total duration of the song
@@ -62,28 +46,6 @@ func UntestedRandomString(length int) string {
 	return string(b)
 }
 
-func GetFFMPEGCommand() string {
-	var cmdPath string
-	begin := os.Getenv("SNAP")
-	cmdPath = "ffmpeg"
-	if begin != "" && !strings.HasPrefix(begin, "/snap/go/") {
-		cmdPath = filepath.Join(begin, "bin", "ffmpeg")
-	}
-
-	return cmdPath
-}
-
-func GetFFPCommand() string {
-	var cmdPath string
-	begin := os.Getenv("SNAP")
-	cmdPath = "ffprobe"
-	if begin != "" && !strings.HasPrefix(begin, "/snap/go/") {
-		cmdPath = filepath.Join(begin, "bin", "ffprobe")
-	}
-
-	return cmdPath
-}
-
 func isKeyNumeric(key glfw.Key) bool {
 	numKeys := []glfw.Key{glfw.Key0, glfw.Key1, glfw.Key2, glfw.Key3, glfw.Key4,
 		glfw.Key5, glfw.Key6, glfw.Key7, glfw.Key8, glfw.Key9}
@@ -98,7 +60,7 @@ func isKeyNumeric(key glfw.Key) bool {
 }
 
 func lengthOfVideo(p string) string {
-	ffprobe := GetFFPCommand()
+	ffprobe := v3shared.GetFFPCommand()
 
 	cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
 		"-show_entries", "format=duration", p)
@@ -138,7 +100,7 @@ func GetPickerPath() string {
 func pickFileUbuntu(exts string) string {
 	fPickerPath := GetPickerPath()
 
-	rootPath, _ := GetRootPath()
+	rootPath, _ := v3shared.GetRootPath()
 	cmd := exec.Command(fPickerPath, rootPath, exts)
 
 	out, err := cmd.Output()

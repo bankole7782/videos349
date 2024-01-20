@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -133,7 +134,7 @@ func drawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 }
 
 func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
-	rootPath, _ := GetRootPath()
+	rootPath, _ := v3shared.GetRootPath()
 
 	if action != glfw.Release {
 		return

@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -167,7 +168,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	rootPath, _ := GetRootPath()
+	rootPath, _ := v3shared.GetRootPath()
 
 	xPos, yPos := window.GetCursorPos()
 	xPosInt := int(xPos)

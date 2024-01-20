@@ -9,6 +9,7 @@ import (
 	"time"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -31,7 +32,7 @@ var inChannel chan bool
 var clearAfterRender bool
 
 func main() {
-	_, err := GetRootPath()
+	_, err := v3shared.GetRootPath()
 	if err != nil {
 		panic(err)
 	}
@@ -322,7 +323,7 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 		window.SetKeyCallback(vavkeyCallback)
 
 	case OpenWDBtn:
-		rootPath, _ := GetRootPath()
+		rootPath, _ := v3shared.GetRootPath()
 		externalLaunch(rootPath)
 
 	case RenderBtn:
