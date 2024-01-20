@@ -29,6 +29,7 @@ parts:
       set -xe
       go mod download
       go build -o $SNAPCRAFT_PART_INSTALL/bin/videos349 .
+      go build -o $SNAPCRAFT_PART_INSTALL/bin/hasten ./hasten
       cp $SNAPCRAFT_PART_SRC/ffmpeg/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/ffmpeg
       cp $SNAPCRAFT_PART_SRC/ffmpeg/ffprobe $SNAPCRAFT_PART_INSTALL/bin/ffprobe
 
@@ -54,3 +55,7 @@ apps:
   videos349:
     command: bin/videos349
     extensions: [gnome]
+  
+  hasten:
+    command: bin/hasten
+    
