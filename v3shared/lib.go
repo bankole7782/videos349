@@ -1,6 +1,7 @@
 package v3shared
 
 import (
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -44,4 +45,20 @@ func GetRootPath() (string, error) {
 	}
 
 	return dd, nil
+}
+
+func DoesPathExists(p string) bool {
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
+
+func UntestedRandomString(length int) string {
+	const letters = "0123456789abcdefghijklmnopqrstuvwxyz"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
 }
