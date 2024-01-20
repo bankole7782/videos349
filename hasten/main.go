@@ -47,8 +47,9 @@ func main() {
 
 		rem := math.Mod(float64(nameNumInt), 2)
 		rem2 := math.Mod(float64(nameNumInt), 3)
+		rem3 := math.Mod(float64(nameNumInt), 5)
 
-		if int(rem) == 0 || int(rem2) == 0 {
+		if int(rem) == 0 || int(rem2) == 0 || int(rem3) == 0 {
 			err = os.Remove(filepath.Join(tmpPath, fmt.Sprintf("%d.png", nameNumInt)))
 			if err != nil {
 				panic(err)
