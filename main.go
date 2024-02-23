@@ -3,6 +3,7 @@ package main
 import (
 	"image"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -17,10 +18,11 @@ import (
 const (
 	fps       = 10
 	fontSize  = 20
-	AddImgBtn = 11
-	AddVidBtn = 12
-	OpenWDBtn = 13
-	RenderBtn = 14
+	AddImgBtn = 101
+	AddVidBtn = 102
+	OpenWDBtn = 103
+	RenderBtn = 104
+	OurSite   = 105
 )
 
 var objCoords map[int]g143.RectSpecs
@@ -275,6 +277,17 @@ func allDraws(window *glfw.Window) {
 			currentX += int(viaStrW) + 20 + 10
 		}
 	}
+
+	// draw our site below
+	ggCtx.SetHexColor("#9C5858")
+	fromAddr := "sae.ng"
+	fromAddrWidth, fromAddrHeight := ggCtx.MeasureString(fromAddr)
+	fromAddrOriginX := (wWidth - int(fromAddrWidth)) / 2
+	ggCtx.DrawString(fromAddr, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
+	fars := g143.RectSpecs{OriginX: fromAddrOriginX, OriginY: wHeight - 40,
+		Width: int(fromAddrWidth), Height: 40}
+	objCoords[OurSite] = fars
+
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
@@ -325,6 +338,13 @@ func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.
 	case OpenWDBtn:
 		rootPath, _ := v3shared.GetRootPath()
 		externalLaunch(rootPath)
+
+	case OurSite:
+		if runtime.GOOS == "windows" {
+			exec.Command("cmd", "/C", "start", "https://sae.ng").Run()
+		} else if runtime.GOOS == "linux" {
+			exec.Command("xdg-open", "https://sae.ng").Run()
+		}
 
 	case RenderBtn:
 		if len(instructions) == 0 {
