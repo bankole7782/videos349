@@ -1,2 +1,8 @@
 # videos349
-a video editor (incomplete)
+
+A simple video editor.
+
+Features included:
+* adding videos
+* adding introductory pictures
+* triming videos
