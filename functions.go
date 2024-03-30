@@ -11,9 +11,60 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bankole7782/videos349/v3shared"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/pkg/errors"
 )
+
+func GetFFMPEGCommand() string {
+	homeDir, _ := os.UserHomeDir()
+
+	ffmegDir := filepath.Join(homeDir, ".v349")
+	outPath := filepath.Join(ffmegDir, "ffmpeg.exe")
+	if !DoesPathExists(outPath) {
+		os.MkdirAll(ffmegDir, 0777)
+
+		os.WriteFile(outPath, ffmpegBytes, 0777)
+	}
+
+	return outPath
+}
+
+func GetFFPCommand() string {
+	homeDir, _ := os.UserHomeDir()
+
+	ffmegDir := filepath.Join(homeDir, ".v349")
+	outPath := filepath.Join(ffmegDir, "ffprobe.exe")
+	if !DoesPathExists(outPath) {
+		os.MkdirAll(ffmegDir, 0777)
+
+		os.WriteFile(outPath, ffprobeBytes, 0777)
+	}
+
+	return outPath
+}
+
+func GetRootPath() (string, error) {
+	hd, err := os.UserHomeDir()
+	if err != nil {
+		return "", errors.Wrap(err, "os error")
+	}
+
+	dd := os.Getenv("SNAP_USER_COMMON")
+
+	if strings.HasPrefix(dd, filepath.Join(hd, "snap", "go")) || dd == "" {
+		dd = filepath.Join(hd, "Videos349")
+		os.MkdirAll(dd, 0777)
+	}
+
+	return dd, nil
+}
+
+func DoesPathExists(p string) bool {
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		return false
+	}
+	return true
+}
 
 func TimeFormatToSeconds(s string) int {
 	// calculate total duration of the song
@@ -60,7 +111,7 @@ func isKeyNumeric(key glfw.Key) bool {
 }
 
 func lengthOfVideo(p string) string {
-	ffprobe := v3shared.GetFFPCommand()
+	ffprobe := GetFFPCommand()
 
 	cmd := exec.Command(ffprobe, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
 		"-show_entries", "format=duration", p)

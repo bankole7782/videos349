@@ -9,12 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 )
 
 func render(instructions []map[string]string) string {
-	rootPath, _ := v3shared.GetRootPath()
+	rootPath, _ := GetRootPath()
 
 	defer func() {
 		dirFIs, _ := os.ReadDir(rootPath)
@@ -28,7 +27,7 @@ func render(instructions []map[string]string) string {
 		}
 	}()
 
-	ffmpeg := v3shared.GetFFMPEGCommand()
+	ffmpeg := GetFFMPEGCommand()
 
 	videoParts := make([]string, 0)
 	for _, instructionDesc := range instructions {
