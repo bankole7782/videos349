@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
-	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/sqweek/dialog"
 )
 
 const (
@@ -168,8 +168,6 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	rootPath, _ := v3shared.GetRootPath()
-
 	xPos, yPos := window.GetCursorPos()
 	xPosInt := int(xPos)
 	yPosInt := int(yPos)
@@ -191,7 +189,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	clearIndicators := func(window *glfw.Window, currentFrame image.Image) {
+	clearIndicators := func(window *glfw.Window) {
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
 		beginInputRS := vavObjCoords[VAV_BeginInput]
@@ -223,17 +221,17 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAV_PickVideo:
-		filename := pickFileUbuntu("mp4|mkv|webm")
-		if filename == "" {
+		filename, err := dialog.File().Filter("MP4 Video", "mp4").Filter("WEBM Video", "webm").Filter("MKV Video", "mkv").Load()
+		if filename == "" || err != nil {
 			return
 		}
-		vavInputsStore["video"] = filepath.Join(rootPath, filename)
+		vavInputsStore["video"] = filename
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 		// load font
 		fontPath := getDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
+		err = ggCtx.LoadFontFace(fontPath, 20)
 		if err != nil {
 			panic(err)
 		}
@@ -243,11 +241,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filename, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
+		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
 
 		// update end str
 		endInputRS := vavObjCoords[VAV_EndInput]
-		videoLength := lengthOfVideo(filepath.Join(rootPath, filename))
+		videoLength := lengthOfVideo(filename)
 		endInputEnteredTxt = videoLength
 
 		ggCtx.SetHexColor("#eee")
@@ -269,7 +267,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 	case VAV_BeginInput:
 		selectedInput = VAV_BeginInput
 
-		clearIndicators(window, currentWindowFrame)
+		clearIndicators(window)
 
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
@@ -287,7 +285,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	case VAV_EndInput:
 		selectedInput = VAV_EndInput
-		clearIndicators(window, currentWindowFrame)
+		clearIndicators(window)
 
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
@@ -304,17 +302,17 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		currentWindowFrame = ggCtx.Image()
 
 	case VAV_PickAudio:
-		filename := pickFileUbuntu("mp3")
-		if filename == "" {
+		filename, err := dialog.File().Filter("MP3 Audio", "mp3").Load()
+		if filename == "" || err != nil {
 			return
 		}
-		vavInputsStore["audio_optional"] = filepath.Join(rootPath, filename)
+		vavInputsStore["audio_optional"] = filename
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 		// load font
 		fontPath := getDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
+		err = ggCtx.LoadFontFace(fontPath, 20)
 		if err != nil {
 			panic(err)
 		}
@@ -324,7 +322,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

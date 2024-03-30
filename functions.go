@@ -78,8 +78,11 @@ func lengthOfVideo(p string) string {
 }
 
 func externalLaunch(p string) {
+	cmd := "url.dll,FileProtocolHandler"
+	runDll32 := filepath.Join(os.Getenv("SYSTEMROOT"), "System32", "rundll32.exe")
+
 	if runtime.GOOS == "windows" {
-		exec.Command("cmd", "/C", "start", p).Run()
+		exec.Command(runDll32, cmd, p).Run()
 	} else if runtime.GOOS == "linux" {
 		exec.Command("xdg-open", p).Run()
 	}
@@ -95,19 +98,4 @@ func GetPickerPath() string {
 	}
 
 	return cmdPath
-}
-
-func pickFileUbuntu(exts string) string {
-	fPickerPath := GetPickerPath()
-
-	rootPath, _ := v3shared.GetRootPath()
-	cmd := exec.Command(fPickerPath, rootPath, exts)
-
-	out, err := cmd.Output()
-	if err != nil {
-		fmt.Println(err)
-		return ""
-	}
-
-	return strings.TrimSpace(string(out))
 }
