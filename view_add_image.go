@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/sqweek/dialog"
 )
 
 const (
@@ -134,6 +134,8 @@ func drawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 }
 
 func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+	rootPath, _ := v3shared.GetRootPath()
+
 	if action != glfw.Release {
 		return
 	}
@@ -168,16 +170,16 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetKeyCallback(nil)
 
 	case VAI_SelectImg:
-		filename, err := dialog.File().Filter("PNG Image", "png").Filter("JPEG Image", "jpg").Load()
-		if filename == "" || err != nil {
+		filename := pickFileUbuntu("png|jpg")
+		if filename == "" {
 			return
 		}
-		vaiInputsStore["image"] = filename
+		vaiInputsStore["image"] = filepath.Join(rootPath, filename)
 
 		// show picked image
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
-		img, _ := imaging.Open(filename)
+		img, _ := imaging.Open(filepath.Join(rootPath, filename))
 		img = imaging.Fit(img, widgetRS.Width-20, widgetRS.Height-20, imaging.Lanczos)
 		ggCtx.SetHexColor("#eee")
 		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY), float64(widgetRS.Width),
@@ -194,17 +196,17 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		currentWindowFrame = ggCtx.Image()
 
 	case VAI_SelectAudio:
-		filename, err := dialog.File().Filter("MP3 Audio", "mp3").Load()
-		if filename == "" || err != nil {
+		filename := pickFileUbuntu("mp3")
+		if filename == "" {
 			return
 		}
-		vaiInputsStore["audio_optional"] = filename
+		vaiInputsStore["audio_optional"] = filepath.Join(rootPath, filename)
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 		// load font
 		fontPath := getDefaultFontPath()
-		err = ggCtx.LoadFontFace(fontPath, 20)
+		err := ggCtx.LoadFontFace(fontPath, 20)
 		if err != nil {
 			panic(err)
 		}
@@ -214,7 +216,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(filename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
