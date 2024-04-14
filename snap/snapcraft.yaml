@@ -27,6 +27,7 @@ parts:
       - libc6-dev
     override-build: |
       set -xe
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin/
       cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/
       cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/ffprobe $SNAPCRAFT_PART_INSTALL/bin/
       cd $SNAPCRAFT_PART_SRC/linux
