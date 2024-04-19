@@ -32,6 +32,8 @@ parts:
       cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/ffprobe $SNAPCRAFT_PART_INSTALL/bin/
       cd $SNAPCRAFT_PART_SRC/linux
       go mod download
+      chmod +x $SNAPCRAFT_PART_INSTALL/bin/ffmpeg
+      chmod +x $SNAPCRAFT_PART_INSTALL/bin/ffprobe
       go build -o $SNAPCRAFT_PART_INSTALL/bin/videos349 .
       go build -o $SNAPCRAFT_PART_INSTALL/bin/hasten ./hasten
 
