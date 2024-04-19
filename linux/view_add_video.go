@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
-	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -168,8 +167,6 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	rootPath, _ := v3shared.GetRootPath()
-
 	xPos, yPos := window.GetCursorPos()
 	xPosInt := int(xPos)
 	yPosInt := int(yPos)
@@ -227,7 +224,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		if filename == "" {
 			return
 		}
-		vavInputsStore["video"] = filepath.Join(rootPath, filename)
+		vavInputsStore["video"] = filename
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
@@ -243,11 +240,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filename, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
+		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
 
 		// update end str
 		endInputRS := vavObjCoords[VAV_EndInput]
-		videoLength := lengthOfVideo(filepath.Join(rootPath, filename))
+		videoLength := lengthOfVideo(filename)
 		endInputEnteredTxt = videoLength
 
 		ggCtx.SetHexColor("#eee")
@@ -308,7 +305,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		if filename == "" {
 			return
 		}
-		vavInputsStore["audio_optional"] = filepath.Join(rootPath, filename)
+		vavInputsStore["audio_optional"] = filename
 
 		// write audio name
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
@@ -324,7 +321,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
