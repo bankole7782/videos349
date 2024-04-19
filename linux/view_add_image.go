@@ -2,9 +2,10 @@ package main
 
 import (
 	"image"
-	"path/filepath"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -158,6 +159,8 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
+	rootPath, _ := v3shared.GetRootPath()
+
 	switch widgetCode {
 	case VAI_CloseBtn:
 		allDraws(window)
@@ -212,8 +215,9 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			float64(widgetRS.Width), float64(widgetRS.Height), 10)
 		ggCtx.Fill()
 
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(displayFilename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

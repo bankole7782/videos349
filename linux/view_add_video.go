@@ -2,9 +2,10 @@ package main
 
 import (
 	"image"
-	"path/filepath"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
+	"github.com/bankole7782/videos349/v3shared"
 	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -188,7 +189,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	clearIndicators := func(window *glfw.Window, currentFrame image.Image) {
+	clearIndicators := func(window *glfw.Window) {
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
 		beginInputRS := vavObjCoords[VAV_BeginInput]
@@ -210,6 +211,8 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		currentWindowFrame = ggCtx.Image()
 	}
+
+	rootPath, _ := v3shared.GetRootPath()
 
 	switch widgetCode {
 	case VAV_CloseBtn:
@@ -239,8 +242,9 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			float64(widgetRS.Width), float64(widgetRS.Height), 10)
 		ggCtx.Fill()
 
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
+		ggCtx.DrawString(displayFilename, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
 
 		// update end str
 		endInputRS := vavObjCoords[VAV_EndInput]
@@ -266,7 +270,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 	case VAV_BeginInput:
 		selectedInput = VAV_BeginInput
 
-		clearIndicators(window, currentWindowFrame)
+		clearIndicators(window)
 
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
@@ -284,7 +288,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	case VAV_EndInput:
 		selectedInput = VAV_EndInput
-		clearIndicators(window, currentWindowFrame)
+		clearIndicators(window)
 
 		ggCtx := gg.NewContextForImage(currentWindowFrame)
 
@@ -320,8 +324,9 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			float64(widgetRS.Width), float64(widgetRS.Height), 10)
 		ggCtx.Fill()
 
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		ggCtx.DrawString(displayFilename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
