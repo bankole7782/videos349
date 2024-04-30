@@ -89,8 +89,11 @@ func IsKeyNumeric(key glfw.Key) bool {
 }
 
 func ExternalLaunch(p string) {
+	cmd := "url.dll,FileProtocolHandler"
+	runDll32 := filepath.Join(os.Getenv("SYSTEMROOT"), "System32", "rundll32.exe")
+
 	if runtime.GOOS == "windows" {
-		exec.Command("cmd", "/C", "start", p).Run()
+		exec.Command(runDll32, cmd, p).Run()
 	} else if runtime.GOOS == "linux" {
 		exec.Command("xdg-open", p).Run()
 	}
