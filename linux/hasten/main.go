@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bankole7782/videos349/v3shared"
+	"github.com/bankole7782/videos349/internal"
 	"github.com/otiai10/copy"
 )
 
@@ -19,17 +19,17 @@ func main() {
 		panic("expecting only a video path")
 	}
 	inVideoFilename := os.Args[1]
-	rootPath, _ := v3shared.GetRootPath()
+	rootPath, _ := internal.GetRootPath()
 
 	inVideoPath := filepath.Join(rootPath, inVideoFilename)
 
-	if !v3shared.DoesPathExists(inVideoPath) {
+	if !internal.DoesPathExists(inVideoPath) {
 		panic(inVideoPath + " does not exists.")
 	}
 
-	ffmpegCmd := v3shared.GetFFMPEGCommand()
+	ffmpegCmd := GetFFMPEGCommand()
 
-	tmpPath := filepath.Join(rootPath, ".tmp_"+v3shared.UntestedRandomString(10))
+	tmpPath := filepath.Join(rootPath, ".tmp_"+internal.UntestedRandomString(10))
 	os.MkdirAll(tmpPath, 0777)
 
 	exec.Command(ffmpegCmd, "-i", inVideoPath, filepath.Join(tmpPath, "%d.png")).Run()
@@ -62,7 +62,7 @@ func main() {
 
 	sort.Ints(nameNums)
 
-	tmpPath2 := filepath.Join(rootPath, ".tmp_"+v3shared.UntestedRandomString(10))
+	tmpPath2 := filepath.Join(rootPath, ".tmp_"+internal.UntestedRandomString(10))
 	os.MkdirAll(tmpPath2, 0777)
 
 	for i, num := range nameNums {
@@ -87,4 +87,15 @@ func main() {
 
 	os.RemoveAll(tmpPath)
 	os.RemoveAll(tmpPath2)
+}
+
+func GetFFMPEGCommand() string {
+	var cmdPath string
+	begin := os.Getenv("SNAP")
+	cmdPath = "ffmpeg"
+	if begin != "" && !strings.HasPrefix(begin, "/snap/go/") {
+		cmdPath = filepath.Join(begin, "bin", "ffmpeg")
+	}
+
+	return cmdPath
 }

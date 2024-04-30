@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"image"
@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func drawRenderView(window *glfw.Window, currentFrame image.Image) {
+func DrawRenderView(window *glfw.Window, currentFrame image.Image) {
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer
@@ -20,7 +20,7 @@ func drawRenderView(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.DrawImage(img, 0, 0)
 
 	// load font
-	fontPath := getDefaultFontPath()
+	fontPath := GetDefaultFontPath()
 	err := ggCtx.LoadFontFace(fontPath, 20)
 	if err != nil {
 		panic(err)
@@ -47,10 +47,10 @@ func drawRenderView(window *glfw.Window, currentFrame image.Image) {
 	window.SwapBuffers()
 
 	// save the frame
-	currentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = ggCtx.Image()
 }
 
-func drawEndRenderView(window *glfw.Window, currentFrame image.Image) {
+func DrawEndRenderView(window *glfw.Window, currentFrame image.Image) {
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer
@@ -61,7 +61,7 @@ func drawEndRenderView(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.DrawImage(img, 0, 0)
 
 	// load font
-	fontPath := getDefaultFontPath()
+	fontPath := GetDefaultFontPath()
 	err := ggCtx.LoadFontFace(fontPath, 20)
 	if err != nil {
 		panic(err)
@@ -88,5 +88,5 @@ func drawEndRenderView(window *glfw.Window, currentFrame image.Image) {
 	window.SwapBuffers()
 
 	// save the frame
-	currentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = ggCtx.Image()
 }
