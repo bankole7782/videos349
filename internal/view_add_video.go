@@ -37,7 +37,8 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	dialogOriginY := (wHeight - dialogHeight) / 2
 
 	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth), float64(dialogHeight))
+	ggCtx.DrawRoundedRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth),
+		float64(dialogHeight), 20)
 	ggCtx.Fill()
 
 	// Add Video Header

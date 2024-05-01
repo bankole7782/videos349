@@ -20,6 +20,7 @@ const (
 	VAI_DurInput    = 23
 	VAI_AddBtn      = 24
 	VAI_CloseBtn    = 25
+	VAI_AudioBegin  = 26
 
 	VAV_AddBtn     = 31
 	VAV_CloseBtn   = 32

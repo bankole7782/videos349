@@ -31,13 +31,14 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 
 	// dialog rectangle
 	dialogWidth := 600
-	dialogHeight := 450
+	dialogHeight := 480
 
 	dialogOriginX := (wWidth - dialogWidth) / 2
 	dialogOriginY := (wHeight - dialogHeight) / 2
 
 	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth), float64(dialogHeight))
+	ggCtx.DrawRoundedRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth),
+		float64(dialogHeight), 20)
 	ggCtx.Fill()
 
 	// Add Image
@@ -75,33 +76,21 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 	selectImgRS := g143.RectSpecs{Width: dialogWidth - 80, Height: 240, OriginX: dialogOriginX + 40, OriginY: dialogOriginY + 20 + 50}
 	VaiObjCoords[VAI_SelectImg] = selectImgRS
 
-	aicStr := "click to pick an image"
+	aicStr := "[click to pick an image]"
 	ggCtx.SetHexColor("#444")
 	aicStrW, _ := ggCtx.MeasureString(aicStr)
 	aicStrOriginX := selectImgRS.OriginX + (selectImgRS.Width-int(aicStrW))/2
 	ggCtx.DrawString(aicStr, float64(aicStrOriginX), float64(selectImgRS.OriginY)+20+20)
 
-	sfl := "audio file (optional)"
-	sflW, _ := ggCtx.MeasureString(sfl)
-	sflY := selectImgRS.OriginY + selectImgRS.Height + 10 + 20
-	ggCtx.DrawString(sfl, float64(dialogOriginX)+40, float64(sflY))
-
-	ggCtx.SetHexColor("#eee")
-	sflBtnX := sflW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(sflBtnX, float64(sflY)-20, float64(dialogWidth)/2, 30, 10)
-	ggCtx.Fill()
-	sflBtnRS := g143.RectSpecs{Width: dialogWidth / 2, Height: 30, OriginX: int(sflBtnX), OriginY: sflY - 20}
-	VaiObjCoords[VAI_SelectAudio] = sflBtnRS
-
 	durLabel := "duration (in seconds)"
 	durLabelW, _ := ggCtx.MeasureString(durLabel)
-	durLabelY := sflBtnRS.OriginY + sflBtnRS.Height + 10 + 20
+	durLabelY := selectImgRS.OriginY + selectImgRS.Height + 10 + 20
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString(durLabel, float64(dialogOriginX)+40, float64(durLabelY))
 
 	ggCtx.SetHexColor("#eee")
 	durInputX := durLabelW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(durInputX, float64(durLabelY)-20, 200, 30, 10)
+	ggCtx.DrawRoundedRectangle(durInputX, float64(durLabelY)-FontSize, 100, 30, 10)
 	ggCtx.Fill()
 	durInputRS := g143.RectSpecs{OriginX: int(durInputX), OriginY: durLabelY - 20, Width: 100, Height: 30}
 	VaiObjCoords[VAI_DurInput] = durInputRS
@@ -109,6 +98,36 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 	// default duration
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("5", durInputX+20, float64(durLabelY))
+
+	// audio file input
+	ggCtx.SetHexColor("#eee")
+	sflInputY := durInputRS.OriginY + durInputRS.Height + 10
+	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(sflInputY), float64(dialogWidth)-80, 30, 10)
+	ggCtx.Fill()
+	sflBtnRS := g143.NRectSpecs(dialogOriginX+40, sflInputY, dialogWidth-80, 30)
+	VaiObjCoords[VAI_SelectAudio] = sflBtnRS
+
+	pAFL := "[click to pick optional audio]"
+	pAFLW, _ := ggCtx.MeasureString(pAFL)
+	pAFLX := sflBtnRS.OriginX + (sflBtnRS.Width-int(pAFLW))/2
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString(pAFL, float64(pAFLX), float64(sflInputY)+FontSize)
+
+	// audio begin
+	aBL := "audio begin (optional) (mm:ss)"
+	aBLW, _ := ggCtx.MeasureString(aBL)
+	aBLY := sflBtnRS.OriginY + sflBtnRS.Height + 10 + 20
+	ggCtx.DrawString(aBL, float64(dialogOriginX)+40, float64(aBLY))
+
+	ggCtx.SetHexColor("#eee")
+	aBInputX := aBLW + 50 + float64(dialogOriginX) + 40
+	ggCtx.DrawRoundedRectangle(aBInputX, float64(aBLY)-FontSize, 100, 30, 10)
+	ggCtx.Fill()
+	aBInputRS := g143.NRectSpecs(int(aBInputX), aBLY-FontSize, 100, 30)
+	VaiObjCoords[VAI_AudioBegin] = aBInputRS
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString("0:00", aBInputX+10, float64(aBLY))
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
