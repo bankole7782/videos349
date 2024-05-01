@@ -113,6 +113,29 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	rootPath, _ := internal.GetRootPath()
 
+	clearIndicators := func(window *glfw.Window) {
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		durationInputRS := internal.VaiObjCoords[internal.VAI_DurInput]
+		beginInputRS := internal.VaiObjCoords[internal.VAI_AudioBegin]
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawCircle(float64(durationInputRS.OriginX)+float64(durationInputRS.Width)+20, float64(durationInputRS.OriginY)+15, 20)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawCircle(float64(beginInputRS.OriginX)+float64(beginInputRS.Width)+20, float64(beginInputRS.OriginY)+15, 20)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+	}
+
 	switch widgetCode {
 	case internal.VAI_CloseBtn:
 		internal.AllDraws(window)
@@ -148,7 +171,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		internal.CurrentWindowFrame = ggCtx.Image()
 
 	case internal.VAI_SelectAudio:
-		filename := pickFileUbuntu("mp3")
+		filename := pickFileUbuntu("mp3|flac|wav")
 		if filename == "" {
 			return
 		}
@@ -179,23 +202,62 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		internal.CurrentWindowFrame = ggCtx.Image()
 
+	case internal.VAI_AudioBegin:
+		internal.VAI_SelectedInput = internal.VAI_AudioBegin
+
+		clearIndicators(window)
+
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+
+	case internal.VAI_DurInput:
+		internal.VAI_SelectedInput = internal.VAI_DurInput
+
+		clearIndicators(window)
+
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+
 	case internal.VAI_AddBtn:
 		if internal.VaiInputsStore["image"] == "" {
 			return
 		}
 
-		if internal.VaiEnteredText == "" {
+		if internal.VAI_DurationEnteredTxt == "" {
 			internal.VaiInputsStore["duration"] = "5"
 		} else {
-			internal.VaiInputsStore["duration"] = internal.VaiEnteredText
-			internal.VaiEnteredText = ""
+			internal.VaiInputsStore["duration"] = internal.VAI_DurationEnteredTxt
+			internal.VAI_DurationEnteredTxt = ""
 		}
 
 		internal.Instructions = append(internal.Instructions, map[string]string{
-			"kind":           "image",
-			"image":          internal.VaiInputsStore["image"],
-			"duration":       internal.VaiInputsStore["duration"],
-			"audio_optional": internal.VaiInputsStore["audio_optional"],
+			"kind":                 "image",
+			"image":                internal.VaiInputsStore["image"],
+			"duration":             internal.VaiInputsStore["duration"],
+			"audio_optional":       internal.VaiInputsStore["audio_optional"],
+			"audio_begin_optional": internal.VAI_AudioBeginEnteredTxt,
 		})
 
 		internal.AllDraws(window)
@@ -314,7 +376,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		internal.CurrentWindowFrame = ggCtx.Image()
 
 	case internal.VAV_BeginInput:
-		internal.SelectedInput = internal.VAV_BeginInput
+		internal.VAV_SelectedInput = internal.VAV_BeginInput
 
 		clearIndicators(window)
 
@@ -333,7 +395,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		internal.CurrentWindowFrame = ggCtx.Image()
 
 	case internal.VAV_EndInput:
-		internal.SelectedInput = internal.VAV_EndInput
+		internal.VAV_SelectedInput = internal.VAV_EndInput
 		clearIndicators(window)
 
 		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)

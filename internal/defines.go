@@ -28,6 +28,7 @@ const (
 	VAV_BeginInput = 34
 	VAV_EndInput   = 35
 	VAV_PickAudio  = 36
+	VAV_AudioBegin = 37
 )
 
 var (
@@ -39,14 +40,16 @@ var (
 	InChannel        chan bool
 	ClearAfterRender bool
 
-	VaiObjCoords   map[int]g143.RectSpecs
-	VaiInputsStore map[string]string
-	VaiEnteredText string
+	VaiObjCoords             map[int]g143.RectSpecs
+	VaiInputsStore           map[string]string
+	VAI_DurationEnteredTxt   string
+	VAI_SelectedInput        int
+	VAI_AudioBeginEnteredTxt string = "0:00"
 
 	VavObjCoords   map[int]g143.RectSpecs
 	VavInputsStore map[string]string
 
 	BeginInputEnteredTxt string = "0:00"
 	EndInputEnteredTxt   string = "0:00"
-	SelectedInput        int
+	VAV_SelectedInput    int
 )

@@ -13,38 +13,77 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 
 	wWidth, wHeight := window.GetSize()
 
-	// enforce number types
-	if IsKeyNumeric(key) {
-		VaiEnteredText += glfw.GetKeyName(key, scancode)
-	} else if key == glfw.KeyBackspace && len(VaiEnteredText) != 0 {
-		VaiEnteredText = VaiEnteredText[:len(VaiEnteredText)-1]
+	if VAI_SelectedInput == VAI_DurInput {
+		// enforce number types
+		if IsKeyNumeric(key) {
+			VAI_DurationEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeyBackspace && len(VAI_DurationEnteredTxt) != 0 {
+			VAI_DurationEnteredTxt = VAI_DurationEnteredTxt[:len(VAI_DurationEnteredTxt)-1]
+		}
+
+		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
+		// load font
+		fontPath := GetDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+
+		durInputRS := VaiObjCoords[VAI_DurInput]
+
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(durInputRS.OriginX), float64(durInputRS.OriginY), float64(durInputRS.Width),
+			float64(durInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(VAI_DurationEnteredTxt, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		CurrentWindowFrame = ggCtx.Image()
+
+	} else if VAI_SelectedInput == VAI_AudioBegin {
+		// enforce number types
+		if IsKeyNumeric(key) {
+			VAI_AudioBeginEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeySemicolon {
+			VAI_AudioBeginEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(VAI_AudioBeginEnteredTxt) != 0 {
+			VAI_AudioBeginEnteredTxt = VAI_AudioBeginEnteredTxt[:len(VAI_AudioBeginEnteredTxt)-1]
+		}
+
+		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
+		// load font
+		fontPath := GetDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+
+		audioBeginInputRS := VaiObjCoords[VAI_AudioBegin]
+
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(audioBeginInputRS.OriginX), float64(audioBeginInputRS.OriginY),
+			float64(audioBeginInputRS.Width), float64(audioBeginInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(VAI_AudioBeginEnteredTxt, float64(audioBeginInputRS.OriginX+10), float64(audioBeginInputRS.OriginY)+20)
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		CurrentWindowFrame = ggCtx.Image()
 	}
 
-	ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-	// load font
-	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 20)
-	if err != nil {
-		panic(err)
-	}
-
-	durInputRS := VaiObjCoords[VAI_DurInput]
-
-	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(durInputRS.OriginX), float64(durInputRS.OriginY), float64(durInputRS.Width),
-		float64(durInputRS.Height), 10)
-	ggCtx.Fill()
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString(VaiEnteredText, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
-
-	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
-	window.SwapBuffers()
-
-	// save the frame
-	CurrentWindowFrame = ggCtx.Image()
 }
 
 func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -54,7 +93,7 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 
 	wWidth, wHeight := window.GetSize()
 
-	if SelectedInput == VAV_BeginInput {
+	if VAV_SelectedInput == VAV_BeginInput {
 		beginInputRS := VavObjCoords[VAV_BeginInput]
 
 		// enforce number types, semicolon and backspace
@@ -90,7 +129,7 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		// save the frame
 		CurrentWindowFrame = ggCtx.Image()
 
-	} else if SelectedInput == VAV_EndInput {
+	} else if VAV_SelectedInput == VAV_EndInput {
 		endInputRS := VavObjCoords[VAV_EndInput]
 
 		// enforce number types, semicolon and backspace
