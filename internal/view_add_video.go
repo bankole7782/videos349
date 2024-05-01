@@ -31,7 +31,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	// dialog rectangle
 	dialogWidth := 600
-	dialogHeight := 300
+	dialogHeight := 360
 
 	dialogOriginX := (wWidth - dialogWidth) / 2
 	dialogOriginY := (wHeight - dialogHeight) / 2
@@ -71,30 +71,27 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	// end of top bar
 
 	// pick video label and btn
-	ggCtx.SetHexColor("#444")
-	pvStr := "video file"
-	pvStrW, _ := ggCtx.MeasureString(pvStr)
-	pvStrX := dialogOriginX + 40
-	pvStrY := dialogOriginY + FontSize + 70
-	ggCtx.DrawString(pvStr, float64(pvStrX), float64(pvStrY))
+	pvInputX := dialogOriginX + 40
+	pvInputW := dialogWidth - 80
+	pvInputY := dialogOriginY + FontSize + 70
 
 	ggCtx.SetHexColor("#eee")
-	pvInputX := pvStrW + 30 + float64(dialogOriginX) + 40
-	pvInputW := dialogWidth - int(pvStrW) - 90
-
-	ggCtx.DrawRoundedRectangle(pvInputX, float64(pvStrY)-FontSize, float64(pvInputW), 60, 10)
+	ggCtx.DrawRoundedRectangle(float64(pvInputX), float64(pvInputY)-FontSize, float64(pvInputW), 30, 10)
 	ggCtx.Fill()
-	pfRS := g143.RectSpecs{OriginX: int(pvInputX), OriginY: pvStrY - FontSize, Width: pvInputW, Height: 60}
+	pfRS := g143.RectSpecs{OriginX: int(pvInputX), OriginY: pvInputY - FontSize, Width: pvInputW, Height: 30}
 	VavObjCoords[VAV_PickVideo] = pfRS
 
 	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("[click to pick file]", pvInputX+10, float64(pvStrY))
+	pVFL := "[click to pick video file]"
+	pVFLW, _ := ggCtx.MeasureString(pVFL)
+	pVFLX := pvInputX + (pfRS.Width-int(pVFLW))/2
+	ggCtx.DrawString(pVFL, float64(pVFLX), float64(pvInputY))
 
 	// begin str label and input
 	beginStr := "begin (mm:ss)"
 	beginStrW, _ := ggCtx.MeasureString(beginStr)
 	beginStrX := dialogOriginX + 40
-	beginStrY := pvStrY + FontSize + 60
+	beginStrY := pvInputY + FontSize + 30
 	ggCtx.DrawString(beginStr, float64(beginStrX), float64(beginStrY))
 
 	ggCtx.SetHexColor("#eee")
@@ -125,17 +122,34 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.DrawString("0:00", endInputX+10, float64(endStrY))
 
 	// add audio input
-	sfl := "audio file (optional)"
-	sflW, _ := ggCtx.MeasureString(sfl)
-	sflY := eiRS.OriginY + eiRS.Height + 10 + 20
-	ggCtx.DrawString(sfl, float64(dialogOriginX)+40, float64(sflY))
+	aFOY := eiRS.OriginY + eiRS.Height + 10
+	ggCtx.SetHexColor("#eee")
+	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(aFOY), float64(dialogWidth)-80, 30, 10)
+	ggCtx.Fill()
+	aFOYInputRS := g143.RectSpecs{Width: dialogWidth - 80, Height: 30, OriginX: dialogOriginX + 40, OriginY: aFOY}
+	VavObjCoords[VAV_PickAudio] = aFOYInputRS
+
+	pAFL := "[click to pick optional audio]"
+	pAFLW, _ := ggCtx.MeasureString(pAFL)
+	pAFLX := aFOYInputRS.OriginX + (aFOYInputRS.Width-int(pAFLW))/2
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString(pAFL, float64(pAFLX), float64(aFOY)+FontSize)
+
+	// audio begin (optional)
+	aBL := "audio begin (optional) (mm:ss)"
+	aBLW, _ := ggCtx.MeasureString(aBL)
+	aBLY := aFOYInputRS.OriginY + aFOYInputRS.Height + 10 + 20
+	ggCtx.DrawString(aBL, float64(dialogOriginX)+40, float64(aBLY))
 
 	ggCtx.SetHexColor("#eee")
-	sflBtnX := sflW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(sflBtnX, float64(sflY)-20, float64(dialogWidth)/2, 30, 10)
+	aBInputX := aBLW + 50 + float64(dialogOriginX) + 40
+	ggCtx.DrawRoundedRectangle(aBInputX, float64(aBLY)-FontSize, 100, 30, 10)
 	ggCtx.Fill()
-	sflBtnRS := g143.RectSpecs{Width: dialogWidth / 2, Height: 30, OriginX: int(sflBtnX), OriginY: sflY - 20}
-	VavObjCoords[VAV_PickAudio] = sflBtnRS
+	aBInputRS := g143.NRectSpecs(int(aBInputX), aBLY-FontSize, 100, 30)
+	VavObjCoords[VAV_AudioBegin] = aBInputRS
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString("0:00", aBInputX+10, float64(aBLY))
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

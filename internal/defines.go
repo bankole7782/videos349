@@ -49,7 +49,8 @@ var (
 	VavObjCoords   map[int]g143.RectSpecs
 	VavInputsStore map[string]string
 
-	BeginInputEnteredTxt string = "0:00"
-	EndInputEnteredTxt   string = "0:00"
-	VAV_SelectedInput    int
+	BeginInputEnteredTxt     string = "0:00"
+	EndInputEnteredTxt       string = "0:00"
+	VAV_SelectedInput        int
+	VAV_AudioBeginEnteredTxt string = "0:00"
 )

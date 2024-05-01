@@ -165,5 +165,41 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		// save the frame
 		CurrentWindowFrame = ggCtx.Image()
 
+	} else if VAV_SelectedInput == VAV_AudioBegin {
+		audioBeginInputRS := VavObjCoords[VAV_AudioBegin]
+
+		// enforce number types, semicolon and backspace
+		if IsKeyNumeric(key) {
+			VAV_AudioBeginEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeySemicolon {
+			VAV_AudioBeginEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(VAV_AudioBeginEnteredTxt) != 0 {
+			VAV_AudioBeginEnteredTxt = VAV_AudioBeginEnteredTxt[:len(VAV_AudioBeginEnteredTxt)-1]
+		}
+
+		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
+		// load font
+		fontPath := GetDefaultFontPath()
+		err := ggCtx.LoadFontFace(fontPath, 20)
+		if err != nil {
+			panic(err)
+		}
+
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(audioBeginInputRS.OriginX), float64(audioBeginInputRS.OriginY),
+			float64(audioBeginInputRS.Width), float64(audioBeginInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(VAV_AudioBeginEnteredTxt, float64(audioBeginInputRS.OriginX+10), float64(audioBeginInputRS.OriginY)+FontSize)
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		CurrentWindowFrame = ggCtx.Image()
+
 	}
 }

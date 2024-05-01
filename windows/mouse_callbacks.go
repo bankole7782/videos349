@@ -300,6 +300,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 		beginInputRS := internal.VavObjCoords[internal.VAV_BeginInput]
 		endInputRS := internal.VavObjCoords[internal.VAV_EndInput]
+		audioBeginInputRS := internal.VavObjCoords[internal.VAV_AudioBegin]
 
 		ggCtx.SetHexColor("#fff")
 		ggCtx.DrawCircle(float64(beginInputRS.OriginX)+float64(beginInputRS.Width)+20, float64(beginInputRS.OriginY)+15, 20)
@@ -307,6 +308,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 		ggCtx.SetHexColor("#fff")
 		ggCtx.DrawCircle(float64(endInputRS.OriginX)+float64(endInputRS.Width)+20, float64(endInputRS.OriginY)+15, 20)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawCircle(float64(audioBeginInputRS.OriginX)+float64(audioBeginInputRS.Width)+20,
+			float64(audioBeginInputRS.OriginY)+15, 20)
 		ggCtx.Fill()
 
 		// send the frame to glfw window
@@ -407,6 +413,24 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		internal.CurrentWindowFrame = ggCtx.Image()
 
+	case internal.VAV_AudioBegin:
+		internal.VAV_SelectedInput = internal.VAV_AudioBegin
+		clearIndicators(window)
+
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
+		ggCtx.Fill()
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+
 	case internal.VAV_PickAudio:
 		filename, err := dialog.File().Filter("MP3 Audio", "mp3").Load()
 		if filename == "" || err != nil {
@@ -444,11 +468,12 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		}
 
 		internal.Instructions = append(internal.Instructions, map[string]string{
-			"kind":           "video",
-			"video":          internal.VavInputsStore["video"],
-			"begin":          internal.BeginInputEnteredTxt,
-			"end":            internal.EndInputEnteredTxt,
-			"audio_optional": internal.VavInputsStore["audio_optional"],
+			"kind":                 "video",
+			"video":                internal.VavInputsStore["video"],
+			"begin":                internal.BeginInputEnteredTxt,
+			"end":                  internal.EndInputEnteredTxt,
+			"audio_optional":       internal.VavInputsStore["audio_optional"],
+			"audio_begin_optional": internal.VAV_AudioBeginEnteredTxt,
 		})
 
 		internal.AllDraws(window)
