@@ -98,3 +98,19 @@ func ExternalLaunch(p string) {
 		exec.Command("xdg-open", p).Run()
 	}
 }
+
+func LengthOfVideo(p, ffprobePath string) string {
+	cmd := exec.Command(ffprobePath, "-v", "quiet", "-print_format", "compact=print_section=0:nokey=1:escape=csv",
+		"-show_entries", "format=duration", p)
+
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	trueOut := strings.TrimSpace(string(out))
+	seconds, _ := strconv.ParseFloat(trueOut, 64)
+	tmp := int(math.Ceil(seconds))
+	return SecondsToTimeFormat(tmp)
+}

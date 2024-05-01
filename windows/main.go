@@ -24,10 +24,13 @@ func main() {
 	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
 	internal.AllDraws(window)
 
+	ffmpegPath := GetFFMPEGCommand()
+	ffprobePath := GetFFPCommand()
+
 	go func() {
 		for {
 			<-internal.InChannel
-			render(internal.Instructions)
+			internal.Render(internal.Instructions, ffmpegPath, ffprobePath)
 			internal.ClearAfterRender = true
 		}
 	}()

@@ -356,8 +356,9 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		ggCtx.DrawString(filepath.Base(filename), float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
 
 		// update end str
+		ffprobe := GetFFPCommand()
 		endInputRS := internal.VavObjCoords[internal.VAV_EndInput]
-		videoLength := lengthOfVideo(filename)
+		videoLength := internal.LengthOfVideo(filename, ffprobe)
 		internal.EndInputEnteredTxt = videoLength
 
 		ggCtx.SetHexColor("#eee")
