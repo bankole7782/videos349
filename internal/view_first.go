@@ -46,8 +46,8 @@ func AllDraws(window *glfw.Window) {
 	ggCtx.DrawCircle(10+addImgBtnWidth-40, 10+addImgBtnHeight/2, 10)
 	ggCtx.Fill()
 
-	// Add Image + Sound Button
-	aisStr := "Add Image + Sound"
+	// Add Image + Audio Button
+	aisStr := "Add Image + Audio"
 	aisStrWidth, aisStrHeight := ggCtx.MeasureString(aisStr)
 	aisBtnWidth := aisStrWidth + 80
 	aisBtnHeight := aisStrHeight + 30
