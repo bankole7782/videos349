@@ -36,8 +36,6 @@ func main() {
 
 	// respond to the mouse
 	window.SetMouseButtonCallback(mouseBtnCallback)
-	// respond to the keyboard
-	// window.SetKeyCallback(keyCallback)
 
 	for !window.ShouldClose() {
 		t := time.Now()

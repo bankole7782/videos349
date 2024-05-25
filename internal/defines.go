@@ -7,13 +7,14 @@ import (
 )
 
 const (
-	FPS       = 10
-	FontSize  = 20
-	AddImgBtn = 101
-	AddVidBtn = 102
-	OpenWDBtn = 103
-	RenderBtn = 104
-	OurSite   = 105
+	FPS            = 10
+	FontSize       = 20
+	AddImgBtn      = 101
+	AddImgSoundBtn = 102
+	AddVidBtn      = 103
+	OpenWDBtn      = 104
+	RenderBtn      = 105
+	OurSite        = 106
 
 	VAI_SelectImg   = 21
 	VAI_SelectAudio = 22
@@ -22,13 +23,20 @@ const (
 	VAI_CloseBtn    = 25
 	VAI_AudioBegin  = 26
 
-	VAV_AddBtn     = 31
-	VAV_CloseBtn   = 32
-	VAV_PickVideo  = 33
-	VAV_BeginInput = 34
-	VAV_EndInput   = 35
-	VAV_PickAudio  = 36
-	VAV_AudioBegin = 37
+	VAIS_SelectImg       = 31
+	VAIS_SelectAudio     = 32
+	VAIS_AddBtn          = 33
+	VAIS_CloseBtn        = 34
+	VAIS_AudioBeginInput = 35
+	VAIS_AudioEndInput   = 36
+
+	VAV_AddBtn     = 41
+	VAV_CloseBtn   = 42
+	VAV_PickVideo  = 43
+	VAV_BeginInput = 44
+	VAV_EndInput   = 45
+	VAV_PickAudio  = 46
+	VAV_AudioBegin = 47
 )
 
 var (
@@ -40,12 +48,22 @@ var (
 	InChannel        chan bool
 	ClearAfterRender bool
 
+	// view add image
 	VaiObjCoords             map[int]g143.RectSpecs
 	VaiInputsStore           map[string]string
 	VAI_DurationEnteredTxt   string
 	VAI_SelectedInput        int
 	VAI_AudioBeginEnteredTxt string = "0:00"
 
+	// view add image + sound
+	VaisObjCoords   map[int]g143.RectSpecs
+	VaisInputsStore map[string]string
+
+	VaisBeginInputEnteredTxt string = "0:00"
+	VaisEndInputEnteredTxt   string = "0:00"
+	VAIS_SelectedInput       int
+
+	// view add video
 	VavObjCoords   map[int]g143.RectSpecs
 	VavInputsStore map[string]string
 

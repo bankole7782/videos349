@@ -31,7 +31,7 @@ func AllDraws(window *glfw.Window) {
 	addImgStrWidth, addImgStrHeight := ggCtx.MeasureString(addImgStr)
 	addImgBtnWidth := addImgStrWidth + 80
 	addImgBtnHeight := addImgStrHeight + 30
-	ggCtx.SetHexColor("#B75F5F")
+	ggCtx.SetHexColor("#5C909C")
 	ggCtx.DrawRoundedRectangle(10, 10, addImgBtnWidth, addImgBtnHeight, addImgBtnHeight/2)
 	ggCtx.Fill()
 
@@ -42,8 +42,29 @@ func AllDraws(window *glfw.Window) {
 	ggCtx.SetHexColor("#fff")
 	ggCtx.DrawString(addImgStr, 30, 10+addImgStrHeight+15)
 
-	ggCtx.SetHexColor("#633232")
+	ggCtx.SetHexColor("#286775")
 	ggCtx.DrawCircle(10+addImgBtnWidth-40, 10+addImgBtnHeight/2, 10)
+	ggCtx.Fill()
+
+	// Add Image + Sound Button
+	aisStr := "Add Image + Sound"
+	aisStrWidth, aisStrHeight := ggCtx.MeasureString(aisStr)
+	aisBtnWidth := aisStrWidth + 80
+	aisBtnHeight := aisStrHeight + 30
+	ggCtx.SetHexColor("#5C909C")
+	aisBtnOriginX := float64(addImgBtnRS.Width+addImgBtnRS.OriginX) + 10 // gutter
+	ggCtx.DrawRoundedRectangle(aisBtnOriginX, 10, aisBtnWidth, aisBtnHeight, aisBtnHeight/2)
+	ggCtx.Fill()
+
+	aisBtnRS := g143.RectSpecs{Width: int(aisBtnWidth), Height: int(aisBtnHeight),
+		OriginX: int(aisBtnOriginX), OriginY: 10}
+	ObjCoords[AddImgSoundBtn] = aisBtnRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawString(aisStr, 30+float64(aisBtnRS.OriginX), 10+addImgStrHeight+15)
+
+	ggCtx.SetHexColor("#286775")
+	ggCtx.DrawCircle(float64(aisBtnRS.OriginX)+aisBtnWidth-30, 10+aisBtnHeight/2, 10)
 	ggCtx.Fill()
 
 	// Add Video Button
@@ -52,7 +73,7 @@ func AllDraws(window *glfw.Window) {
 	addVidBtnWidth := addVidStrWidth + 80
 	addVidBtnHeight := addVidStrHeight + 30
 	ggCtx.SetHexColor("#81577F")
-	addVidBtnOriginX := float64(addImgBtnRS.Width+addImgBtnRS.OriginX) + 10 // gutter
+	addVidBtnOriginX := float64(aisBtnRS.Width+aisBtnRS.OriginX) + 10 // gutter
 	ggCtx.DrawRoundedRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight, addVidBtnHeight/2)
 	ggCtx.Fill()
 
@@ -132,12 +153,18 @@ func AllDraws(window *glfw.Window) {
 			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+FontSize+30)
 
 			// duration
-			durStr := "duration: " + instr["duration"]
+			var durStr string
+			if _, ok := instr["audio"]; ok {
+				durStr = "begin: " + instr["audio_begin"] + " | end: " + instr["audio_end"]
+			} else {
+				durStr = "duration: " + instr["duration"]
+			}
+
 			ggCtx.SetHexColor("#444")
 			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
 
 			// view audio asset optional
-			if instr["audio_optional"] != "" {
+			if _, ok := instr["audio"]; ok && instr["audio"] != "" {
 				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
 				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
 				ggCtx.SetHexColor("#74A299")

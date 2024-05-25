@@ -13,12 +13,55 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 
 	wWidth, wHeight := window.GetSize()
 
-	if VAI_SelectedInput == VAI_DurInput {
+	// enforce number types
+	if IsKeyNumeric(key) {
+		VAI_DurationEnteredTxt += glfw.GetKeyName(key, scancode)
+	} else if key == glfw.KeyBackspace && len(VAI_DurationEnteredTxt) != 0 {
+		VAI_DurationEnteredTxt = VAI_DurationEnteredTxt[:len(VAI_DurationEnteredTxt)-1]
+	}
+
+	ggCtx := gg.NewContextForImage(CurrentWindowFrame)
+	// load font
+	fontPath := GetDefaultFontPath()
+	err := ggCtx.LoadFontFace(fontPath, 20)
+	if err != nil {
+		panic(err)
+	}
+
+	durInputRS := VaiObjCoords[VAI_DurInput]
+
+	ggCtx.SetHexColor("#eee")
+	ggCtx.DrawRoundedRectangle(float64(durInputRS.OriginX), float64(durInputRS.OriginY), float64(durInputRS.Width),
+		float64(durInputRS.Height), 10)
+	ggCtx.Fill()
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString(VAI_DurationEnteredTxt, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
+
+	// send the frame to glfw window
+	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	window.SwapBuffers()
+
+	// save the frame
+	CurrentWindowFrame = ggCtx.Image()
+}
+
+func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if action != glfw.Release {
+		return
+	}
+
+	wWidth, wHeight := window.GetSize()
+
+	if VAIS_SelectedInput == VAIS_AudioBeginInput {
 		// enforce number types
 		if IsKeyNumeric(key) {
-			VAI_DurationEnteredTxt += glfw.GetKeyName(key, scancode)
-		} else if key == glfw.KeyBackspace && len(VAI_DurationEnteredTxt) != 0 {
-			VAI_DurationEnteredTxt = VAI_DurationEnteredTxt[:len(VAI_DurationEnteredTxt)-1]
+			VaisBeginInputEnteredTxt += glfw.GetKeyName(key, scancode)
+		} else if key == glfw.KeySemicolon {
+			VaisBeginInputEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(VaisBeginInputEnteredTxt) != 0 {
+			VaisBeginInputEnteredTxt = VaisBeginInputEnteredTxt[:len(VaisBeginInputEnteredTxt)-1]
 		}
 
 		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
@@ -29,15 +72,15 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 			panic(err)
 		}
 
-		durInputRS := VaiObjCoords[VAI_DurInput]
+		aBInputRS := VaisObjCoords[VAIS_AudioBeginInput]
 
 		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(durInputRS.OriginX), float64(durInputRS.OriginY), float64(durInputRS.Width),
-			float64(durInputRS.Height), 10)
+		ggCtx.DrawRoundedRectangle(float64(aBInputRS.OriginX), float64(aBInputRS.OriginY), float64(aBInputRS.Width),
+			float64(aBInputRS.Height), 10)
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(VAI_DurationEnteredTxt, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
+		ggCtx.DrawString(VaisBeginInputEnteredTxt, float64(aBInputRS.OriginX+10), float64(aBInputRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
@@ -47,14 +90,14 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		// save the frame
 		CurrentWindowFrame = ggCtx.Image()
 
-	} else if VAI_SelectedInput == VAI_AudioBegin {
+	} else if VAIS_SelectedInput == VAIS_AudioEndInput {
 		// enforce number types
 		if IsKeyNumeric(key) {
-			VAI_AudioBeginEnteredTxt += glfw.GetKeyName(key, scancode)
+			VaisEndInputEnteredTxt += glfw.GetKeyName(key, scancode)
 		} else if key == glfw.KeySemicolon {
-			VAI_AudioBeginEnteredTxt += ":"
-		} else if key == glfw.KeyBackspace && len(VAI_AudioBeginEnteredTxt) != 0 {
-			VAI_AudioBeginEnteredTxt = VAI_AudioBeginEnteredTxt[:len(VAI_AudioBeginEnteredTxt)-1]
+			VaisEndInputEnteredTxt += ":"
+		} else if key == glfw.KeyBackspace && len(VaisEndInputEnteredTxt) != 0 {
+			VaisEndInputEnteredTxt = VaisEndInputEnteredTxt[:len(VaisEndInputEnteredTxt)-1]
 		}
 
 		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
@@ -65,15 +108,15 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 			panic(err)
 		}
 
-		audioBeginInputRS := VaiObjCoords[VAI_AudioBegin]
+		aEINputRS := VaisObjCoords[VAIS_AudioEndInput]
 
 		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(audioBeginInputRS.OriginX), float64(audioBeginInputRS.OriginY),
-			float64(audioBeginInputRS.Width), float64(audioBeginInputRS.Height), 10)
+		ggCtx.DrawRoundedRectangle(float64(aEINputRS.OriginX), float64(aEINputRS.OriginY),
+			float64(aEINputRS.Width), float64(aEINputRS.Height), 10)
 		ggCtx.Fill()
 
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(VAI_AudioBeginEnteredTxt, float64(audioBeginInputRS.OriginX+10), float64(audioBeginInputRS.OriginY)+20)
+		ggCtx.DrawString(VaisEndInputEnteredTxt, float64(aEINputRS.OriginX+10), float64(aEINputRS.OriginY)+20)
 
 		// send the frame to glfw window
 		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
