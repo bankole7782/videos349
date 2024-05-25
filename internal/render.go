@@ -33,7 +33,14 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 		if instructionDesc["kind"] == "image" {
 			tmpFramesPath := filepath.Join(rootPath, "."+UntestedRandomString(10))
 			os.MkdirAll(tmpFramesPath, 0777)
-			endSeconds, _ := strconv.Atoi(instructionDesc["duration"])
+			var endSeconds int
+			if tmpAudio, ok := instructionDesc["audio"]; ok && tmpAudio != "" {
+				tmp1 := TimeFormatToSeconds(instructionDesc["audio_begin"])
+				tmp2 := TimeFormatToSeconds(instructionDesc["audio_end"])
+				endSeconds = tmp2 - tmp1
+			} else {
+				endSeconds, _ = strconv.Atoi(instructionDesc["duration"])
+			}
 			for seconds := 0; seconds < endSeconds; seconds++ {
 				img, err := imaging.Open(instructionDesc["image"])
 				if err != nil {
@@ -52,28 +59,38 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 			}
 
 			// join audio to video
-			if instructionDesc["audio_optional"] != "" {
-				tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
+			if tmpAudio, ok := instructionDesc["audio"]; ok && tmpAudio != "" {
 
-				beginSeconds := "0:0"
-				endSecondsInt, _ := strconv.Atoi(instructionDesc["duration"])
-				endSeconds := SecondsToTimeFormat(endSecondsInt)
+				startAudioPath := instructionDesc["audio"]
+				// do conversion to mp3 if necessary
+				if strings.HasSuffix(instructionDesc["audio"], ".wav") || strings.HasSuffix(instructionDesc["audio"], ".flac") {
+					tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
+					_, err := exec.Command(ffmpeg, "-i", instructionDesc["audio"], tmpAudioPath).CombinedOutput()
+					if err != nil {
+						fmt.Println(err)
+						return "error occured."
+					}
 
-				if instructionDesc["audio_begin_optional"] != "" {
-					beginSeconds = instructionDesc["audio_begin_optional"]
-					tmp := endSecondsInt + TimeFormatToSeconds(beginSeconds)
-					endSeconds = SecondsToTimeFormat(tmp)
+					startAudioPath = tmpAudioPath
 				}
 
-				out, err := exec.Command(ffmpeg, "-ss", beginSeconds, "-to", endSeconds, "-i",
-					instructionDesc["audio_optional"], "-c", "copy", tmpAudioPath).CombinedOutput()
-				if err != nil {
-					fmt.Println(string(out))
-					return "error occured"
+				// trim audio if necessary
+				audioLength := LengthOfVideo(startAudioPath, ffprobe)
+				if audioLength != instructionDesc["audio_end"] || instructionDesc["audio_begin"] != "0:00" {
+					tmpAudioPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
+
+					out, err := exec.Command(ffmpeg, "-ss", instructionDesc["audio_begin"], "-to",
+						instructionDesc["audio_end"], "-i", startAudioPath, "-c", "copy", tmpAudioPath2).CombinedOutput()
+					if err != nil {
+						fmt.Println(string(out))
+						return "error occured"
+					}
+
+					startAudioPath = tmpAudioPath2
 				}
 
 				tmpImageVideoPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				_, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", tmpAudioPath,
+				_, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", startAudioPath,
 					"-pix_fmt", "yuv420p", tmpImageVideoPath2).CombinedOutput()
 				if err != nil {
 					return "error occured"
