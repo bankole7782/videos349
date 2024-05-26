@@ -38,24 +38,6 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		return
 	}
 
-	clearIndicators := func(window *glfw.Window) {
-		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
-
-		durationInputRS := internal.VaiObjCoords[internal.VAI_DurInput]
-
-		ggCtx.SetHexColor("#fff")
-		ggCtx.DrawCircle(float64(durationInputRS.OriginX)+float64(durationInputRS.Width)+20, float64(durationInputRS.OriginY)+15, 20)
-		ggCtx.Fill()
-
-		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
-		window.SwapBuffers()
-
-		// save the frame
-		internal.CurrentWindowFrame = ggCtx.Image()
-	}
-
 	switch widgetCode {
 	case internal.VAI_CloseBtn:
 		internal.DrawWorkView(window)
@@ -90,25 +72,6 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		internal.CurrentWindowFrame = ggCtx.Image()
 
-	case internal.VAI_DurInput:
-		internal.VAI_SelectedInput = internal.VAI_DurInput
-
-		clearIndicators(window)
-
-		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawCircle(float64(widgetRS.OriginX)+float64(widgetRS.Width)+20, float64(widgetRS.OriginY)+15, 10)
-		ggCtx.Fill()
-
-		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
-		window.SwapBuffers()
-
-		// save the frame
-		internal.CurrentWindowFrame = ggCtx.Image()
-
 	case internal.VAI_AddBtn:
 		if internal.VaiInputsStore["image"] == "" {
 			return
@@ -121,11 +84,22 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			internal.VAI_DurationEnteredTxt = ""
 		}
 
-		internal.Instructions = append(internal.Instructions, map[string]string{
-			"kind":     "image",
-			"image":    internal.VaiInputsStore["image"],
-			"duration": internal.VaiInputsStore["duration"],
-		})
+		if internal.ToUpdateInstrNum != 0 {
+			internal.Instructions[internal.ToUpdateInstrNum] = map[string]string{
+				"kind":     "image",
+				"image":    internal.VaiInputsStore["image"],
+				"duration": internal.VaiInputsStore["duration"],
+			}
+
+			internal.ToUpdateInstrNum = 0
+		} else {
+			internal.Instructions = append(internal.Instructions, map[string]string{
+				"kind":     "image",
+				"image":    internal.VaiInputsStore["image"],
+				"duration": internal.VaiInputsStore["duration"],
+			})
+
+		}
 
 		internal.DrawWorkView(window)
 
@@ -331,14 +305,25 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 			internal.VaisEndInputEnteredTxt = ""
 		}
 
-		internal.Instructions = append(internal.Instructions, map[string]string{
-			"kind":        "image",
-			"image":       internal.VaisInputsStore["image"],
-			"audio":       internal.VaisInputsStore["audio"],
-			"audio_begin": internal.VaisInputsStore["audio_begin"],
-			"audio_end":   internal.VaisInputsStore["audio_end"],
-		})
+		if internal.ToUpdateInstrNum != 0 {
+			internal.Instructions[internal.ToUpdateInstrNum] = map[string]string{
+				"kind":        "image",
+				"image":       internal.VaisInputsStore["image"],
+				"audio":       internal.VaisInputsStore["audio"],
+				"audio_begin": internal.VaisInputsStore["audio_begin"],
+				"audio_end":   internal.VaisInputsStore["audio_end"],
+			}
+			internal.ToUpdateInstrNum = 0
+		} else {
+			internal.Instructions = append(internal.Instructions, map[string]string{
+				"kind":        "image",
+				"image":       internal.VaisInputsStore["image"],
+				"audio":       internal.VaisInputsStore["audio"],
+				"audio_begin": internal.VaisInputsStore["audio_begin"],
+				"audio_end":   internal.VaisInputsStore["audio_end"],
+			})
 
+		}
 		internal.DrawWorkView(window)
 
 		// register the ViewMain mouse callback
@@ -494,13 +479,22 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			return
 		}
 
-		internal.Instructions = append(internal.Instructions, map[string]string{
-			"kind":  "video",
-			"video": internal.VavInputsStore["video"],
-			"begin": internal.BeginInputEnteredTxt,
-			"end":   internal.EndInputEnteredTxt,
-		})
-
+		if internal.ToUpdateInstrNum != 0 {
+			internal.Instructions[internal.ToUpdateInstrNum] = map[string]string{
+				"kind":  "video",
+				"video": internal.VavInputsStore["video"],
+				"begin": internal.BeginInputEnteredTxt,
+				"end":   internal.EndInputEnteredTxt,
+			}
+			internal.ToUpdateInstrNum = 0
+		} else {
+			internal.Instructions = append(internal.Instructions, map[string]string{
+				"kind":  "video",
+				"video": internal.VavInputsStore["video"],
+				"begin": internal.BeginInputEnteredTxt,
+				"end":   internal.EndInputEnteredTxt,
+			})
+		}
 		internal.DrawWorkView(window)
 
 		// register the ViewMain mouse callback

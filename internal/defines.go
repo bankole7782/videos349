@@ -48,7 +48,7 @@ var (
 	CurrentWindowFrame image.Image
 	Instructions       []map[string]string
 	ProjectName        string
-	FromBeginView      bool = false
+	ToUpdateInstrNum   int // for updating an instruction
 
 	// tmpFrame image.Image
 	InChannel        chan bool

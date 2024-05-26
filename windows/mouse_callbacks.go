@@ -156,8 +156,24 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		instrNum := widgetCode - 3000 - 1
 		internal.ExternalLaunch(internal.Instructions[instrNum]["video"])
 	} else if widgetCode > 4000 && widgetCode < 5000 {
-		// instrNum := widgetCode - 4000 - 1
+		// bring up update instruction dialog
+		instrNum := widgetCode - 4000 - 1
+		internal.ToUpdateInstrNum = instrNum
+		if internal.Instructions[instrNum]["image"] != "" {
+			internal.DrawViewAddImage(window, internal.CurrentWindowFrame)
+			window.SetMouseButtonCallback(viewAddImageMouseCallback)
+			window.SetKeyCallback(internal.VaikeyCallback)
+		} else if internal.Instructions[instrNum]["audio"] != "" {
+			internal.DrawViewAIS(window, internal.CurrentWindowFrame)
+			window.SetMouseButtonCallback(viewAISMouseCallback)
+			window.SetKeyCallback(internal.VaiskeyCallback)
+		} else if internal.Instructions[instrNum]["video"] != "" {
+			internal.DrawViewAddVideo(window, internal.CurrentWindowFrame)
+			window.SetMouseButtonCallback(viewAddVideoMouseCallback)
+			window.SetKeyCallback(internal.VavkeyCallback)
+		}
 	} else if widgetCode > 5000 {
+		// delete from instructions slice
 		instrNum := widgetCode - 5000 - 1
 		internal.Instructions = slices.Delete(internal.Instructions, instrNum, instrNum+1)
 
