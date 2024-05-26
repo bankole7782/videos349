@@ -1,10 +1,8 @@
 package internal
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -32,12 +30,8 @@ func GetProjectFiles() []ToSortProject {
 	}
 
 	slices.SortFunc(projectFiles, func(a, b ToSortProject) int {
-		return a.ModTime.Compare(b.ModTime)
+		return b.ModTime.Compare(a.ModTime)
 	})
-
-	if len(projectFiles) > 20 {
-		projectFiles = projectFiles[:20]
-	}
 
 	return projectFiles
 }
@@ -142,14 +136,6 @@ func DrawWorkView(window *glfw.Window) {
 
 	ObjCoords = make(map[int]g143.RectSpecs)
 
-	// load instructions
-	obj := make([]map[string]string, 0)
-	rootPath, _ := GetRootPath()
-	inPath := filepath.Join(rootPath, ProjectName)
-	rawBytes, _ := os.ReadFile(inPath)
-	json.Unmarshal(rawBytes, &obj)
-
-	Instructions = obj
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer

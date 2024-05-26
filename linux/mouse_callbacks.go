@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -61,6 +62,15 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		projectFile := internal.GetProjectFiles()[num]
 
 		internal.ProjectName = projectFile.Name
+
+		// load instructions
+		obj := make([]map[string]string, 0)
+		rootPath, _ := internal.GetRootPath()
+		inPath := filepath.Join(rootPath, internal.ProjectName)
+		rawBytes, _ := os.ReadFile(inPath)
+		json.Unmarshal(rawBytes, &obj)
+
+		internal.Instructions = append(internal.Instructions, obj...)
 
 		// move to work view
 		internal.DrawWorkView(window)

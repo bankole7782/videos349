@@ -31,7 +31,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	// dialog rectangle
 	dialogWidth := 600
-	dialogHeight := 360
+	dialogHeight := 240
 
 	dialogOriginX := (wWidth - dialogWidth) / 2
 	dialogOriginY := (wHeight - dialogHeight) / 2
@@ -120,36 +120,6 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("0:00", endInputX+10, float64(endStrY))
-
-	// add audio input
-	aFOY := eiRS.OriginY + eiRS.Height + 10
-	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(aFOY), float64(dialogWidth)-80, 30, 10)
-	ggCtx.Fill()
-	aFOYInputRS := g143.RectSpecs{Width: dialogWidth - 80, Height: 30, OriginX: dialogOriginX + 40, OriginY: aFOY}
-	VavObjCoords[VAV_PickAudio] = aFOYInputRS
-
-	pAFL := "[click to pick optional audio]"
-	pAFLW, _ := ggCtx.MeasureString(pAFL)
-	pAFLX := aFOYInputRS.OriginX + (aFOYInputRS.Width-int(pAFLW))/2
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString(pAFL, float64(pAFLX), float64(aFOY)+FontSize)
-
-	// audio begin (optional)
-	aBL := "audio begin (optional) (mm:ss)"
-	aBLW, _ := ggCtx.MeasureString(aBL)
-	aBLY := aFOYInputRS.OriginY + aFOYInputRS.Height + 10 + 20
-	ggCtx.DrawString(aBL, float64(dialogOriginX)+40, float64(aBLY))
-
-	ggCtx.SetHexColor("#eee")
-	aBInputX := aBLW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(aBInputX, float64(aBLY)-FontSize, 100, 30, 10)
-	ggCtx.Fill()
-	aBInputRS := g143.NRectSpecs(int(aBInputX), aBLY-FontSize, 100, 30)
-	VavObjCoords[VAV_AudioBegin] = aBInputRS
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("0:00", aBInputX+10, float64(aBLY))
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

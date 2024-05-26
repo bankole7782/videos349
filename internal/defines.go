@@ -36,8 +36,6 @@ const (
 	VAV_PickVideo  = 43
 	VAV_BeginInput = 44
 	VAV_EndInput   = 45
-	VAV_PickAudio  = 46
-	VAV_AudioBegin = 47
 
 	PROJ_NameInput  = 51
 	PROJ_NewProject = 52
@@ -50,6 +48,7 @@ var (
 	CurrentWindowFrame image.Image
 	Instructions       []map[string]string
 	ProjectName        string
+	FromBeginView      bool = false
 
 	// tmpFrame image.Image
 	InChannel        chan bool
@@ -74,10 +73,9 @@ var (
 	VavObjCoords   map[int]g143.RectSpecs
 	VavInputsStore map[string]string
 
-	BeginInputEnteredTxt     string = "0:00"
-	EndInputEnteredTxt       string = "0:00"
-	VAV_SelectedInput        int
-	VAV_AudioBeginEnteredTxt string = "0:00"
+	BeginInputEnteredTxt string = "0:00"
+	EndInputEnteredTxt   string = "0:00"
+	VAV_SelectedInput    int
 
 	// view projects
 	ProjObjCoords map[int]g143.RectSpecs
