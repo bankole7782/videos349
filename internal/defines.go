@@ -2,6 +2,7 @@ package internal
 
 import (
 	"image"
+	"time"
 
 	g143 "github.com/bankole7782/graphics143"
 )
@@ -83,3 +84,8 @@ var (
 
 	NameInputEnteredTxt string
 )
+
+type ToSortProject struct {
+	Name    string
+	ModTime time.Time
+}

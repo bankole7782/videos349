@@ -55,6 +55,19 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		window.SetKeyCallback(nil)
 	}
+
+	if widgetCode > 1000 && widgetCode < 2000 {
+		num := widgetCode - 1000 - 1
+		projectFile := internal.GetProjectFiles()[num]
+
+		internal.ProjectName = projectFile.Name
+
+		// move to work view
+		internal.DrawWorkView(window)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
+		window.SetKeyCallback(nil)
+
+	}
 }
 
 func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {

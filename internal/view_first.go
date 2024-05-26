@@ -1,12 +1,44 @@
 package internal
 
 import (
+	"fmt"
+	"os"
+	"slices"
 	"strconv"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
+
+func GetProjectFiles() []ToSortProject {
+	// display some project names
+	rootPath, _ := GetRootPath()
+	dirEs, _ := os.ReadDir(rootPath)
+
+	projectFiles := make([]ToSortProject, 0)
+	for _, dirE := range dirEs {
+		if dirE.IsDir() {
+			continue
+		}
+
+		if strings.HasSuffix(dirE.Name(), ".v3p") {
+			fInfo, _ := dirE.Info()
+			projectFiles = append(projectFiles, ToSortProject{dirE.Name(), fInfo.ModTime()})
+		}
+	}
+
+	slices.SortFunc(projectFiles, func(a, b ToSortProject) int {
+		return a.ModTime.Compare(b.ModTime)
+	})
+
+	if len(projectFiles) > 20 {
+		projectFiles = projectFiles[:20]
+	}
+
+	return projectFiles
+}
 
 func DrawBeginView(window *glfw.Window) {
 	ProjObjCoords = make(map[int]g143.RectSpecs)
@@ -66,6 +98,33 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.SetHexColor("#444")
 	ggCtx.LoadFontFace(fontPath, 20)
 
+	projectFiles := GetProjectFiles()
+	currentX := 550
+	currentY := 60
+	for i, pf := range projectFiles {
+		pfStrW, _ := ggCtx.MeasureString(pf.Name)
+
+		ggCtx.SetHexColor("#5F699F")
+		ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, pfStrW+20, FontSize+10, 10)
+		ggCtx.Fill()
+
+		pfRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+			Width: int(pfStrW) + 20, Height: FontSize + 10}
+		ProjObjCoords[1000+(i+1)] = pfRS
+
+		ggCtx.SetHexColor("#fff")
+		ggCtx.DrawString(pf.Name, float64(currentX)+10, float64(currentY)+FontSize+30)
+
+		newX := currentX + int(pfStrW) + 30
+		if newX > (wWidth - int(pfStrW)) {
+			currentY += 40
+			currentX = 550
+		} else {
+			currentX += int(pfStrW) + 20 + 10
+		}
+
+	}
+
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
@@ -77,6 +136,8 @@ func DrawBeginView(window *glfw.Window) {
 
 // func AllDraws(window *glfw.Window) {
 func DrawWorkView(window *glfw.Window) {
+	window.SetTitle(fmt.Sprintf("Project: %s ---- %s", ProjectName, ProgTitle))
+
 	ObjCoords = make(map[int]g143.RectSpecs)
 	wWidth, wHeight := window.GetSize()
 
