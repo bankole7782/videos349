@@ -17,12 +17,11 @@ func main() {
 
 	runtime.LockOSThread()
 
-	internal.ObjCoords = make(map[int]g143.RectSpecs)
 	internal.Instructions = make([]map[string]string, 0)
 	internal.InChannel = make(chan bool)
 
-	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
-	internal.AllDraws(window)
+	window := g143.NewWindow(1200, 800, "videos349: a simple video editor for teachers", false)
+	internal.DrawBeginView(window)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()
@@ -35,7 +34,7 @@ func main() {
 	}()
 
 	// respond to the mouse
-	window.SetMouseButtonCallback(mouseBtnCallback)
+	window.SetMouseButtonCallback(workViewMouseBtnCallback)
 
 	for !window.ShouldClose() {
 		t := time.Now()
@@ -49,7 +48,7 @@ func main() {
 			time.Sleep(5 * time.Second)
 			internal.AllDraws(window)
 			// register the ViewMain mouse callback
-			window.SetMouseButtonCallback(mouseBtnCallback)
+			window.SetMouseButtonCallback(workViewMouseBtnCallback)
 			internal.ClearAfterRender = false
 		}
 

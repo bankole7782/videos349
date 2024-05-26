@@ -21,7 +21,7 @@ func main() {
 	internal.Instructions = make([]map[string]string, 0)
 	internal.InChannel = make(chan bool)
 
-	window := g143.NewWindow(1200, 800, "videos349: a simple video editor", false)
+	window := g143.NewWindow(1200, 800, "videos349: a simple video editor for teachers", false)
 	internal.AllDraws(window)
 
 	ffmpegPath := GetFFMPEGCommand()

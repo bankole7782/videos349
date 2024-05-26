@@ -12,7 +12,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func mouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
+func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, action glfw.Action, mods glfw.ModifierKey) {
 	if action != glfw.Release {
 		return
 	}
@@ -126,7 +126,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 	case internal.VAI_CloseBtn:
 		internal.AllDraws(window)
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 
@@ -194,7 +194,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		internal.AllDraws(window)
 
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 
@@ -257,7 +257,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 	case internal.VAIS_CloseBtn:
 		internal.AllDraws(window)
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 
@@ -405,7 +405,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		internal.AllDraws(window)
 
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 
@@ -474,7 +474,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 	case internal.VAV_CloseBtn:
 		internal.AllDraws(window)
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 
@@ -628,7 +628,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		internal.AllDraws(window)
 
 		// register the ViewMain mouse callback
-		window.SetMouseButtonCallback(mouseBtnCallback)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 

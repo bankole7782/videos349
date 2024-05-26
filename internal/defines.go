@@ -71,4 +71,9 @@ var (
 	EndInputEnteredTxt       string = "0:00"
 	VAV_SelectedInput        int
 	VAV_AudioBeginEnteredTxt string = "0:00"
+
+	// view projects
+	ProjObjCoords   map[int]g143.RectSpecs
+	PROJ_NameInput  = 51
+	PROJ_NewProject = 52
 )

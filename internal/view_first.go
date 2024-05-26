@@ -8,7 +8,75 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
+func DrawBeginView(window *glfw.Window) {
+	ProjObjCoords = make(map[int]g143.RectSpecs)
+	wWidth, wHeight := window.GetSize()
+
+	// frame buffer
+	ggCtx := gg.NewContext(wWidth, wHeight)
+
+	// background rectangle
+	ggCtx.DrawRectangle(0, 0, float64(wWidth), float64(wHeight))
+	ggCtx.SetHexColor("#ffffff")
+	ggCtx.Fill()
+
+	// load font
+	fontPath := GetDefaultFontPath()
+	err := ggCtx.LoadFontFace(fontPath, 30)
+	if err != nil {
+		panic(err)
+	}
+
+	// first column
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString("New Video", 30, 30+30)
+
+	// project name input
+	ggCtx.LoadFontFace(fontPath, 20)
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawRectangle(30, 90, 420, 40)
+	ggCtx.Fill()
+	pniRS := g143.NRectSpecs(30, 90, 420, 40)
+	ProjObjCoords[PROJ_NameInput] = pniRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawRectangle(33, 93, 420-6, 40-6)
+	ggCtx.Fill()
+
+	npStr := "New Video"
+	npStrW, _ := ggCtx.MeasureString(npStr)
+	npBtnW := npStrW + 40
+	ggCtx.SetHexColor("#B3AE97")
+	ggCtx.DrawRoundedRectangle(200, 140, npBtnW, 50, 10)
+	ggCtx.Fill()
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString(npStr, 200+20, 150+20)
+
+	// second column
+	ggCtx.SetHexColor("#999")
+	ggCtx.DrawRoundedRectangle(500, 30, 4, 700, 2)
+	ggCtx.Fill()
+
+	ggCtx.LoadFontFace(fontPath, 40)
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString("Continue Videos", 550, 30+30)
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.LoadFontFace(fontPath, 20)
+
+	// send the frame to glfw window
+	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	window.SwapBuffers()
+
+	// save the frame
+	CurrentWindowFrame = ggCtx.Image()
+}
+
 func AllDraws(window *glfw.Window) {
+	// func DrawWorkView(window *glfw.Window) {
+	ObjCoords = make(map[int]g143.RectSpecs)
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer
