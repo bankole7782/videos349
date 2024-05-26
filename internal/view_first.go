@@ -1,8 +1,10 @@
 package internal
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -139,6 +141,15 @@ func DrawWorkView(window *glfw.Window) {
 	window.SetTitle(fmt.Sprintf("Project: %s ---- %s", ProjectName, ProgTitle))
 
 	ObjCoords = make(map[int]g143.RectSpecs)
+
+	// load instructions
+	obj := make([]map[string]string, 0)
+	rootPath, _ := GetRootPath()
+	inPath := filepath.Join(rootPath, ProjectName)
+	rawBytes, _ := os.ReadFile(inPath)
+	json.Unmarshal(rawBytes, &obj)
+
+	Instructions = obj
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer

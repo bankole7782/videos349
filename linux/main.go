@@ -38,6 +38,8 @@ func main() {
 	// respond to the keyboard
 	window.SetKeyCallback(internal.ProjKeyCallback)
 
+	window.SetCloseCallback(internal.SaveProjectCloseCallback)
+
 	for !window.ShouldClose() {
 		t := time.Now()
 		glfw.PollEvents()

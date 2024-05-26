@@ -46,8 +46,8 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		}
 
 		// create file
-		internal.ProjectName = internal.NameInputEnteredTxt
-		outPath := filepath.Join(rootPath, internal.ProjectName+".v3p")
+		internal.ProjectName = internal.NameInputEnteredTxt + ".v3p"
+		outPath := filepath.Join(rootPath, internal.ProjectName)
 		os.WriteFile(outPath, []byte(""), 0777)
 
 		// move to work view
