@@ -22,7 +22,7 @@ func main() {
 	internal.InChannel = make(chan bool)
 
 	window := g143.NewWindow(1200, 800, "videos349: a simple video editor for teachers", false)
-	internal.DrawWorkView(window)
+	internal.DrawBeginView(window)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()
@@ -36,9 +36,9 @@ func main() {
 	}()
 
 	// respond to the mouse
-	window.SetMouseButtonCallback(mouseBtnCallback)
+	window.SetMouseButtonCallback(projViewMouseCallback)
 	// respond to the keyboard
-	// window.SetKeyCallback(keyCallback)
+	window.SetKeyCallback(internal.ProjKeyCallback)
 
 	for !window.ShouldClose() {
 		t := time.Now()
@@ -46,13 +46,13 @@ func main() {
 
 		if internal.ClearAfterRender {
 			// clear the UI and redraw
-			internal.Instructions = make([]map[string]string, 0)
+			// internal.Instructions = make([]map[string]string, 0)
 			internal.DrawWorkView(window)
 			internal.DrawEndRenderView(window, internal.CurrentWindowFrame)
 			time.Sleep(5 * time.Second)
 			internal.DrawWorkView(window)
 			// register the ViewMain mouse callback
-			window.SetMouseButtonCallback(mouseBtnCallback)
+			window.SetMouseButtonCallback(workViewMouseBtnCallback)
 			internal.ClearAfterRender = false
 		}
 
