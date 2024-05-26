@@ -49,6 +49,7 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.SetHexColor("#B3AE97")
 	ggCtx.DrawRoundedRectangle(200, 140, npBtnW, 50, 10)
 	ggCtx.Fill()
+	ProjObjCoords[PROJ_NewProject] = g143.NRectSpecs(200, 140, int(npBtnW), 50)
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString(npStr, 200+20, 150+20)
@@ -74,8 +75,8 @@ func DrawBeginView(window *glfw.Window) {
 	CurrentWindowFrame = ggCtx.Image()
 }
 
-func AllDraws(window *glfw.Window) {
-	// func DrawWorkView(window *glfw.Window) {
+// func AllDraws(window *glfw.Window) {
+func DrawWorkView(window *glfw.Window) {
 	ObjCoords = make(map[int]g143.RectSpecs)
 	wWidth, wHeight := window.GetSize()
 

@@ -37,12 +37,18 @@ const (
 	VAV_EndInput   = 45
 	VAV_PickAudio  = 46
 	VAV_AudioBegin = 47
+
+	PROJ_NameInput  = 51
+	PROJ_NewProject = 52
+
+	ProgTitle = "videos349: a simple video editor for teachers"
 )
 
 var (
 	ObjCoords          map[int]g143.RectSpecs
 	CurrentWindowFrame image.Image
 	Instructions       []map[string]string
+	ProjectName        string
 
 	// tmpFrame image.Image
 	InChannel        chan bool
@@ -73,7 +79,7 @@ var (
 	VAV_AudioBeginEnteredTxt string = "0:00"
 
 	// view projects
-	ProjObjCoords   map[int]g143.RectSpecs
-	PROJ_NameInput  = 51
-	PROJ_NewProject = 52
+	ProjObjCoords map[int]g143.RectSpecs
+
+	NameInputEnteredTxt string
 )

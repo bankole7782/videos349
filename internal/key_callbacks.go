@@ -6,6 +6,48 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
+func ProjKeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if action != glfw.Release {
+		return
+	}
+
+	wWidth, wHeight := window.GetSize()
+
+	if key == glfw.KeyBackspace && len(NameInputEnteredTxt) != 0 {
+		NameInputEnteredTxt = NameInputEnteredTxt[:len(NameInputEnteredTxt)-1]
+	} else if key == glfw.KeySpace {
+		NameInputEnteredTxt += " "
+	} else {
+		NameInputEnteredTxt += glfw.GetKeyName(key, scancode)
+	}
+
+	ggCtx := gg.NewContextForImage(CurrentWindowFrame)
+	// load font
+	fontPath := GetDefaultFontPath()
+	err := ggCtx.LoadFontFace(fontPath, 20)
+	if err != nil {
+		panic(err)
+	}
+
+	nameInputRS := ProjObjCoords[PROJ_NameInput]
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawRectangle(float64(nameInputRS.OriginX+3), float64(nameInputRS.OriginY+3),
+		float64(nameInputRS.Width)-6, float64(nameInputRS.Height)-6)
+	ggCtx.Fill()
+
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawString(NameInputEnteredTxt, float64(nameInputRS.OriginX+25), float64(nameInputRS.OriginY+25))
+
+	// send the frame to glfw window
+	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	window.SwapBuffers()
+
+	// save the frame
+	CurrentWindowFrame = ggCtx.Image()
+}
+
 func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
 	if action != glfw.Release {
 		return
