@@ -2,39 +2,12 @@ package internal
 
 import (
 	"fmt"
-	"os"
-	"slices"
 	"strconv"
-	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
-
-func GetProjectFiles() []ToSortProject {
-	// display some project names
-	rootPath, _ := GetRootPath()
-	dirEs, _ := os.ReadDir(rootPath)
-
-	projectFiles := make([]ToSortProject, 0)
-	for _, dirE := range dirEs {
-		if dirE.IsDir() {
-			continue
-		}
-
-		if strings.HasSuffix(dirE.Name(), ".v3p") {
-			fInfo, _ := dirE.Info()
-			projectFiles = append(projectFiles, ToSortProject{dirE.Name(), fInfo.ModTime()})
-		}
-	}
-
-	slices.SortFunc(projectFiles, func(a, b ToSortProject) int {
-		return b.ModTime.Compare(a.ModTime)
-	})
-
-	return projectFiles
-}
 
 func DrawBeginView(window *glfw.Window) {
 	ProjObjCoords = make(map[int]g143.RectSpecs)
@@ -257,15 +230,30 @@ func DrawWorkView(window *glfw.Window) {
 	currentX := 20
 	// show instructions
 	for i, instr := range Instructions {
+		kStr := strconv.Itoa(i+1) + "  [" + instr["kind"] + "]"
+		kStrW, _ := ggCtx.MeasureString(kStr)
+
 		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(strconv.Itoa(i+1)+"  ["+instr["kind"]+"]", float64(currentX), float64(currentY)+FontSize)
+		ggCtx.DrawString(kStr, float64(currentX), float64(currentY)+FontSize)
+
+		ggCtx.SetHexColor("#5A8A5E")
+		ggCtx.DrawRoundedRectangle(float64(currentX)+kStrW+50, float64(currentY), FontSize, FontSize, FontSize/2)
+		ggCtx.Fill()
+		editRS := g143.NRectSpecs(currentX+int(kStrW)+50, currentY, FontSize, FontSize)
+		ObjCoords[4000+(i+1)] = editRS
+
+		ggCtx.SetHexColor("#A84E4E")
+		ggCtx.DrawRoundedRectangle(float64(currentX)+kStrW+50+30, float64(currentY), FontSize, FontSize, FontSize/2)
+		ggCtx.Fill()
+		delRS := g143.NRectSpecs(currentX+int(kStrW)+50+30, currentY, FontSize, FontSize)
+		ObjCoords[5000+(i+1)] = delRS
 
 		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
 		viaStrW, _ := ggCtx.MeasureString(viaStr)
 
 		if instr["kind"] == "image" {
 			// view image asset
-			viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+			viaStr = "View Image Asset #" + strconv.Itoa(i+1)
 			viaStrW, _ := ggCtx.MeasureString(viaStr)
 
 			ggCtx.SetHexColor("#5F699F")
@@ -290,7 +278,7 @@ func DrawWorkView(window *glfw.Window) {
 			ggCtx.SetHexColor("#444")
 			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
 
-			// view audio asset optional
+			// view audio asset
 			if _, ok := instr["audio"]; ok && instr["audio"] != "" {
 				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
 				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
@@ -308,7 +296,7 @@ func DrawWorkView(window *glfw.Window) {
 
 		} else if instr["kind"] == "video" {
 			// view video asset
-			viaStr := "View Video Asset #" + strconv.Itoa(i+1)
+			viaStr = "View Video Asset #" + strconv.Itoa(i+1)
 			viaStrW, _ := ggCtx.MeasureString(viaStr)
 
 			ggCtx.SetHexColor("#5F699F")
@@ -325,22 +313,6 @@ func DrawWorkView(window *glfw.Window) {
 			durStr := "begin: " + instr["begin"] + " | end: " + instr["end"]
 			ggCtx.SetHexColor("#444")
 			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
-
-			// view audio asset optional
-			if instr["audio_optional"] != "" {
-				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
-				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
-				ggCtx.SetHexColor("#74A299")
-
-				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, FontSize+10, 10)
-				ggCtx.Fill()
-				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
-					Width: int(vaaStrW) + 20, Height: FontSize + 10}
-				ObjCoords[2000+(i+1)] = vaabRS
-
-				ggCtx.SetHexColor("#fff")
-				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+FontSize+30+65)
-			}
 		}
 
 		newX := currentX + int(viaStrW) + 20

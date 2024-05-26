@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -121,4 +122,28 @@ func SaveProjectCloseCallback(w *glfw.Window) {
 	rootPath, _ := GetRootPath()
 	outPath := filepath.Join(rootPath, ProjectName)
 	os.WriteFile(outPath, jsonBytes, 0777)
+}
+
+func GetProjectFiles() []ToSortProject {
+	// display some project names
+	rootPath, _ := GetRootPath()
+	dirEs, _ := os.ReadDir(rootPath)
+
+	projectFiles := make([]ToSortProject, 0)
+	for _, dirE := range dirEs {
+		if dirE.IsDir() {
+			continue
+		}
+
+		if strings.HasSuffix(dirE.Name(), ".v3p") {
+			fInfo, _ := dirE.Info()
+			projectFiles = append(projectFiles, ToSortProject{dirE.Name(), fInfo.ModTime()})
+		}
+	}
+
+	slices.SortFunc(projectFiles, func(a, b ToSortProject) int {
+		return b.ModTime.Compare(a.ModTime)
+	})
+
+	return projectFiles
 }

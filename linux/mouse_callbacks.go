@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/bankole7782/videos349/internal"
@@ -146,18 +147,22 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 
 	// for generated buttons
 	if widgetCode > 1000 && widgetCode < 2000 {
-		instrNum := widgetCode - 1000
-		internal.ExternalLaunch(internal.Instructions[instrNum-1]["image"])
+		instrNum := widgetCode - 1000 - 1
+		internal.ExternalLaunch(internal.Instructions[instrNum]["image"])
 	} else if widgetCode > 2000 && widgetCode < 3000 {
-		instrNum := widgetCode - 2000
-		if _, ok := internal.Instructions[instrNum-1]["audio_optional"]; ok {
-			internal.ExternalLaunch(internal.Instructions[instrNum-1]["audio_optional"])
-		} else {
-			internal.ExternalLaunch(internal.Instructions[instrNum-1]["audio"])
-		}
-	} else if widgetCode > 3000 {
-		instrNum := widgetCode - 3000
-		internal.ExternalLaunch(internal.Instructions[instrNum-1]["video"])
+		instrNum := widgetCode - 2000 - 1
+		internal.ExternalLaunch(internal.Instructions[instrNum]["audio"])
+	} else if widgetCode > 3000 && widgetCode < 4000 {
+		instrNum := widgetCode - 3000 - 1
+		internal.ExternalLaunch(internal.Instructions[instrNum]["video"])
+	} else if widgetCode > 4000 && widgetCode < 5000 {
+		// instrNum := widgetCode - 4000 - 1
+	} else if widgetCode > 5000 {
+		instrNum := widgetCode - 5000 - 1
+		internal.Instructions = slices.Delete(internal.Instructions, instrNum, instrNum+1)
+
+		internal.ObjCoords = make(map[int]g143.RectSpecs)
+		internal.DrawWorkView(window)
 	}
 
 }
