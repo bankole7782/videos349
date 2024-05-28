@@ -168,3 +168,29 @@ func GetPageInstructions(page int) []map[string]string {
 	}
 	return retInstructions
 }
+
+func TotalVideoLength() string {
+	seconds := 0
+	for _, instr := range Instructions {
+		if instr["kind"] == "image" {
+			if tmp, ok := instr["audio"]; ok && tmp != "" {
+				tmp1 := TimeFormatToSeconds(instr["audio_begin"])
+				tmp2 := TimeFormatToSeconds(instr["audio_end"])
+
+				calculatedAudioLengthInt := tmp2 - tmp1
+				seconds += calculatedAudioLengthInt
+			} else {
+				tmpInt, _ := strconv.Atoi(instr["duration"])
+				seconds += tmpInt
+			}
+		} else if instr["kind"] == "video" {
+			tmp1 := TimeFormatToSeconds(instr["begin"])
+			tmp2 := TimeFormatToSeconds(instr["end"])
+
+			calculatedVideoLengthInt := tmp2 - tmp1
+			seconds += calculatedVideoLengthInt
+		}
+	}
+
+	return SecondsToTimeFormat(seconds)
+}
