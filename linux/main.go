@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
 	"runtime"
 	"time"
 
@@ -10,10 +12,13 @@ import (
 )
 
 func main() {
-	_, err := internal.GetRootPath()
+	rootPath, err := internal.GetRootPath()
 	if err != nil {
 		panic(err)
 	}
+
+	outPath := filepath.Join(rootPath, "renders")
+	os.MkdirAll(outPath, 0777)
 
 	runtime.LockOSThread()
 

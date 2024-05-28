@@ -218,7 +218,9 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 	}
 	os.WriteFile(tmpVideosTxtPath, []byte(outStr), 0777)
 
-	finalPath := filepath.Join(rootPath, "renders", ProjectName+time.Now().Format("20060102T150405")+".mp4")
+	stub := strings.ReplaceAll(ProjectName, ".v3p", "") + "_" + time.Now().Format("20060102T150405") + ".mp4"
+	finalPath := filepath.Join(rootPath, "renders", stub)
+
 	out, err := exec.Command(ffmpeg, "-f", "concat", "-safe", "0",
 		"-i", tmpVideosTxtPath, "-c", "copy", finalPath).CombinedOutput()
 	if err != nil {
