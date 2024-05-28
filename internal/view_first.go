@@ -330,7 +330,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	}
 
 	// draw our site below
-	ggCtx.SetHexColor("#9C5858")
+	ggCtx.SetHexColor("#444")
 	msg := fmt.Sprintf("VideoLength: %s  Total Pages: %d  Current Page: %d", TotalVideoLength(), TotalPages(), CurrentPage)
 	fromAddrWidth, fromAddrHeight := ggCtx.MeasureString(msg)
 	fromAddrOriginX := (wWidth - int(fromAddrWidth)) / 2
