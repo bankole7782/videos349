@@ -40,11 +40,12 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case internal.VAI_CloseBtn:
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(internal.FirstUIScrollCallback)
 
 	case internal.VAI_SelectImg:
 		filename, err := dialog.File().Filter("PNG Image", "png").Filter("JPEG Image", "jpg").Load()
@@ -101,7 +102,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 		}
 
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.TotalPages())
 
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
@@ -165,11 +166,12 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 
 	switch widgetCode {
 	case internal.VAIS_CloseBtn:
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.TotalPages())
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(internal.FirstUIScrollCallback)
 
 	case internal.VAIS_SelectImg:
 		filename, err := dialog.File().Filter("PNG Image", "png").Filter("JPEG Image", "jpg").Load()
@@ -324,7 +326,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 			})
 
 		}
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.TotalPages())
 
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
@@ -386,11 +388,12 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case internal.VAV_CloseBtn:
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.TotalPages())
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(internal.FirstUIScrollCallback)
 
 	case internal.VAV_PickVideo:
 		filename, err := dialog.File().Filter("MP4 Video", "mp4").Filter("WEBM Video", "webm").Filter("MKV Video", "mkv").Load()
@@ -495,7 +498,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 				"end":   internal.EndInputEnteredTxt,
 			})
 		}
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.TotalPages())
 
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)

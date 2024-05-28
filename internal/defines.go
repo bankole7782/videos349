@@ -8,14 +8,15 @@ import (
 )
 
 const (
-	FPS            = 10
-	FontSize       = 20
+	FPS      = 10
+	FontSize = 20
+	PageSize = 20
+
 	AddImgBtn      = 101
 	AddImgSoundBtn = 102
 	AddVidBtn      = 103
 	OpenWDBtn      = 104
 	RenderBtn      = 105
-	OurSite        = 106
 
 	VAI_SelectImg   = 21
 	VAI_SelectAudio = 22
@@ -49,6 +50,7 @@ var (
 	Instructions       []map[string]string
 	ProjectName        string
 	ToUpdateInstrNum   int // for updating an instruction
+	CurrentPage        int
 
 	// tmpFrame image.Image
 	InChannel        chan bool

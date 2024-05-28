@@ -104,7 +104,9 @@ func DrawBeginView(window *glfw.Window) {
 }
 
 // func AllDraws(window *glfw.Window) {
-func DrawWorkView(window *glfw.Window) {
+func DrawWorkView(window *glfw.Window, page int) {
+	CurrentPage = page
+
 	window.SetTitle(fmt.Sprintf("Project: %s ---- %s", ProjectName, ProgTitle))
 
 	ObjCoords = make(map[int]g143.RectSpecs)
@@ -229,7 +231,10 @@ func DrawWorkView(window *glfw.Window) {
 	currentY := openWDBtnRS.OriginY + openWDBtnRS.Height + 10 + 10
 	currentX := 20
 	// show instructions
-	for i, instr := range Instructions {
+	shortInstrs := GetPageInstructions(page)
+	for j, instr := range shortInstrs {
+		// for i, instr := range Instructions {
+		i := (PageSize * (page - 1)) + j
 		kStr := strconv.Itoa(i+1) + "  [" + instr["kind"] + "]"
 		kStrW, _ := ggCtx.MeasureString(kStr)
 
@@ -326,13 +331,10 @@ func DrawWorkView(window *glfw.Window) {
 
 	// draw our site below
 	ggCtx.SetHexColor("#9C5858")
-	fromAddr := "sae.ng"
-	fromAddrWidth, fromAddrHeight := ggCtx.MeasureString(fromAddr)
+	msg := fmt.Sprintf("VideoLength: %ds  Total Pages: %d  Current Page: %d", 0, TotalPages(), CurrentPage)
+	fromAddrWidth, fromAddrHeight := ggCtx.MeasureString(msg)
 	fromAddrOriginX := (wWidth - int(fromAddrWidth)) / 2
-	ggCtx.DrawString(fromAddr, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
-	fars := g143.RectSpecs{OriginX: fromAddrOriginX, OriginY: wHeight - 40,
-		Width: int(fromAddrWidth), Height: 40}
-	ObjCoords[OurSite] = fars
+	ggCtx.DrawString(msg, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
@@ -341,4 +343,25 @@ func DrawWorkView(window *glfw.Window) {
 
 	// save the frame
 	CurrentWindowFrame = ggCtx.Image()
+}
+
+var scrollEventCount = 0
+
+func FirstUIScrollCallback(window *glfw.Window, xoff, yoff float64) {
+
+	if scrollEventCount != 5 {
+		scrollEventCount += 1
+		return
+	}
+
+	scrollEventCount = 0
+
+	if xoff == 0 && yoff == -1 && CurrentPage != TotalPages() {
+		ObjCoords = make(map[int]g143.RectSpecs)
+		DrawWorkView(window, CurrentPage+1)
+	} else if xoff == 0 && yoff == 1 && CurrentPage != 1 {
+		ObjCoords = make(map[int]g143.RectSpecs)
+		DrawWorkView(window, CurrentPage-1)
+	}
+
 }

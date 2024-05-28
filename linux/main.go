@@ -52,10 +52,10 @@ func main() {
 		if internal.ClearAfterRender {
 			// clear the UI and redraw
 			// internal.Instructions = make([]map[string]string, 0)
-			internal.DrawWorkView(window)
+			internal.DrawWorkView(window, 1)
 			internal.DrawEndRenderView(window, internal.CurrentWindowFrame)
 			time.Sleep(5 * time.Second)
-			internal.DrawWorkView(window)
+			internal.DrawWorkView(window, 1)
 			// register the ViewMain mouse callback
 			window.SetMouseButtonCallback(workViewMouseBtnCallback)
 			internal.ClearAfterRender = false

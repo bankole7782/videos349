@@ -3,9 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"slices"
 
 	g143 "github.com/bankole7782/graphics143"
@@ -53,9 +51,10 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		os.WriteFile(outPath, []byte(""), 0777)
 
 		// move to work view
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, 1)
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(internal.FirstUIScrollCallback)
 	}
 
 	if widgetCode > 1000 && widgetCode < 2000 {
@@ -74,9 +73,10 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		internal.Instructions = append(internal.Instructions, obj...)
 
 		// move to work view
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, 1)
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(internal.FirstUIScrollCallback)
 
 	}
 }
@@ -113,27 +113,23 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		internal.DrawViewAddImage(window, internal.CurrentWindowFrame)
 		window.SetMouseButtonCallback(viewAddImageMouseCallback)
 		window.SetKeyCallback(internal.VaikeyCallback)
+		window.SetScrollCallback(nil)
 
 	case internal.AddImgSoundBtn:
 		internal.DrawViewAIS(window, internal.CurrentWindowFrame)
 		window.SetMouseButtonCallback(viewAISMouseCallback)
 		window.SetKeyCallback(internal.VaiskeyCallback)
+		window.SetScrollCallback(nil)
 
 	case internal.AddVidBtn:
 		internal.DrawViewAddVideo(window, internal.CurrentWindowFrame)
 		window.SetMouseButtonCallback(viewAddVideoMouseCallback)
 		window.SetKeyCallback(internal.VavkeyCallback)
+		window.SetScrollCallback(nil)
 
 	case internal.OpenWDBtn:
 		rootPath, _ := internal.GetRootPath()
 		internal.ExternalLaunch(rootPath)
-
-	case internal.OurSite:
-		if runtime.GOOS == "windows" {
-			exec.Command("cmd", "/C", "start", "https://sae.ng").Run()
-		} else if runtime.GOOS == "linux" {
-			exec.Command("xdg-open", "https://sae.ng").Run()
-		}
 
 	case internal.RenderBtn:
 		if len(internal.Instructions) == 0 {
@@ -142,6 +138,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		internal.DrawRenderView(window, internal.CurrentWindowFrame)
 		window.SetMouseButtonCallback(nil)
 		window.SetKeyCallback(nil)
+		window.SetScrollCallback(nil)
 		internal.InChannel <- true
 	}
 
@@ -178,7 +175,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		internal.Instructions = slices.Delete(internal.Instructions, instrNum, instrNum+1)
 
 		internal.ObjCoords = make(map[int]g143.RectSpecs)
-		internal.DrawWorkView(window)
+		internal.DrawWorkView(window, internal.CurrentPage)
 	}
 
 }

@@ -147,3 +147,24 @@ func GetProjectFiles() []ToSortProject {
 
 	return projectFiles
 }
+
+func TotalPages() int {
+	return int(math.Ceil(float64(len(Instructions)) / float64(PageSize)))
+}
+
+func GetPageInstructions(page int) []map[string]string {
+	beginIndex := (page - 1) * PageSize
+	endIndex := beginIndex + PageSize
+
+	var retInstructions []map[string]string
+	if len(Instructions) <= PageSize {
+		retInstructions = Instructions
+	} else if page == 1 {
+		retInstructions = Instructions[:PageSize]
+	} else if endIndex > len(Instructions) {
+		retInstructions = Instructions[beginIndex+1:]
+	} else {
+		retInstructions = Instructions[beginIndex+1 : endIndex+1]
+	}
+	return retInstructions
+}
