@@ -58,6 +58,17 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 				return "error occured."
 			}
 
+			// convert to 24 fps
+			tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+			out, err := exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-filter:v",
+				"fps=24", tmpVideoPath).CombinedOutput()
+			if err != nil {
+				fmt.Println(out)
+				return "error occurred."
+			}
+
+			tmpImageVideoPath = tmpVideoPath
+
 			// join audio to video
 			if tmpAudio, ok := instructionDesc["audio"]; ok && tmpAudio != "" {
 
@@ -131,7 +142,6 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 
 			videoLength := LengthOfVideo(videoPath, ffprobe)
 
-			calculatedVideoLengthInt := TimeFormatToSeconds(videoLength)
 			// check and do triming
 			if instructionDesc["begin"] != "0:00" || instructionDesc["end"] != videoLength {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
@@ -143,69 +153,24 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 					return "error occurred"
 				}
 
-				tmp1 := TimeFormatToSeconds(instructionDesc["begin"])
-				tmp2 := TimeFormatToSeconds(instructionDesc["end"])
-
-				calculatedVideoLengthInt = tmp2 - tmp1
-
 				videoPath = tmpVideoPath
 			}
 
-			// add optional audio to video
+			// check and do speed up
+			if instructionDesc["speedup"] == "true" {
+				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+				hastenVideo(videoPath, tmpVideoPath, ffmpeg)
+				videoPath = tmpVideoPath
+			}
 
-			if instructionDesc["audio_optional"] != "" && instructionDesc["audio_begin_optional"] != "" {
-
-				tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
-				beginSeconds := instructionDesc["audio_begin_optional"]
-				tmp := calculatedVideoLengthInt + TimeFormatToSeconds(beginSeconds)
-				endSeconds := SecondsToTimeFormat(tmp)
-
-				out, err := exec.Command(ffmpeg, "-ss", beginSeconds, "-to", endSeconds, "-i",
-					instructionDesc["audio_optional"], "-c", "copy", tmpAudioPath).CombinedOutput()
-				if err != nil {
-					fmt.Println(string(out))
-					return "error occured"
-				}
-
-				tmpVideoPath3 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-
-				out, err = exec.Command(ffmpeg, "-i", videoPath, "-i", tmpAudioPath,
-					"-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0", "-shortest", tmpVideoPath3).CombinedOutput()
-				if err != nil {
-					fmt.Println(string(out))
-					return "error occured"
-				}
-
-				videoPath = tmpVideoPath3
-
-			} else if instructionDesc["audio_optional"] != "" {
-
-				tmpVideoPath3 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-
-				out, err := exec.Command(ffmpeg, "-i", videoPath, "-i", instructionDesc["audio_optional"],
-					"-c:v", "copy", "-map", "0:v:0", "-map", "1:a:0", "-shortest", tmpVideoPath3).CombinedOutput()
-				if err != nil {
-					fmt.Println(string(out))
-					return "error occured"
-				}
-
-				videoPath = tmpVideoPath3
+			if instructionDesc["blackwhite"] == "true" {
+				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
+				blackAndWhiteVideo(videoPath, tmpVideoPath, ffmpeg)
+				videoPath = tmpVideoPath
 			}
 
 			videoParts = append(videoParts, videoPath)
 		}
-	}
-
-	for i, videoPart := range videoParts {
-		// convert to 24 fps
-		tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-		out, err := exec.Command(ffmpeg, "-i", videoPart, "-filter:v",
-			"fps=24", tmpVideoPath).CombinedOutput()
-		if err != nil {
-			fmt.Println(out)
-			return "error occurred."
-		}
-		videoParts[i] = tmpVideoPath
 	}
 
 	tmpVideosTxtPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".txt")
