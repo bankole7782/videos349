@@ -32,11 +32,13 @@ const (
 	VAIS_AudioBeginInput = 35
 	VAIS_AudioEndInput   = 36
 
-	VAV_AddBtn     = 41
-	VAV_CloseBtn   = 42
-	VAV_PickVideo  = 43
-	VAV_BeginInput = 44
-	VAV_EndInput   = 45
+	VAV_AddBtn                = 41
+	VAV_CloseBtn              = 42
+	VAV_PickVideo             = 43
+	VAV_BeginInput            = 44
+	VAV_EndInput              = 45
+	VAV_SpeedUpCheckbox       = 46
+	VAV_BlackAndWhiteCheckbox = 47
 
 	PROJ_NameInput  = 51
 	PROJ_NewProject = 52
@@ -75,9 +77,11 @@ var (
 	VavObjCoords   map[int]g143.RectSpecs
 	VavInputsStore map[string]string
 
-	BeginInputEnteredTxt string = "0:00"
-	EndInputEnteredTxt   string = "0:00"
-	VAV_SelectedInput    int
+	BeginInputEnteredTxt              string = "0:00"
+	EndInputEnteredTxt                string = "0:00"
+	VAV_SelectedInput                 int
+	VAV_SpeedUpCheckboxSelected       bool
+	VAV_BlackAndWhiteCheckboxSelected bool
 
 	// view projects
 	ProjObjCoords map[int]g143.RectSpecs

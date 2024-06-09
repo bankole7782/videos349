@@ -2,6 +2,7 @@ package main
 
 import (
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
@@ -477,6 +478,64 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// save the frame
 		internal.CurrentWindowFrame = ggCtx.Image()
 
+	case internal.VAV_SpeedUpCheckbox:
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		suRS := internal.VavObjCoords[internal.VAV_SpeedUpCheckbox]
+		if internal.VAV_SpeedUpCheckboxSelected {
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawRectangle(float64(suRS.OriginX)+2, float64(suRS.OriginY)+2, float64(suRS.Width)-4,
+				float64(suRS.Height)-4)
+			ggCtx.Fill()
+
+			internal.VAV_SpeedUpCheckboxSelected = false
+		} else {
+
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawRectangle(float64(suRS.OriginX)+4, float64(suRS.OriginY)+4, float64(suRS.Width)-8,
+				float64(suRS.Height)-8)
+			ggCtx.Fill()
+
+			internal.VAV_SpeedUpCheckboxSelected = true
+		}
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+
+	case internal.VAV_BlackAndWhiteCheckbox:
+		ggCtx := gg.NewContextForImage(internal.CurrentWindowFrame)
+
+		bwRS := internal.VavObjCoords[internal.VAV_BlackAndWhiteCheckbox]
+		if internal.VAV_BlackAndWhiteCheckboxSelected {
+			ggCtx.SetHexColor("#fff")
+			ggCtx.DrawRectangle(float64(bwRS.OriginX)+2, float64(bwRS.OriginY)+2, float64(bwRS.Width)-4,
+				float64(bwRS.Height)-4)
+			ggCtx.Fill()
+
+			internal.VAV_BlackAndWhiteCheckboxSelected = false
+		} else {
+
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawRectangle(float64(bwRS.OriginX)+4, float64(bwRS.OriginY)+4, float64(bwRS.Width)-8,
+				float64(bwRS.Height)-8)
+			ggCtx.Fill()
+
+			internal.VAV_BlackAndWhiteCheckboxSelected = true
+		}
+
+		// send the frame to glfw window
+		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		window.SwapBuffers()
+
+		// save the frame
+		internal.CurrentWindowFrame = ggCtx.Image()
+
 	case internal.VAV_AddBtn:
 		if internal.VavInputsStore["video"] == "" {
 			return
@@ -484,20 +543,25 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 		if internal.ToUpdateInstrNum != 0 {
 			internal.Instructions[internal.ToUpdateInstrNum] = map[string]string{
-				"kind":  "video",
-				"video": internal.VavInputsStore["video"],
-				"begin": internal.BeginInputEnteredTxt,
-				"end":   internal.EndInputEnteredTxt,
+				"kind":       "video",
+				"video":      internal.VavInputsStore["video"],
+				"begin":      internal.BeginInputEnteredTxt,
+				"end":        internal.EndInputEnteredTxt,
+				"speedup":    strconv.FormatBool(internal.VAV_SpeedUpCheckboxSelected),
+				"blackwhite": strconv.FormatBool(internal.VAV_BlackAndWhiteCheckboxSelected),
 			}
 			internal.ToUpdateInstrNum = 0
 		} else {
 			internal.Instructions = append(internal.Instructions, map[string]string{
-				"kind":  "video",
-				"video": internal.VavInputsStore["video"],
-				"begin": internal.BeginInputEnteredTxt,
-				"end":   internal.EndInputEnteredTxt,
+				"kind":       "video",
+				"video":      internal.VavInputsStore["video"],
+				"begin":      internal.BeginInputEnteredTxt,
+				"end":        internal.EndInputEnteredTxt,
+				"speedup":    strconv.FormatBool(internal.VAV_SpeedUpCheckboxSelected),
+				"blackwhite": strconv.FormatBool(internal.VAV_BlackAndWhiteCheckboxSelected),
 			})
 		}
+
 		internal.DrawWorkView(window, internal.TotalPages())
 
 		// register the ViewMain mouse callback

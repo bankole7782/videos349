@@ -31,7 +31,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	// dialog rectangle
 	dialogWidth := 600
-	dialogHeight := 240
+	dialogHeight := 280
 
 	dialogOriginX := (wWidth - dialogWidth) / 2
 	dialogOriginY := (wHeight - dialogHeight) / 2
@@ -120,6 +120,43 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("0:00", endInputX+10, float64(endStrY))
+
+	// speedUp checkbox
+	ggCtx.SetHexColor("#444")
+	suL := "speed up video"
+	suLW, _ := ggCtx.MeasureString(suL)
+	sulX := dialogOriginX + 40
+	sulY := endStrY + FontSize + 30
+	ggCtx.DrawString(suL, float64(sulX), float64(sulY))
+
+	suCX := suLW + 30 + float64(dialogOriginX) + 40
+	ggCtx.DrawRectangle(suCX, float64(sulY)-FontSize, 30, 30)
+	ggCtx.Fill()
+	suRS := g143.NRectSpecs(int(suCX), sulY-FontSize, 30, 30)
+	VavObjCoords[VAV_SpeedUpCheckbox] = suRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawRectangle(suCX+2, float64(suRS.OriginY)+2, float64(suRS.Width)-4,
+		float64(suRS.Height)-4)
+	ggCtx.Fill()
+
+	// blackAndWhite checkbox
+	ggCtx.SetHexColor("#444")
+	bwL := "black and white video"
+	bwLW, _ := ggCtx.MeasureString(bwL)
+	bwLX := suRS.OriginX + suRS.Width + 40
+	ggCtx.DrawString(bwL, float64(bwLX), float64(sulY))
+
+	bwCX := bwLX + int(bwLW) + 40
+	ggCtx.DrawRectangle(float64(bwCX), float64(sulY)-FontSize, 30, 30)
+	ggCtx.Fill()
+	bwRS := g143.NRectSpecs(bwCX, sulY-FontSize, 30, 30)
+	VavObjCoords[VAV_BlackAndWhiteCheckbox] = bwRS
+
+	ggCtx.SetHexColor("#fff")
+	ggCtx.DrawRectangle(float64(bwCX)+2, float64(bwRS.OriginY)+2, float64(bwRS.Width)-4,
+		float64(bwRS.Height)-4)
+	ggCtx.Fill()
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
