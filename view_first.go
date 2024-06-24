@@ -30,7 +30,7 @@ func DrawBeginView(window *glfw.Window) {
 
 	// first column
 	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("New Video", 30, 30+30)
+	ggCtx.DrawString("New Project", 30, 30+30)
 
 	// project name input
 	ggCtx.LoadFontFace(fontPath, 20)
@@ -44,7 +44,7 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.DrawRectangle(33, 93, 420-6, 40-6)
 	ggCtx.Fill()
 
-	npStr := "New Video"
+	npStr := "New Project"
 	npStrW, _ := ggCtx.MeasureString(npStr)
 	npBtnW := npStrW + 40
 	ggCtx.SetHexColor("#B3AE97")
@@ -62,7 +62,7 @@ func DrawBeginView(window *glfw.Window) {
 
 	ggCtx.LoadFontFace(fontPath, 40)
 	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("Continue Videos", 550, 30+30)
+	ggCtx.DrawString("Continue Projects", 550, 30+30)
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.LoadFontFace(fontPath, 20)
