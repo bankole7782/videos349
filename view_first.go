@@ -44,6 +44,10 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.DrawRectangle(33, 93, 420-6, 40-6)
 	ggCtx.Fill()
 
+	// placeholder
+	ggCtx.SetHexColor("#aaa")
+	ggCtx.DrawString("enter project name", 38, 95+FontSize)
+
 	npStr := "New Project"
 	npStrW, _ := ggCtx.MeasureString(npStr)
 	npBtnW := npStrW + 40
