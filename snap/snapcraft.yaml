@@ -28,8 +28,8 @@ parts:
     override-build: |
       set -xe
       mkdir -p $SNAPCRAFT_PART_INSTALL/bin/
-      cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/
-      cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/ffprobe $SNAPCRAFT_PART_INSTALL/bin/
+      cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/linux/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/
+      cp $SNAPCRAFT_PART_SRC/linux/ffmpeg/linux/ffprobe $SNAPCRAFT_PART_INSTALL/bin/
       cd $SNAPCRAFT_PART_SRC/linux
       go mod download
       chmod +x $SNAPCRAFT_PART_INSTALL/bin/ffmpeg
