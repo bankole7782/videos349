@@ -1,6 +1,9 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
+
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
@@ -17,6 +20,20 @@ func ProjKeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 		NameInputEnteredTxt = NameInputEnteredTxt[:len(NameInputEnteredTxt)-1]
 	} else if key == glfw.KeySpace {
 		NameInputEnteredTxt += " "
+	} else if key == glfw.KeyEnter && len(NameInputEnteredTxt) != 0 {
+		// create file
+		rootPath, _ := GetRootPath()
+
+		ProjectName = NameInputEnteredTxt + ".v3p"
+		outPath := filepath.Join(rootPath, ProjectName)
+		os.WriteFile(outPath, []byte(""), 0777)
+
+		// move to work view
+		DrawWorkView(window, 1)
+		window.SetMouseButtonCallback(workViewMouseBtnCallback)
+		window.SetKeyCallback(nil)
+		window.SetScrollCallback(FirstUIScrollCallback)
+		return
 	} else {
 		NameInputEnteredTxt += glfw.GetKeyName(key, scancode)
 	}
