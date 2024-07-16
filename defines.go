@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FPS      = 10
+	FPS      = 24
 	FontSize = 20
 	PageSize = 20
 
