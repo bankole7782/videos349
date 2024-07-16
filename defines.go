@@ -87,6 +87,8 @@ var (
 	ProjObjCoords map[int]g143.RectSpecs
 
 	NameInputEnteredTxt string
+
+	cursorEventsCount = 0
 )
 
 type ToSortProject struct {

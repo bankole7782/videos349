@@ -52,7 +52,7 @@ func DrawBeginView(window *glfw.Window) {
 	npStrW, _ := ggCtx.MeasureString(npStr)
 	npBtnW := npStrW + 40
 	ggCtx.SetHexColor("#B3AE97")
-	ggCtx.DrawRoundedRectangle(200, 140, npBtnW, 50, 10)
+	ggCtx.DrawRectangle(200, 140, npBtnW, 50)
 	ggCtx.Fill()
 	ProjObjCoords[PROJ_NewProject] = g143.NRectSpecs(200, 140, int(npBtnW), 50)
 
@@ -78,7 +78,7 @@ func DrawBeginView(window *glfw.Window) {
 		pfStrW, _ := ggCtx.MeasureString(pf.Name)
 
 		ggCtx.SetHexColor("#5F699F")
-		ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, pfStrW+20, FontSize+10, 10)
+		ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, pfStrW+20, FontSize+10)
 		ggCtx.Fill()
 
 		pfRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
@@ -107,7 +107,6 @@ func DrawBeginView(window *glfw.Window) {
 	CurrentWindowFrame = ggCtx.Image()
 }
 
-// func AllDraws(window *glfw.Window) {
 func DrawWorkView(window *glfw.Window, page int) {
 	CurrentPage = page
 
@@ -138,7 +137,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	addImgBtnWidth := addImgStrWidth + 80
 	addImgBtnHeight := addImgStrHeight + 30
 	ggCtx.SetHexColor("#5C909C")
-	ggCtx.DrawRoundedRectangle(10, 10, addImgBtnWidth, addImgBtnHeight, addImgBtnHeight/2)
+	ggCtx.DrawRectangle(10, 10, addImgBtnWidth, addImgBtnHeight)
 	ggCtx.Fill()
 
 	addImgBtnRS := g143.RectSpecs{Width: int(addImgBtnWidth), Height: int(addImgBtnHeight),
@@ -159,7 +158,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	aisBtnHeight := aisStrHeight + 30
 	ggCtx.SetHexColor("#5C909C")
 	aisBtnOriginX := float64(addImgBtnRS.Width+addImgBtnRS.OriginX) + 10 // gutter
-	ggCtx.DrawRoundedRectangle(aisBtnOriginX, 10, aisBtnWidth, aisBtnHeight, aisBtnHeight/2)
+	ggCtx.DrawRectangle(aisBtnOriginX, 10, aisBtnWidth, aisBtnHeight)
 	ggCtx.Fill()
 
 	aisBtnRS := g143.RectSpecs{Width: int(aisBtnWidth), Height: int(aisBtnHeight),
@@ -180,7 +179,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	addVidBtnHeight := addVidStrHeight + 30
 	ggCtx.SetHexColor("#81577F")
 	addVidBtnOriginX := float64(aisBtnRS.Width+aisBtnRS.OriginX) + 10 // gutter
-	ggCtx.DrawRoundedRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight, addVidBtnHeight/2)
+	ggCtx.DrawRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight)
 	ggCtx.Fill()
 
 	addVidBtnRS := g143.RectSpecs{Width: int(addVidBtnWidth), Height: int(addVidBtnHeight),
@@ -201,7 +200,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	openWDBtnHeight := owdStrHeight + 30
 	ggCtx.SetHexColor("#56845A")
 	openWDBtnOriginX := float64(addVidBtnRS.OriginX+addVidBtnRS.Width) + 40
-	ggCtx.DrawRoundedRectangle(openWDBtnOriginX, 10, openWDBtnWidth, openWDBtnHeight, openWDBtnHeight/2)
+	ggCtx.DrawRectangle(openWDBtnOriginX, 10, openWDBtnWidth, openWDBtnHeight)
 	ggCtx.Fill()
 
 	openWDBtnRS := g143.RectSpecs{Width: int(openWDBtnWidth), Height: int(openWDBtnHeight),
@@ -218,7 +217,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	renderBtnH := rbStrH + 30
 	ggCtx.SetHexColor("#B19644")
 	renderBtnX := openWDBtnRS.OriginX + openWDBtnRS.Width + 20
-	ggCtx.DrawRoundedRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH, renderBtnH/2)
+	ggCtx.DrawRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH)
 	ggCtx.Fill()
 
 	rbRS := g143.RectSpecs{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
@@ -246,13 +245,13 @@ func DrawWorkView(window *glfw.Window, page int) {
 		ggCtx.DrawString(kStr, float64(currentX), float64(currentY)+FontSize)
 
 		ggCtx.SetHexColor("#5A8A5E")
-		ggCtx.DrawRoundedRectangle(float64(currentX)+kStrW+50, float64(currentY), FontSize, FontSize, FontSize/2)
+		ggCtx.DrawRectangle(float64(currentX)+kStrW+50, float64(currentY), FontSize, FontSize)
 		ggCtx.Fill()
 		editRS := g143.NRectSpecs(currentX+int(kStrW)+50, currentY, FontSize, FontSize)
 		ObjCoords[4000+(i+1)] = editRS
 
 		ggCtx.SetHexColor("#A84E4E")
-		ggCtx.DrawRoundedRectangle(float64(currentX)+kStrW+50+30, float64(currentY), FontSize, FontSize, FontSize/2)
+		ggCtx.DrawRectangle(float64(currentX)+kStrW+50+30, float64(currentY), FontSize, FontSize)
 		ggCtx.Fill()
 		delRS := g143.NRectSpecs(currentX+int(kStrW)+50+30, currentY, FontSize, FontSize)
 		ObjCoords[5000+(i+1)] = delRS
@@ -266,7 +265,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 			viaStrW, _ := ggCtx.MeasureString(viaStr)
 
 			ggCtx.SetHexColor("#5F699F")
-			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10, 10)
+			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
 			ggCtx.Fill()
 
 			viabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
@@ -293,7 +292,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
 				ggCtx.SetHexColor("#74A299")
 
-				ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, FontSize+10, 10)
+				ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, FontSize+10)
 				ggCtx.Fill()
 				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
 					Width: int(vaaStrW) + 20, Height: FontSize + 10}
@@ -309,7 +308,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 			viaStrW, _ := ggCtx.MeasureString(viaStr)
 
 			ggCtx.SetHexColor("#5F699F")
-			ggCtx.DrawRoundedRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10, 10)
+			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
 			ggCtx.Fill()
 			vvabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
 				Width: int(viaStrW) + 20, Height: FontSize + 10}
@@ -363,9 +362,11 @@ func FirstUIScrollCallback(window *glfw.Window, xoff, yoff float64) {
 	if xoff == 0 && yoff == -1 && CurrentPage != TotalPages() {
 		ObjCoords = make(map[int]g143.RectSpecs)
 		DrawWorkView(window, CurrentPage+1)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 	} else if xoff == 0 && yoff == 1 && CurrentPage != 1 {
 		ObjCoords = make(map[int]g143.RectSpecs)
 		DrawWorkView(window, CurrentPage-1)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 	}
 
 }

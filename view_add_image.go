@@ -49,7 +49,7 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#56845A")
 	addStrW, _ := ggCtx.MeasureString("Add")
 	addBtnOriginX := dialogWidth - int(addStrW) - 50 + dialogOriginX
-	ggCtx.DrawRoundedRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30)
 	ggCtx.Fill()
 	addBtnRS := g143.RectSpecs{OriginX: addBtnOriginX, OriginY: dialogOriginY + 20, Width: int(addStrW) + 20, Height: 30}
 	VaiObjCoords[VAI_AddBtn] = addBtnRS
@@ -61,7 +61,7 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#B75F5F")
 	closeStrW, _ := ggCtx.MeasureString("Close")
 	closeBtnX := dialogOriginX + dialogWidth - 50 - int(addStrW) - 30 - int(closeStrW)
-	ggCtx.DrawRoundedRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30)
 	ggCtx.Fill()
 	closeBtnRS := g143.RectSpecs{OriginX: closeBtnX, OriginY: dialogOriginY + 20, Width: int(closeStrW) + 20, Height: 30}
 	VaiObjCoords[VAI_CloseBtn] = closeBtnRS
@@ -71,7 +71,7 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 
 	// add image form
 	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(dialogOriginY)+20+50, float64(dialogWidth)-80, 240, 10)
+	ggCtx.DrawRectangle(float64(dialogOriginX)+40, float64(dialogOriginY)+20+50, float64(dialogWidth)-80, 240)
 	ggCtx.Fill()
 	selectImgRS := g143.RectSpecs{Width: dialogWidth - 80, Height: 240, OriginX: dialogOriginX + 40, OriginY: dialogOriginY + 20 + 50}
 	VaiObjCoords[VAI_SelectImg] = selectImgRS
@@ -90,7 +90,7 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#eee")
 	durInputX := durLabelW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(durInputX, float64(durLabelY)-FontSize, 100, 30, 10)
+	ggCtx.DrawRectangle(durInputX, float64(durLabelY)-FontSize, 100, 30)
 	ggCtx.Fill()
 	durInputRS := g143.RectSpecs{OriginX: int(durInputX), OriginY: durLabelY - 20, Width: 100, Height: 30}
 	VaiObjCoords[VAI_DurInput] = durInputRS

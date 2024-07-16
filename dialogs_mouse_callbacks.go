@@ -46,6 +46,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(FirstUIScrollCallback)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 	case VAI_SelectImg:
 		filename := PickImageFile()
@@ -108,6 +109,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 	}
 
@@ -172,6 +174,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(FirstUIScrollCallback)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 	case VAIS_SelectImg:
 		filename := PickImageFile()
@@ -327,6 +330,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		}
 
 		DrawWorkView(window, TotalPages())
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
@@ -396,6 +400,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		// unregister the keyCallback
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(FirstUIScrollCallback)
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 	case VAV_PickVideo:
 		filename := PickVideoFile()
@@ -565,6 +570,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		}
 
 		DrawWorkView(window, TotalPages())
+		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
 
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
