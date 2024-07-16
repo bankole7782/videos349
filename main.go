@@ -44,7 +44,7 @@ func main() {
 	// save the project file
 	window.SetCloseCallback(SaveProjectCloseCallback)
 	// quick hover effect
-	window.SetCursorPosCallback(getHoverCB(ProjObjCoords, CurrentWindowFrame))
+	window.SetCursorPosCallback(getHoverCB(ProjObjCoords))
 
 	for !window.ShouldClose() {
 		t := time.Now()
@@ -60,7 +60,7 @@ func main() {
 			// register the ViewMain mouse callback
 			window.SetMouseButtonCallback(workViewMouseBtnCallback)
 			// quick hover effect
-			window.SetCursorPosCallback(getHoverCB(ProjObjCoords, CurrentWindowFrame))
+			window.SetCursorPosCallback(getHoverCB(ObjCoords))
 			ClearAfterRender = false
 		}
 

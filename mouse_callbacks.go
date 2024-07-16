@@ -55,7 +55,7 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(FirstUIScrollCallback)
 		// quick hover effect
-		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}
 
 	if widgetCode > 1000 && widgetCode < 2000 {
@@ -78,7 +78,7 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(FirstUIScrollCallback)
-		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}
 }
 
@@ -115,21 +115,21 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		window.SetMouseButtonCallback(viewAddImageMouseCallback)
 		window.SetKeyCallback(VaikeyCallback)
 		window.SetScrollCallback(nil)
-		window.SetCursorPosCallback(getHoverCB(VaiObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
 
 	case AddImgSoundBtn:
 		DrawViewAIS(window, CurrentWindowFrame)
 		window.SetMouseButtonCallback(viewAISMouseCallback)
 		window.SetKeyCallback(VaiskeyCallback)
 		window.SetScrollCallback(nil)
-		window.SetCursorPosCallback(getHoverCB(VaisObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(VaisObjCoords))
 
 	case AddVidBtn:
 		DrawViewAddVideo(window, CurrentWindowFrame)
 		window.SetMouseButtonCallback(viewAddVideoMouseCallback)
 		window.SetKeyCallback(VavkeyCallback)
 		window.SetScrollCallback(nil)
-		window.SetCursorPosCallback(getHoverCB(VavObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(VavObjCoords))
 
 	case OpenWDBtn:
 		rootPath, _ := GetRootPath()
@@ -165,19 +165,19 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 			DrawViewAddImage(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAddImageMouseCallback)
 			window.SetKeyCallback(VaikeyCallback)
-			window.SetCursorPosCallback(getHoverCB(VaiObjCoords, CurrentWindowFrame))
+			window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
 
 		} else if Instructions[instrNum]["audio"] != "" {
 			DrawViewAIS(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAISMouseCallback)
 			window.SetKeyCallback(VaiskeyCallback)
-			window.SetCursorPosCallback(getHoverCB(VaisObjCoords, CurrentWindowFrame))
+			window.SetCursorPosCallback(getHoverCB(VaisObjCoords))
 
 		} else if Instructions[instrNum]["video"] != "" {
 			DrawViewAddVideo(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAddVideoMouseCallback)
 			window.SetKeyCallback(VavkeyCallback)
-			window.SetCursorPosCallback(getHoverCB(VavObjCoords, CurrentWindowFrame))
+			window.SetCursorPosCallback(getHoverCB(VavObjCoords))
 
 		}
 	} else if widgetCode > 5000 {
@@ -187,7 +187,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 
 		ObjCoords = make(map[int]g143.RectSpecs)
 		DrawWorkView(window, CurrentPage)
-		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}
 
 }

@@ -362,11 +362,11 @@ func FirstUIScrollCallback(window *glfw.Window, xoff, yoff float64) {
 	if xoff == 0 && yoff == -1 && CurrentPage != TotalPages() {
 		ObjCoords = make(map[int]g143.RectSpecs)
 		DrawWorkView(window, CurrentPage+1)
-		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	} else if xoff == 0 && yoff == 1 && CurrentPage != 1 {
 		ObjCoords = make(map[int]g143.RectSpecs)
 		DrawWorkView(window, CurrentPage-1)
-		window.SetCursorPosCallback(getHoverCB(ObjCoords, CurrentWindowFrame))
+		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}
 
 }

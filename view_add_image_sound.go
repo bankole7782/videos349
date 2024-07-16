@@ -49,7 +49,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#56845A")
 	addStrW, _ := ggCtx.MeasureString("Add")
 	addBtnOriginX := dialogWidth - int(addStrW) - 50 + dialogOriginX
-	ggCtx.DrawRoundedRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30)
 	ggCtx.Fill()
 	addBtnRS := g143.RectSpecs{OriginX: addBtnOriginX, OriginY: dialogOriginY + 20, Width: int(addStrW) + 20, Height: 30}
 	VaisObjCoords[VAIS_AddBtn] = addBtnRS
@@ -61,7 +61,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#B75F5F")
 	closeStrW, _ := ggCtx.MeasureString("Close")
 	closeBtnX := dialogOriginX + dialogWidth - 50 - int(addStrW) - 30 - int(closeStrW)
-	ggCtx.DrawRoundedRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30)
 	ggCtx.Fill()
 	closeBtnRS := g143.RectSpecs{OriginX: closeBtnX, OriginY: dialogOriginY + 20, Width: int(closeStrW) + 20, Height: 30}
 	VaisObjCoords[VAIS_CloseBtn] = closeBtnRS
@@ -71,7 +71,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 
 	// add image form
 	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(dialogOriginY)+20+50, float64(dialogWidth)-80, 240, 10)
+	ggCtx.DrawRectangle(float64(dialogOriginX)+40, float64(dialogOriginY)+20+50, float64(dialogWidth)-80, 240)
 	ggCtx.Fill()
 	selectImgRS := g143.RectSpecs{Width: dialogWidth - 80, Height: 240, OriginX: dialogOriginX + 40, OriginY: dialogOriginY + 20 + 50}
 	VaisObjCoords[VAIS_SelectImg] = selectImgRS
@@ -85,7 +85,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 	// audio file input
 	ggCtx.SetHexColor("#eee")
 	sflInputY := selectImgRS.OriginY + selectImgRS.Height + 10
-	ggCtx.DrawRoundedRectangle(float64(dialogOriginX)+40, float64(sflInputY), float64(dialogWidth)-80, 30, 10)
+	ggCtx.DrawRectangle(float64(dialogOriginX)+40, float64(sflInputY), float64(dialogWidth)-80, 30)
 	ggCtx.Fill()
 	sflBtnRS := g143.NRectSpecs(dialogOriginX+40, sflInputY, dialogWidth-80, 30)
 	VaisObjCoords[VAIS_SelectAudio] = sflBtnRS
@@ -104,7 +104,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#eee")
 	aBInputX := aBLW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(aBInputX, float64(aBLY)-FontSize, 100, 30, 10)
+	ggCtx.DrawRectangle(aBInputX, float64(aBLY)-FontSize, 100, 30)
 	ggCtx.Fill()
 	aBInputRS := g143.NRectSpecs(int(aBInputX), aBLY-FontSize, 100, 30)
 	VaisObjCoords[VAIS_AudioBeginInput] = aBInputRS
@@ -120,7 +120,7 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#eee")
 	aEInputX := aELW + 50 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(aEInputX, float64(aELY)-FontSize, 100, 30, 10)
+	ggCtx.DrawRectangle(aEInputX, float64(aELY)-FontSize, 100, 30)
 	ggCtx.Fill()
 	aEInputRS := g143.NRectSpecs(int(aEInputX), aELY-FontSize, 100, 30)
 	VaisObjCoords[VAIS_AudioEndInput] = aEInputRS

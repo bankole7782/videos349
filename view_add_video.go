@@ -49,7 +49,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#56845A")
 	addStrW, _ := ggCtx.MeasureString("Add")
 	addBtnOriginX := dialogWidth - int(addStrW) - 50 + dialogOriginX
-	ggCtx.DrawRoundedRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30)
 	ggCtx.Fill()
 	addBtnRS := g143.RectSpecs{OriginX: addBtnOriginX, OriginY: dialogOriginY + 20, Width: int(addStrW) + 20, Height: 30}
 	VavObjCoords[VAV_AddBtn] = addBtnRS
@@ -61,7 +61,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#B75F5F")
 	closeStrW, _ := ggCtx.MeasureString("Close")
 	closeBtnX := dialogOriginX + dialogWidth - 50 - int(addStrW) - 30 - int(closeStrW)
-	ggCtx.DrawRoundedRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30, 10)
+	ggCtx.DrawRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30)
 	ggCtx.Fill()
 	closeBtnRS := g143.RectSpecs{OriginX: closeBtnX, OriginY: dialogOriginY + 20, Width: int(closeStrW) + 20, Height: 30}
 	VavObjCoords[VAV_CloseBtn] = closeBtnRS
@@ -76,7 +76,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	pvInputY := dialogOriginY + FontSize + 70
 
 	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(pvInputX), float64(pvInputY)-FontSize, float64(pvInputW), 30, 10)
+	ggCtx.DrawRectangle(float64(pvInputX), float64(pvInputY)-FontSize, float64(pvInputW), 30)
 	ggCtx.Fill()
 	pfRS := g143.RectSpecs{OriginX: int(pvInputX), OriginY: pvInputY - FontSize, Width: pvInputW, Height: 30}
 	VavObjCoords[VAV_PickVideo] = pfRS
@@ -96,7 +96,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#eee")
 	beginInputX := beginStrW + 30 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(beginInputX, float64(beginStrY)-FontSize, 100, 30, 10)
+	ggCtx.DrawRectangle(beginInputX, float64(beginStrY)-FontSize, 100, 30)
 	ggCtx.Fill()
 	biRS := g143.RectSpecs{OriginX: int(beginInputX), OriginY: beginStrY - FontSize, Width: 100, Height: 30}
 	VavObjCoords[VAV_BeginInput] = biRS
@@ -113,7 +113,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	ggCtx.SetHexColor("#eee")
 	endInputX := endStrW + 30 + float64(dialogOriginX) + 40
-	ggCtx.DrawRoundedRectangle(endInputX, float64(endStrY)-FontSize, 100, 30, 10)
+	ggCtx.DrawRectangle(endInputX, float64(endStrY)-FontSize, 100, 30)
 	ggCtx.Fill()
 	eiRS := g143.RectSpecs{OriginX: int(endInputX), OriginY: endStrY - FontSize, Width: 100, Height: 30}
 	VavObjCoords[VAV_EndInput] = eiRS

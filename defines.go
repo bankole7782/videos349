@@ -18,27 +18,26 @@ const (
 	OpenWDBtn      = 104
 	RenderBtn      = 105
 
-	VAI_SelectImg   = 21
-	VAI_SelectAudio = 22
-	VAI_DurInput    = 23
-	VAI_AddBtn      = 24
-	VAI_CloseBtn    = 25
-	VAI_AudioBegin  = 26
+	VAI_SelectImg  = 50021
+	VAI_DurInput   = 50023
+	VAI_AddBtn     = 24
+	VAI_CloseBtn   = 25
+	VAI_AudioBegin = 26
 
-	VAIS_SelectImg       = 31
-	VAIS_SelectAudio     = 32
+	VAIS_SelectImg       = 50031
+	VAIS_SelectAudio     = 50032
 	VAIS_AddBtn          = 33
 	VAIS_CloseBtn        = 34
-	VAIS_AudioBeginInput = 35
-	VAIS_AudioEndInput   = 36
+	VAIS_AudioBeginInput = 50035
+	VAIS_AudioEndInput   = 50036
 
 	VAV_AddBtn                = 41
 	VAV_CloseBtn              = 42
-	VAV_PickVideo             = 43
-	VAV_BeginInput            = 44
-	VAV_EndInput              = 45
-	VAV_SpeedUpCheckbox       = 46
-	VAV_BlackAndWhiteCheckbox = 47
+	VAV_PickVideo             = 50043
+	VAV_BeginInput            = 50044
+	VAV_EndInput              = 50045
+	VAV_SpeedUpCheckbox       = 50046
+	VAV_BlackAndWhiteCheckbox = 50047
 
 	PROJ_NameInput  = 51
 	PROJ_NewProject = 52

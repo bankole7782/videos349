@@ -10,7 +10,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func getHoverCB(state map[int]g143.RectSpecs, currentFrame image.Image) glfw.CursorPosCallback {
+func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 	return func(window *glfw.Window, xpos, ypos float64) {
 		if runtime.GOOS == "linux" {
 			// linux fires too many events
@@ -37,10 +37,13 @@ func getHoverCB(state map[int]g143.RectSpecs, currentFrame image.Image) glfw.Cur
 			}
 		}
 
+		// if widgetCode > 50000 {
+		// 	return
+		// }
 		if widgetCode == 0 {
 			// send the last drawn frame to glfw window
 			windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-			g143.DrawImage(wWidth, wHeight, currentFrame, windowRS)
+			g143.DrawImage(wWidth, wHeight, CurrentWindowFrame, windowRS)
 			window.SwapBuffers()
 			return
 		}
@@ -49,10 +52,10 @@ func getHoverCB(state map[int]g143.RectSpecs, currentFrame image.Image) glfw.Cur
 			widgetRS.OriginX+widgetRS.Width,
 			widgetRS.OriginY+widgetRS.Height)
 
-		pieceOfCurrentFrame := imaging.Crop(currentFrame, rectA)
+		pieceOfCurrentFrame := imaging.Crop(CurrentWindowFrame, rectA)
 		invertedPiece := imaging.Invert(pieceOfCurrentFrame)
 
-		ggCtx := gg.NewContextForImage(currentFrame)
+		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
 		ggCtx.DrawImage(invertedPiece, widgetRS.OriginX, widgetRS.OriginY)
 
 		// send the frame to glfw window
