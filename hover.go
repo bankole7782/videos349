@@ -37,9 +37,6 @@ func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 			}
 		}
 
-		// if widgetCode > 50000 {
-		// 	return
-		// }
 		if widgetCode == 0 {
 			// send the last drawn frame to glfw window
 			windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
@@ -53,7 +50,7 @@ func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 			widgetRS.OriginY+widgetRS.Height)
 
 		pieceOfCurrentFrame := imaging.Crop(CurrentWindowFrame, rectA)
-		invertedPiece := imaging.Invert(pieceOfCurrentFrame)
+		invertedPiece := imaging.AdjustBrightness(pieceOfCurrentFrame, -20)
 
 		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
 		ggCtx.DrawImage(invertedPiece, widgetRS.OriginX, widgetRS.OriginY)
