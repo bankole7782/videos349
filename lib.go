@@ -97,11 +97,7 @@ func ExternalLaunch(p string) {
 	if runtime.GOOS == "windows" {
 		exec.Command(runDll32, cmd, p).Run()
 	} else if runtime.GOOS == "linux" {
-		out, err := exec.Command("xdg-open", p).CombinedOutput()
-		if err != nil {
-			fmt.Println(string(out))
-			fmt.Println(err)
-		}
+		exec.Command("xdg-open", p).Run()
 	}
 }
 
