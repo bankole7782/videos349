@@ -40,7 +40,7 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case VAI_CloseBtn:
-		DrawWorkView(window, TotalPages())
+		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
@@ -168,7 +168,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 
 	switch widgetCode {
 	case VAIS_CloseBtn:
-		DrawWorkView(window, TotalPages())
+		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback
@@ -394,7 +394,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case VAV_CloseBtn:
-		DrawWorkView(window, TotalPages())
+		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
 		// unregister the keyCallback

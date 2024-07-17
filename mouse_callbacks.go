@@ -161,19 +161,23 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		// bring up update instruction dialog
 		instrNum := widgetCode - 4000 - 1
 		ToUpdateInstrNum = instrNum
-		if Instructions[instrNum]["image"] != "" {
-			DrawViewAddImage(window, CurrentWindowFrame)
-			window.SetMouseButtonCallback(viewAddImageMouseCallback)
-			window.SetKeyCallback(VaikeyCallback)
-			window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
+		shortInstrs := GetPageInstructions(CurrentPage)
+		toViewInstrNum := instrNum - (PageSize * (CurrentPage - 1))
 
-		} else if Instructions[instrNum]["audio"] != "" {
+		if shortInstrs[toViewInstrNum]["kind"] == "image" && shortInstrs[toViewInstrNum]["audio"] != "" {
+
 			DrawViewAIS(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAISMouseCallback)
 			window.SetKeyCallback(VaiskeyCallback)
 			window.SetCursorPosCallback(getHoverCB(VaisObjCoords))
 
-		} else if Instructions[instrNum]["video"] != "" {
+		} else if shortInstrs[toViewInstrNum]["kind"] == "image" {
+			DrawViewAddImage(window, CurrentWindowFrame)
+			window.SetMouseButtonCallback(viewAddImageMouseCallback)
+			window.SetKeyCallback(VaikeyCallback)
+			window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
+
+		} else if shortInstrs[toViewInstrNum]["video"] != "" {
 			DrawViewAddVideo(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAddVideoMouseCallback)
 			window.SetKeyCallback(VavkeyCallback)
