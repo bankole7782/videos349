@@ -25,15 +25,6 @@ parts:
       - libgl1-mesa-dev
       - xorg-dev
       - libc6-dev
-    override-build: |
-      set -xe
-      mkdir -p $SNAPCRAFT_PART_INSTALL/bin/
-      cp $SNAPCRAFT_PART_SRC/ffmpeg/linux/ffmpeg $SNAPCRAFT_PART_INSTALL/bin/
-      cp $SNAPCRAFT_PART_SRC/ffmpeg/linux/ffprobe $SNAPCRAFT_PART_INSTALL/bin/
-      go mod download
-      chmod +x $SNAPCRAFT_PART_INSTALL/bin/ffmpeg
-      chmod +x $SNAPCRAFT_PART_INSTALL/bin/ffprobe
-      go build -o $SNAPCRAFT_PART_INSTALL/bin/videos349 .
 
   pickers:
     # See 'snapcraft plugins'
@@ -52,7 +43,14 @@ parts:
       go mod download
       go build -o $SNAPCRAFT_PART_INSTALL/bin/fpicker ./fpicker
 
+  ff-part:
+    plugin: dump
+    source: https://storage.googleapis.com/saenuma_public/allff.tar.xz
+    organize:
+      ffmpeg: bin/
+      ffprobe: bin/
 
+      
 apps: 
   videos349:
     command: bin/videos349
