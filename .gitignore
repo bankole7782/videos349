@@ -20,6 +20,3 @@
 # Go workspace file
 go.work
 bin/
-
-!ffmpeg/windows/ffmpeg.exe
-!ffmpeg/windows/ffprobe.exe
