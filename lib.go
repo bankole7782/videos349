@@ -74,7 +74,7 @@ func SecondsToTimeFormat(seconds int) string {
 	minutes := seconds / 60
 	leftSeconds := math.Mod(float64(seconds), 60)
 
-	return fmt.Sprintf("%d:%d", minutes, int(leftSeconds))
+	return fmt.Sprintf("%d:%02d", minutes, int(leftSeconds))
 }
 
 func IsKeyNumeric(key glfw.Key) bool {
@@ -162,9 +162,9 @@ func GetPageInstructions(page int) []map[string]string {
 	} else if page == 1 {
 		retInstructions = Instructions[:PageSize]
 	} else if endIndex > len(Instructions) {
-		retInstructions = Instructions[beginIndex+1:]
+		retInstructions = Instructions[beginIndex:]
 	} else {
-		retInstructions = Instructions[beginIndex+1 : endIndex+1]
+		retInstructions = Instructions[beginIndex:endIndex]
 	}
 	return retInstructions
 }

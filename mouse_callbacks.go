@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -100,7 +101,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		if g143.InRectSpecs(RS, xPosInt, yPosInt) {
 			// widgetRS = RS
 			widgetCode = code
-			break
+			// break
 		}
 	}
 
@@ -161,23 +162,24 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		// bring up update instruction dialog
 		instrNum := widgetCode - 4000 - 1
 		ToUpdateInstrNum = instrNum
-		shortInstrs := GetPageInstructions(CurrentPage)
-		toViewInstrNum := instrNum - (PageSize * (CurrentPage - 1))
+		IsUpdateDialog = true
+		fmt.Println(ToUpdateInstrNum)
+		fmt.Println(Instructions[instrNum])
 
-		if shortInstrs[toViewInstrNum]["kind"] == "image" && shortInstrs[toViewInstrNum]["audio"] != "" {
+		if Instructions[instrNum]["kind"] == "image" && Instructions[instrNum]["audio"] != "" {
 
 			DrawViewAIS(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAISMouseCallback)
 			window.SetKeyCallback(VaiskeyCallback)
 			window.SetCursorPosCallback(getHoverCB(VaisObjCoords))
 
-		} else if shortInstrs[toViewInstrNum]["kind"] == "image" {
+		} else if Instructions[instrNum]["kind"] == "image" {
 			DrawViewAddImage(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAddImageMouseCallback)
 			window.SetKeyCallback(VaikeyCallback)
 			window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
 
-		} else if shortInstrs[toViewInstrNum]["video"] != "" {
+		} else if Instructions[instrNum]["video"] != "" {
 			DrawViewAddVideo(window, CurrentWindowFrame)
 			window.SetMouseButtonCallback(viewAddVideoMouseCallback)
 			window.SetKeyCallback(VavkeyCallback)

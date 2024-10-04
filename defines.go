@@ -51,6 +51,7 @@ var (
 	Instructions       []map[string]string
 	ProjectName        string
 	ToUpdateInstrNum   int // for updating an instruction
+	IsUpdateDialog     bool
 	CurrentPage        int
 
 	// tmpFrame image.Image

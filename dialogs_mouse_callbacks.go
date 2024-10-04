@@ -86,14 +86,14 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			VAI_DurationEnteredTxt = ""
 		}
 
-		if ToUpdateInstrNum != 0 {
+		if IsUpdateDialog {
 			Instructions[ToUpdateInstrNum] = map[string]string{
 				"kind":     "image",
 				"image":    VaiInputsStore["image"],
 				"duration": VaiInputsStore["duration"],
 			}
 
-			ToUpdateInstrNum = 0
+			IsUpdateDialog = false
 		} else {
 			Instructions = append(Instructions, map[string]string{
 				"kind":     "image",
@@ -309,7 +309,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 			VaisEndInputEnteredTxt = ""
 		}
 
-		if ToUpdateInstrNum != 0 {
+		if IsUpdateDialog {
 			Instructions[ToUpdateInstrNum] = map[string]string{
 				"kind":        "image",
 				"image":       VaisInputsStore["image"],
@@ -318,6 +318,8 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 				"audio_end":   VaisInputsStore["audio_end"],
 			}
 			ToUpdateInstrNum = 0
+			IsUpdateDialog = false
+
 		} else {
 			Instructions = append(Instructions, map[string]string{
 				"kind":        "image",
@@ -548,7 +550,7 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			return
 		}
 
-		if ToUpdateInstrNum != 0 {
+		if IsUpdateDialog {
 			Instructions[ToUpdateInstrNum] = map[string]string{
 				"kind":       "video",
 				"video":      VavInputsStore["video"],
@@ -558,6 +560,8 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 				"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
 			}
 			ToUpdateInstrNum = 0
+			IsUpdateDialog = false
+
 		} else {
 			Instructions = append(Instructions, map[string]string{
 				"kind":       "video",
