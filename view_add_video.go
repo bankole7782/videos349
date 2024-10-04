@@ -11,7 +11,7 @@ import (
 )
 
 func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
-	VavObjCoords = make(map[int]g143.RectSpecs)
+	VavObjCoords = make(map[int]g143.Rect)
 	VavInputsStore = make(map[string]string)
 
 	wWidth, wHeight := window.GetSize()
@@ -52,7 +52,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	addBtnOriginX := dialogWidth - int(addStrW) - 50 + dialogOriginX
 	ggCtx.DrawRectangle(float64(addBtnOriginX), float64(dialogOriginY)+20, addStrW+20, 30)
 	ggCtx.Fill()
-	addBtnRS := g143.RectSpecs{OriginX: addBtnOriginX, OriginY: dialogOriginY + 20, Width: int(addStrW) + 20, Height: 30}
+	addBtnRS := g143.Rect{OriginX: addBtnOriginX, OriginY: dialogOriginY + 20, Width: int(addStrW) + 20, Height: 30}
 	VavObjCoords[VAV_AddBtn] = addBtnRS
 
 	ggCtx.SetHexColor("#fff")
@@ -64,7 +64,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	closeBtnX := dialogOriginX + dialogWidth - 50 - int(addStrW) - 30 - int(closeStrW)
 	ggCtx.DrawRectangle(float64(closeBtnX), float64(dialogOriginY)+20, closeStrW+20, 30)
 	ggCtx.Fill()
-	closeBtnRS := g143.RectSpecs{OriginX: closeBtnX, OriginY: dialogOriginY + 20, Width: int(closeStrW) + 20, Height: 30}
+	closeBtnRS := g143.Rect{OriginX: closeBtnX, OriginY: dialogOriginY + 20, Width: int(closeStrW) + 20, Height: 30}
 	VavObjCoords[VAV_CloseBtn] = closeBtnRS
 
 	ggCtx.SetHexColor("#fff")
@@ -79,7 +79,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#eee")
 	ggCtx.DrawRectangle(float64(pvInputX), float64(pvInputY)-FontSize, float64(pvInputW), 30)
 	ggCtx.Fill()
-	pfRS := g143.RectSpecs{OriginX: int(pvInputX), OriginY: pvInputY - FontSize, Width: pvInputW, Height: 30}
+	pfRS := g143.Rect{OriginX: int(pvInputX), OriginY: pvInputY - FontSize, Width: pvInputW, Height: 30}
 	VavObjCoords[VAV_PickVideo] = pfRS
 
 	ggCtx.SetHexColor("#444")
@@ -99,7 +99,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	beginInputX := beginStrW + 30 + float64(dialogOriginX) + 40
 	ggCtx.DrawRectangle(beginInputX, float64(beginStrY)-FontSize, 100, 30)
 	ggCtx.Fill()
-	biRS := g143.RectSpecs{OriginX: int(beginInputX), OriginY: beginStrY - FontSize, Width: 100, Height: 30}
+	biRS := g143.Rect{OriginX: int(beginInputX), OriginY: beginStrY - FontSize, Width: 100, Height: 30}
 	VavObjCoords[VAV_BeginInput] = biRS
 
 	ggCtx.SetHexColor("#444")
@@ -116,7 +116,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	endInputX := endStrW + 30 + float64(dialogOriginX) + 40
 	ggCtx.DrawRectangle(endInputX, float64(endStrY)-FontSize, 100, 30)
 	ggCtx.Fill()
-	eiRS := g143.RectSpecs{OriginX: int(endInputX), OriginY: endStrY - FontSize, Width: 100, Height: 30}
+	eiRS := g143.Rect{OriginX: int(endInputX), OriginY: endStrY - FontSize, Width: 100, Height: 30}
 	VavObjCoords[VAV_EndInput] = eiRS
 
 	ggCtx.SetHexColor("#444")
@@ -133,7 +133,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	suCX := suLW + 30 + float64(dialogOriginX) + 40
 	ggCtx.DrawRectangle(suCX, float64(sulY)-FontSize, 30, 30)
 	ggCtx.Fill()
-	suRS := g143.NRectSpecs(int(suCX), sulY-FontSize, 30, 30)
+	suRS := g143.NewRect(int(suCX), sulY-FontSize, 30, 30)
 	VavObjCoords[VAV_SpeedUpCheckbox] = suRS
 
 	ggCtx.SetHexColor("#fff")
@@ -151,7 +151,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 	bwCX := bwLX + int(bwLW) + 40
 	ggCtx.DrawRectangle(float64(bwCX), float64(sulY)-FontSize, 30, 30)
 	ggCtx.Fill()
-	bwRS := g143.NRectSpecs(bwCX, sulY-FontSize, 30, 30)
+	bwRS := g143.NewRect(bwCX, sulY-FontSize, 30, 30)
 	VavObjCoords[VAV_BlackAndWhiteCheckbox] = bwRS
 
 	ggCtx.SetHexColor("#fff")
@@ -208,7 +208,7 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 
 	}
 	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 

@@ -46,7 +46,7 @@ const (
 )
 
 var (
-	ObjCoords          map[int]g143.RectSpecs
+	ObjCoords          map[int]g143.Rect
 	CurrentWindowFrame image.Image
 	Instructions       []map[string]string
 	ProjectName        string
@@ -59,14 +59,14 @@ var (
 	ClearAfterRender bool
 
 	// view add image
-	VaiObjCoords             map[int]g143.RectSpecs
+	VaiObjCoords             map[int]g143.Rect
 	VaiInputsStore           map[string]string
 	VAI_DurationEnteredTxt   string
 	VAI_SelectedInput        int
 	VAI_AudioBeginEnteredTxt string = "0:00"
 
 	// view add image + sound
-	VaisObjCoords   map[int]g143.RectSpecs
+	VaisObjCoords   map[int]g143.Rect
 	VaisInputsStore map[string]string
 
 	VaisBeginInputEnteredTxt string = "0:00"
@@ -74,7 +74,7 @@ var (
 	VAIS_SelectedInput       int
 
 	// view add video
-	VavObjCoords   map[int]g143.RectSpecs
+	VavObjCoords   map[int]g143.Rect
 	VavInputsStore map[string]string
 
 	BeginInputEnteredTxt              string = "0:00"
@@ -84,7 +84,7 @@ var (
 	VAV_BlackAndWhiteCheckboxSelected bool
 
 	// view projects
-	ProjObjCoords map[int]g143.RectSpecs
+	ProjObjCoords map[int]g143.Rect
 
 	NameInputEnteredTxt string
 

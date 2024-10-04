@@ -21,11 +21,11 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 
 	// wWidth, wHeight := window.GetSize()
 
-	// var widgetRS g143.RectSpecs
+	// var widgetRS g143.Rect
 	var widgetCode int
 
 	for code, RS := range ProjObjCoords {
-		if g143.InRectSpecs(RS, xPosInt, yPosInt) {
+		if g143.InRect(RS, xPosInt, yPosInt) {
 			// widgetRS = RS
 			widgetCode = code
 			break
@@ -93,11 +93,11 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 
 	// wWidth, wHeight := window.GetSize()
 
-	// var widgetRS g143.RectSpecs
+	// var widgetRS g143.Rect
 	var widgetCode int
 
 	for code, RS := range ObjCoords {
-		if g143.InRectSpecs(RS, xPosInt, yPosInt) {
+		if g143.InRect(RS, xPosInt, yPosInt) {
 			// widgetRS = RS
 			widgetCode = code
 			// break
@@ -188,7 +188,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		instrNum := widgetCode - 5000 - 1
 		Instructions = slices.Delete(Instructions, instrNum, instrNum+1)
 
-		ObjCoords = make(map[int]g143.RectSpecs)
+		ObjCoords = make(map[int]g143.Rect)
 		DrawWorkView(window, CurrentPage)
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}

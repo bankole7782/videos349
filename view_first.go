@@ -10,7 +10,7 @@ import (
 )
 
 func DrawBeginView(window *glfw.Window) {
-	ProjObjCoords = make(map[int]g143.RectSpecs)
+	ProjObjCoords = make(map[int]g143.Rect)
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer
@@ -37,7 +37,7 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawRectangle(30, 90, 420, 40)
 	ggCtx.Fill()
-	pniRS := g143.NRectSpecs(30, 90, 420, 40)
+	pniRS := g143.NewRect(30, 90, 420, 40)
 	ProjObjCoords[PROJ_NameInput] = pniRS
 
 	ggCtx.SetHexColor("#fff")
@@ -54,7 +54,7 @@ func DrawBeginView(window *glfw.Window) {
 	ggCtx.SetHexColor("#B3AE97")
 	ggCtx.DrawRectangle(200, 140, npBtnW, 50)
 	ggCtx.Fill()
-	ProjObjCoords[PROJ_NewProject] = g143.NRectSpecs(200, 140, int(npBtnW), 50)
+	ProjObjCoords[PROJ_NewProject] = g143.NewRect(200, 140, int(npBtnW), 50)
 
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString(npStr, 200+20, 150+20)
@@ -81,7 +81,7 @@ func DrawBeginView(window *glfw.Window) {
 		ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, pfStrW+20, FontSize+10)
 		ggCtx.Fill()
 
-		pfRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+		pfRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
 			Width: int(pfStrW) + 20, Height: FontSize + 10}
 		ProjObjCoords[1000+(i+1)] = pfRS
 
@@ -99,7 +99,7 @@ func DrawBeginView(window *glfw.Window) {
 	}
 
 	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
@@ -112,7 +112,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 
 	window.SetTitle(fmt.Sprintf("Project: %s ---- %s", ProjectName, ProgTitle))
 
-	ObjCoords = make(map[int]g143.RectSpecs)
+	ObjCoords = make(map[int]g143.Rect)
 
 	wWidth, wHeight := window.GetSize()
 
@@ -140,7 +140,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawRectangle(10, 10, addImgBtnWidth, addImgBtnHeight)
 	ggCtx.Fill()
 
-	addImgBtnRS := g143.RectSpecs{Width: int(addImgBtnWidth), Height: int(addImgBtnHeight),
+	addImgBtnRS := g143.Rect{Width: int(addImgBtnWidth), Height: int(addImgBtnHeight),
 		OriginX: 10, OriginY: 10}
 	ObjCoords[AddImgBtn] = addImgBtnRS
 
@@ -161,7 +161,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawRectangle(aisBtnOriginX, 10, aisBtnWidth, aisBtnHeight)
 	ggCtx.Fill()
 
-	aisBtnRS := g143.RectSpecs{Width: int(aisBtnWidth), Height: int(aisBtnHeight),
+	aisBtnRS := g143.Rect{Width: int(aisBtnWidth), Height: int(aisBtnHeight),
 		OriginX: int(aisBtnOriginX), OriginY: 10}
 	ObjCoords[AddImgSoundBtn] = aisBtnRS
 
@@ -182,7 +182,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight)
 	ggCtx.Fill()
 
-	addVidBtnRS := g143.RectSpecs{Width: int(addVidBtnWidth), Height: int(addVidBtnHeight),
+	addVidBtnRS := g143.Rect{Width: int(addVidBtnWidth), Height: int(addVidBtnHeight),
 		OriginX: int(addVidBtnOriginX), OriginY: 10}
 	ObjCoords[AddVidBtn] = addVidBtnRS
 
@@ -203,7 +203,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawRectangle(openWDBtnOriginX, 10, openWDBtnWidth, openWDBtnHeight)
 	ggCtx.Fill()
 
-	openWDBtnRS := g143.RectSpecs{Width: int(openWDBtnWidth), Height: int(openWDBtnHeight),
+	openWDBtnRS := g143.Rect{Width: int(openWDBtnWidth), Height: int(openWDBtnHeight),
 		OriginX: int(openWDBtnOriginX), OriginY: 10}
 	ObjCoords[OpenWDBtn] = openWDBtnRS
 
@@ -220,7 +220,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH)
 	ggCtx.Fill()
 
-	rbRS := g143.RectSpecs{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
+	rbRS := g143.Rect{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
 		Height: int(renderBtnH)}
 	ObjCoords[RenderBtn] = rbRS
 
@@ -247,13 +247,13 @@ func DrawWorkView(window *glfw.Window, page int) {
 		ggCtx.SetHexColor("#5A8A5E")
 		ggCtx.DrawRectangle(float64(currentX)+kStrW+50, float64(currentY), FontSize, FontSize)
 		ggCtx.Fill()
-		editRS := g143.NRectSpecs(currentX+int(kStrW)+50, currentY, FontSize, FontSize)
+		editRS := g143.NewRect(currentX+int(kStrW)+50, currentY, FontSize, FontSize)
 		ObjCoords[4000+(i+1)] = editRS
 
 		ggCtx.SetHexColor("#A84E4E")
 		ggCtx.DrawRectangle(float64(currentX)+kStrW+50+30, float64(currentY), FontSize, FontSize)
 		ggCtx.Fill()
-		delRS := g143.NRectSpecs(currentX+int(kStrW)+50+30, currentY, FontSize, FontSize)
+		delRS := g143.NewRect(currentX+int(kStrW)+50+30, currentY, FontSize, FontSize)
 		ObjCoords[5000+(i+1)] = delRS
 
 		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
@@ -268,7 +268,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
 			ggCtx.Fill()
 
-			viabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+			viabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
 				Width: int(viaStrW) + 20, Height: FontSize + 10}
 			ObjCoords[1000+(i+1)] = viabRS
 
@@ -294,7 +294,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 
 				ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, FontSize+10)
 				ggCtx.Fill()
-				vaabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30 + 65,
+				vaabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30 + 65,
 					Width: int(vaaStrW) + 20, Height: FontSize + 10}
 				ObjCoords[2000+(i+1)] = vaabRS
 
@@ -310,7 +310,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 			ggCtx.SetHexColor("#5F699F")
 			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
 			ggCtx.Fill()
-			vvabRS := g143.RectSpecs{OriginX: currentX, OriginY: currentY + 30,
+			vvabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
 				Width: int(viaStrW) + 20, Height: FontSize + 10}
 			ObjCoords[3000+(i+1)] = vvabRS
 
@@ -340,7 +340,7 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ggCtx.DrawString(msg, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
 
 	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
@@ -360,11 +360,11 @@ func FirstUIScrollCallback(window *glfw.Window, xoff, yoff float64) {
 	scrollEventCount = 0
 
 	if xoff == 0 && yoff == -1 && CurrentPage != TotalPages() {
-		ObjCoords = make(map[int]g143.RectSpecs)
+		ObjCoords = make(map[int]g143.Rect)
 		DrawWorkView(window, CurrentPage+1)
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	} else if xoff == 0 && yoff == 1 && CurrentPage != 1 {
-		ObjCoords = make(map[int]g143.RectSpecs)
+		ObjCoords = make(map[int]g143.Rect)
 		DrawWorkView(window, CurrentPage-1)
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
 	}

@@ -57,7 +57,7 @@ func ProjKeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 	ggCtx.DrawString(NameInputEnteredTxt, float64(nameInputRS.OriginX+25), float64(nameInputRS.OriginY+25))
 
 	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
@@ -98,7 +98,7 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 	ggCtx.DrawString(VAI_DurationEnteredTxt, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
 
 	// send the frame to glfw window
-	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
@@ -142,7 +142,7 @@ func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 		ggCtx.DrawString(VaisBeginInputEnteredTxt, float64(aBInputRS.OriginX+10), float64(aBInputRS.OriginY)+20)
 
 		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
@@ -178,7 +178,7 @@ func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 		ggCtx.DrawString(VaisEndInputEnteredTxt, float64(aEINputRS.OriginX+10), float64(aEINputRS.OriginY)+20)
 
 		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
@@ -224,7 +224,7 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		ggCtx.DrawString(BeginInputEnteredTxt, float64(beginInputRS.OriginX+10), float64(beginInputRS.OriginY)+FontSize)
 
 		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
@@ -260,7 +260,7 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		ggCtx.DrawString(EndInputEnteredTxt, float64(endInputRS.OriginX+10), float64(endInputRS.OriginY)+FontSize)
 
 		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 

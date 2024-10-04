@@ -10,7 +10,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
+func getHoverCB(state map[int]g143.Rect) glfw.CursorPosCallback {
 	return func(window *glfw.Window, xpos, ypos float64) {
 		if runtime.GOOS == "linux" {
 			// linux fires too many events
@@ -24,13 +24,13 @@ func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 
 		wWidth, wHeight := window.GetSize()
 
-		var widgetRS g143.RectSpecs
+		var widgetRS g143.Rect
 		var widgetCode int
 
 		xPosInt := int(xpos)
 		yPosInt := int(ypos)
 		for code, RS := range state {
-			if g143.InRectSpecs(RS, xPosInt, yPosInt) {
+			if g143.InRect(RS, xPosInt, yPosInt) {
 				widgetRS = RS
 				widgetCode = code
 				break
@@ -39,7 +39,7 @@ func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 
 		if widgetCode == 0 {
 			// send the last drawn frame to glfw window
-			windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+			windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 			g143.DrawImage(wWidth, wHeight, CurrentWindowFrame, windowRS)
 			window.SwapBuffers()
 			return
@@ -56,7 +56,7 @@ func getHoverCB(state map[int]g143.RectSpecs) glfw.CursorPosCallback {
 		ggCtx.DrawImage(invertedPiece, widgetRS.OriginX, widgetRS.OriginY)
 
 		// send the frame to glfw window
-		windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
+		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 	}
