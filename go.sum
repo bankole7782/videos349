@@ -6,6 +6,8 @@ github.com/bankole7782/graphics143 v0.0.0-20240428182111-b093c93f2881 h1:WghwI2D
 github.com/bankole7782/graphics143 v0.0.0-20240428182111-b093c93f2881/go.mod h1:sq+C6f677mNsKUSIrZVgjIsSqHJkLqBKyDuH4ntNB8U=
 github.com/bankole7782/graphics143 v0.0.0-20241004130740-992a0fdc7946 h1:XzEmgmJSH9kPzVrM2xiThkwt1gE9pjo6B+Mp0Ad96FI=
 github.com/bankole7782/graphics143 v0.0.0-20241004130740-992a0fdc7946/go.mod h1:sq+C6f677mNsKUSIrZVgjIsSqHJkLqBKyDuH4ntNB8U=
+github.com/bankole7782/graphics143 v1.0.0 h1:7KBp/V9e8OD1WXXI78SQEo6pIhyo0/hWc8XAcqy9UOU=
+github.com/bankole7782/graphics143 v1.0.0/go.mod h1:sq+C6f677mNsKUSIrZVgjIsSqHJkLqBKyDuH4ntNB8U=
 github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
 github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
 github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=

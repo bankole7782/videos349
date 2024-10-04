@@ -3,7 +3,7 @@ module github.com/bankole7782/videos349
 go 1.21.0
 
 require (
-	github.com/bankole7782/graphics143 v0.0.0-20241004130740-992a0fdc7946
+	github.com/bankole7782/graphics143 v1.0.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/fogleman/gg v1.3.0
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20240506104042-037f3cc74f2a
