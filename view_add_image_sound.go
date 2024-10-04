@@ -2,6 +2,7 @@ package main
 
 import (
 	"image"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
@@ -82,6 +83,18 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 	aicStrOriginX := selectImgRS.OriginX + (selectImgRS.Width-int(aicStrW))/2
 	ggCtx.DrawString(aicStr, float64(aicStrOriginX), float64(selectImgRS.OriginY)+20+20)
 
+	if IsUpdateDialog {
+		// show picked image
+		filename := Instructions[ToUpdateInstrNum]["image"]
+		img, _ := imaging.Open(filename)
+		img = imaging.Fit(img, selectImgRS.Width-20, selectImgRS.Height-20, imaging.Lanczos)
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(selectImgRS.OriginX), float64(selectImgRS.OriginY), float64(selectImgRS.Width),
+			float64(selectImgRS.Height), 10)
+		ggCtx.Fill()
+		ggCtx.DrawImage(img, selectImgRS.OriginX+10, selectImgRS.OriginY+10)
+	}
+
 	// audio file input
 	ggCtx.SetHexColor("#eee")
 	sflInputY := selectImgRS.OriginY + selectImgRS.Height + 10
@@ -128,6 +141,39 @@ func DrawViewAIS(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("0:00", aEInputX+10, float64(aELY))
 
+	if IsUpdateDialog {
+		filename := Instructions[ToUpdateInstrNum]["audio"]
+		rootPath, _ := GetRootPath()
+		// write audio name
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(sflBtnRS.OriginX), float64(sflBtnRS.OriginY),
+			float64(sflBtnRS.Width), float64(sflBtnRS.Height), 10)
+		ggCtx.Fill()
+
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(displayFilename, float64(sflBtnRS.OriginX)+10, float64(sflBtnRS.OriginY)+20)
+
+		// write choice audio begin
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(aBInputRS.OriginX), float64(aBInputRS.OriginY), float64(aBInputRS.Width),
+			float64(aBInputRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(VaisBeginInputEnteredTxt, float64(aBInputRS.OriginX+10), float64(aBInputRS.OriginY)+20)
+
+		// write choice audio end input
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(aEInputRS.OriginX), float64(aEInputRS.OriginY),
+			float64(aEInputRS.Width), float64(aEInputRS.Height), 10)
+		ggCtx.Fill()
+
+		videoLength := Instructions[ToUpdateInstrNum]["audio_end"]
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(videoLength, float64(aEInputRS.OriginX)+10, float64(aEInputRS.OriginY+FontSize))
+
+	}
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)

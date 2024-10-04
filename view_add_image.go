@@ -82,6 +82,18 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 	aicStrOriginX := selectImgRS.OriginX + (selectImgRS.Width-int(aicStrW))/2
 	ggCtx.DrawString(aicStr, float64(aicStrOriginX), float64(selectImgRS.OriginY)+20+20)
 
+	if IsUpdateDialog {
+		// show picked image
+		filename := Instructions[ToUpdateInstrNum]["image"]
+		img, _ := imaging.Open(filename)
+		img = imaging.Fit(img, selectImgRS.Width-20, selectImgRS.Height-20, imaging.Lanczos)
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(selectImgRS.OriginX), float64(selectImgRS.OriginY), float64(selectImgRS.Width),
+			float64(selectImgRS.Height), 10)
+		ggCtx.Fill()
+		ggCtx.DrawImage(img, selectImgRS.OriginX+10, selectImgRS.OriginY+10)
+	}
+
 	durLabel := "duration (in seconds)"
 	durLabelW, _ := ggCtx.MeasureString(durLabel)
 	durLabelY := selectImgRS.OriginY + selectImgRS.Height + 10 + 20
@@ -97,7 +109,12 @@ func DrawViewAddImage(window *glfw.Window, currentFrame image.Image) {
 
 	// default duration
 	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("5", durInputX+20, float64(durLabelY))
+	if IsUpdateDialog {
+		durationStr := Instructions[ToUpdateInstrNum]["duration"]
+		ggCtx.DrawString(durationStr, durInputX+20, float64(durLabelY))
+	} else {
+		ggCtx.DrawString("5", durInputX+20, float64(durLabelY))
+	}
 
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

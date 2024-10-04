@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -163,8 +162,6 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		instrNum := widgetCode - 4000 - 1
 		ToUpdateInstrNum = instrNum
 		IsUpdateDialog = true
-		fmt.Println(ToUpdateInstrNum)
-		fmt.Println(Instructions[instrNum])
 
 		if Instructions[instrNum]["kind"] == "image" && Instructions[instrNum]["audio"] != "" {
 

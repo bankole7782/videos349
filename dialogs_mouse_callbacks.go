@@ -296,7 +296,7 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		}
 
 		if VaisBeginInputEnteredTxt == "" {
-			VaisInputsStore["audio_begin"] = "5"
+			VaisInputsStore["audio_begin"] = "0:00"
 		} else {
 			VaisInputsStore["audio_begin"] = VaisBeginInputEnteredTxt
 			VaisBeginInputEnteredTxt = ""

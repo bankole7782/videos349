@@ -2,6 +2,7 @@ package main
 
 import (
 	"image"
+	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
@@ -158,6 +159,54 @@ func DrawViewAddVideo(window *glfw.Window, currentFrame image.Image) {
 		float64(bwRS.Height)-4)
 	ggCtx.Fill()
 
+	if IsUpdateDialog {
+		// write picked video filename
+		filename := Instructions[ToUpdateInstrNum]["video"]
+		rootPath, _ := GetRootPath()
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(pfRS.OriginX), float64(pfRS.OriginY),
+			float64(pfRS.Width), float64(pfRS.Height), 10)
+		ggCtx.Fill()
+
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(displayFilename, float64(pfRS.OriginX+10), float64(pfRS.OriginY+20))
+
+		// write video begin
+		beginStr := Instructions[ToUpdateInstrNum]["begin"]
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(biRS.OriginX), float64(biRS.OriginY), float64(biRS.Width),
+			float64(biRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(beginStr, float64(biRS.OriginX+10), float64(biRS.OriginY)+FontSize)
+
+		// write video end
+		ggCtx.SetHexColor("#eee")
+		ggCtx.DrawRoundedRectangle(float64(eiRS.OriginX), float64(eiRS.OriginY), float64(eiRS.Width),
+			float64(eiRS.Height), 10)
+		ggCtx.Fill()
+
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString(EndInputEnteredTxt, float64(eiRS.OriginX+10), float64(eiRS.OriginY)+FontSize)
+
+		// draw speedup checkbox
+		if strings.ToLower(Instructions[ToUpdateInstrNum]["speedup"]) == "true" {
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawRectangle(float64(suRS.OriginX)+4, float64(suRS.OriginY)+4, float64(suRS.Width)-8,
+				float64(suRS.Height)-8)
+			ggCtx.Fill()
+		}
+
+		if strings.ToLower(Instructions[ToUpdateInstrNum]["blackwhite"]) == "true" {
+			ggCtx.SetHexColor("#444")
+			ggCtx.DrawRectangle(float64(bwRS.OriginX)+4, float64(bwRS.OriginY)+4, float64(bwRS.Width)-8,
+				float64(bwRS.Height)-8)
+			ggCtx.Fill()
+		}
+
+	}
 	// send the frame to glfw window
 	windowRS := g143.RectSpecs{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
 	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
