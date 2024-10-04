@@ -75,26 +75,33 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		CurrentWindowFrame = ggCtx.Image()
 
 	case VAI_AddBtn:
-		if VaiInputsStore["image"] == "" {
-			return
-		}
-
-		if VAI_DurationEnteredTxt == "" {
-			VaiInputsStore["duration"] = "5"
-		} else {
-			VaiInputsStore["duration"] = VAI_DurationEnteredTxt
-			VAI_DurationEnteredTxt = ""
-		}
 
 		if IsUpdateDialog {
-			Instructions[ToUpdateInstrNum] = map[string]string{
-				"kind":     "image",
-				"image":    VaiInputsStore["image"],
-				"duration": VaiInputsStore["duration"],
+			oldInstr := Instructions[ToUpdateInstrNum]
+			if filename, ok := VaiInputsStore["image"]; ok {
+				oldInstr["image"] = filename
+			}
+			if VAI_DurationEnteredTxt != "" {
+				oldInstr["duration"] = VAI_DurationEnteredTxt
+				VAI_DurationEnteredTxt = ""
 			}
 
+			Instructions[ToUpdateInstrNum] = oldInstr
 			IsUpdateDialog = false
+
 		} else {
+
+			if VaiInputsStore["image"] == "" {
+				return
+			}
+
+			if VAI_DurationEnteredTxt == "" {
+				VaiInputsStore["duration"] = "5"
+			} else {
+				VaiInputsStore["duration"] = VAI_DurationEnteredTxt
+				VAI_DurationEnteredTxt = ""
+			}
+
 			Instructions = append(Instructions, map[string]string{
 				"kind":     "image",
 				"image":    VaiInputsStore["image"],
@@ -287,40 +294,51 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		CurrentWindowFrame = ggCtx.Image()
 
 	case VAIS_AddBtn:
-		if VaisInputsStore["image"] == "" {
-			return
-		}
-
-		if VaisInputsStore["audio"] == "" {
-			return
-		}
-
-		if VaisBeginInputEnteredTxt == "" {
-			VaisInputsStore["audio_begin"] = "0:00"
-		} else {
-			VaisInputsStore["audio_begin"] = VaisBeginInputEnteredTxt
-			VaisBeginInputEnteredTxt = ""
-		}
-
-		if VaisEndInputEnteredTxt == "" {
-			VaisInputsStore["audio_end"] = "5"
-		} else {
-			VaisInputsStore["audio_end"] = VaisEndInputEnteredTxt
-			VaisEndInputEnteredTxt = ""
-		}
 
 		if IsUpdateDialog {
-			Instructions[ToUpdateInstrNum] = map[string]string{
-				"kind":        "image",
-				"image":       VaisInputsStore["image"],
-				"audio":       VaisInputsStore["audio"],
-				"audio_begin": VaisInputsStore["audio_begin"],
-				"audio_end":   VaisInputsStore["audio_end"],
+			oldInstr := Instructions[ToUpdateInstrNum]
+			if imagePath, ok := oldInstr["image"]; ok {
+				oldInstr["image"] = imagePath
 			}
+			if audioPath, ok := oldInstr["audio"]; ok {
+				oldInstr["audio"] = audioPath
+			}
+			if VaisBeginInputEnteredTxt != "" {
+				oldInstr["audio_begin"] = VaisBeginInputEnteredTxt
+				VaisBeginInputEnteredTxt = ""
+			}
+
+			if VaisEndInputEnteredTxt != "" {
+				oldInstr["audio_end"] = VaisEndInputEnteredTxt
+				VaisEndInputEnteredTxt = ""
+			}
+			Instructions[ToUpdateInstrNum] = oldInstr
 			ToUpdateInstrNum = 0
 			IsUpdateDialog = false
 
 		} else {
+			if VaisInputsStore["image"] == "" {
+				return
+			}
+
+			if VaisInputsStore["audio"] == "" {
+				return
+			}
+
+			if VaisBeginInputEnteredTxt == "" {
+				VaisInputsStore["audio_begin"] = "0:00"
+			} else {
+				VaisInputsStore["audio_begin"] = VaisBeginInputEnteredTxt
+				VaisBeginInputEnteredTxt = ""
+			}
+
+			if VaisEndInputEnteredTxt == "" {
+				VaisInputsStore["audio_end"] = "5"
+			} else {
+				VaisInputsStore["audio_end"] = VaisEndInputEnteredTxt
+				VaisEndInputEnteredTxt = ""
+			}
+
 			Instructions = append(Instructions, map[string]string{
 				"kind":        "image",
 				"image":       VaisInputsStore["image"],
@@ -546,23 +564,37 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		CurrentWindowFrame = ggCtx.Image()
 
 	case VAV_AddBtn:
-		if VavInputsStore["video"] == "" {
-			return
-		}
 
 		if IsUpdateDialog {
-			Instructions[ToUpdateInstrNum] = map[string]string{
-				"kind":       "video",
-				"video":      VavInputsStore["video"],
-				"begin":      BeginInputEnteredTxt,
-				"end":        EndInputEnteredTxt,
-				"speedup":    strconv.FormatBool(VAV_SpeedUpCheckboxSelected),
-				"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
+			oldInstr := Instructions[ToUpdateInstrNum]
+			if videoPath, ok := oldInstr["video"]; ok {
+				oldInstr["video"] = videoPath
 			}
+			if BeginInputEnteredTxt != "" {
+				oldInstr["begin"] = BeginInputEnteredTxt
+			}
+			if EndInputEnteredTxt != "" {
+				oldInstr["end"] = EndInputEnteredTxt
+			}
+			if oldCBState, ok := oldInstr["speedup"]; ok {
+				if oldCBState != strconv.FormatBool(VAV_SpeedUpCheckboxSelected) {
+					oldInstr["speedup"] = strconv.FormatBool(VAV_SpeedUpCheckboxSelected)
+				}
+			}
+			if oldBWState, ok := oldInstr["blackwhite"]; ok {
+				if oldBWState != strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected) {
+					oldInstr["blackwhite"] = strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected)
+				}
+			}
+			Instructions[ToUpdateInstrNum] = oldInstr
 			ToUpdateInstrNum = 0
 			IsUpdateDialog = false
 
 		} else {
+			if VavInputsStore["video"] == "" {
+				return
+			}
+
 			Instructions = append(Instructions, map[string]string{
 				"kind":       "video",
 				"video":      VavInputsStore["video"],
@@ -571,7 +603,11 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 				"speedup":    strconv.FormatBool(VAV_SpeedUpCheckboxSelected),
 				"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
 			})
+
 		}
+
+		BeginInputEnteredTxt = ""
+		EndInputEnteredTxt = ""
 
 		DrawWorkView(window, TotalPages())
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
