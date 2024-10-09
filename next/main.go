@@ -27,7 +27,7 @@ func main() {
 	window := g143.NewWindow(1200, 800, ProgTitle, false)
 	// DrawBeginView(window)
 	DrawWorkView(window, 1)
-	DrawViewAIS(window, CurrentWindowFrame)
+	DrawViewAddVideo(window, CurrentWindowFrame)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()

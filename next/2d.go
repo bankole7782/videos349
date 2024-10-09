@@ -143,6 +143,28 @@ func (ctx *Ctx) drawFileInput(inputId, originX, originY, inputWidth int, placeho
 	return fIRect
 }
 
+func (ctx *Ctx) drawCheckbox(inputId, originX, originY int, isSelected bool) g143.Rect {
+	width := 30
+	height := 30
+	ctx.ggCtx.SetHexColor(fontColor)
+	ctx.ggCtx.DrawRectangle(float64(originX), float64(originY), float64(width), float64(height))
+	ctx.ggCtx.Fill()
+
+	ctx.ggCtx.SetHexColor("#fff")
+	ctx.ggCtx.DrawRectangle(float64(originX)+2, float64(originY)+2, float64(width)-4, float64(height)-4)
+	ctx.ggCtx.Fill()
+
+	entryRect := g143.Rect{Width: width, Height: height, OriginX: originX, OriginY: originY}
+	(*ctx.ObjCoords)[inputId] = entryRect
+
+	if isSelected {
+		ctx.ggCtx.SetHexColor("#444")
+		ctx.ggCtx.DrawRectangle(float64(originX)+4, float64(originY)+4, float64(width)-8, float64(height)-8)
+		ctx.ggCtx.Fill()
+	}
+	return entryRect
+}
+
 func nextHorizontalCoords(aRect g143.Rect, margin int) (int, int) {
 	nextOriginX := aRect.OriginX + aRect.Width + margin
 	nextOriginY := aRect.OriginY
