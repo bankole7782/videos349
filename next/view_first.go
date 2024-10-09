@@ -24,7 +24,7 @@ func DrawBeginView(window *glfw.Window) {
 	theCtx.ggCtx.DrawString("New Project", 20, 10+30)
 
 	theCtx.ggCtx.LoadFontFace(fontPath, 20)
-	pnIRect := theCtx.drawInput(PROJ_NameInput, 40, 60, 420, "enter project name")
+	pnIRect := theCtx.drawInput(PROJ_NameInput, 40, 60, 420, "enter project name", false)
 	pnBtnX, pnBtnY := nextHorizontalCoords(pnIRect, 30)
 	theCtx.drawButtonA(PROJ_NewProject, pnBtnX, pnBtnY, "New Project", fontColor, "#B3AE97")
 

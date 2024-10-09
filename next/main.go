@@ -25,8 +25,9 @@ func main() {
 	InChannel = make(chan bool)
 
 	window := g143.NewWindow(1200, 800, ProgTitle, false)
-	DrawBeginView(window)
-	// DrawWorkView(window, 1)
+	// DrawBeginView(window)
+	DrawWorkView(window, 1)
+	DrawViewAIS(window, CurrentWindowFrame)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()
