@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
-	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
@@ -38,31 +37,17 @@ func ProjKeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 		NameInputEnteredTxt += glfw.GetKeyName(key, scancode)
 	}
 
-	ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-	// load font
-	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 20)
-	if err != nil {
-		panic(err)
-	}
-
-	nameInputRS := ProjObjCoords[PROJ_NameInput]
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawRectangle(float64(nameInputRS.OriginX+3), float64(nameInputRS.OriginY+3),
-		float64(nameInputRS.Width)-6, float64(nameInputRS.Height)-6)
-	ggCtx.Fill()
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString(NameInputEnteredTxt, float64(nameInputRS.OriginX+25), float64(nameInputRS.OriginY+25))
+	nIRS := ProjObjCoords[PROJ_NameInput]
+	theCtx := Continue2dCtx(CurrentWindowFrame, &ProjObjCoords)
+	theCtx.drawInput(PROJ_NameInput, nIRS.OriginX, nIRS.OriginY, nIRS.Width, NameInputEnteredTxt, true)
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
 	// save the frame
-	CurrentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = theCtx.ggCtx.Image()
 }
 
 func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -79,31 +64,17 @@ func VaikeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 		VAI_DurationEnteredTxt = VAI_DurationEnteredTxt[:len(VAI_DurationEnteredTxt)-1]
 	}
 
-	ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-	// load font
-	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 20)
-	if err != nil {
-		panic(err)
-	}
-
-	durInputRS := VaiObjCoords[VAI_DurInput]
-
-	ggCtx.SetHexColor("#eee")
-	ggCtx.DrawRoundedRectangle(float64(durInputRS.OriginX), float64(durInputRS.OriginY), float64(durInputRS.Width),
-		float64(durInputRS.Height), 10)
-	ggCtx.Fill()
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString(VAI_DurationEnteredTxt, float64(durInputRS.OriginX+10), float64(durInputRS.OriginY)+20)
+	dIRS := VaiObjCoords[VAI_DurInput]
+	theCtx := Continue2dCtx(CurrentWindowFrame, &VaiObjCoords)
+	theCtx.drawInput(VAI_DurInput, dIRS.OriginX, dIRS.OriginY, dIRS.Width, VAI_DurationEnteredTxt, true)
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
 	// save the frame
-	CurrentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = theCtx.ggCtx.Image()
 }
 
 func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -123,31 +94,17 @@ func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 			VaisBeginInputEnteredTxt = VaisBeginInputEnteredTxt[:len(VaisBeginInputEnteredTxt)-1]
 		}
 
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-
-		aBInputRS := VaisObjCoords[VAIS_AudioBeginInput]
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(aBInputRS.OriginX), float64(aBInputRS.OriginY), float64(aBInputRS.Width),
-			float64(aBInputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(VaisBeginInputEnteredTxt, float64(aBInputRS.OriginX+10), float64(aBInputRS.OriginY)+20)
+		aBRect := VaisObjCoords[VAIS_AudioBeginInput]
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VaisObjCoords)
+		theCtx.drawInput(VAIS_AudioBeginInput, aBRect.OriginX, aBRect.OriginY, aBRect.Width, VaisBeginInputEnteredTxt, true)
 
 		// send the frame to glfw window
 		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	} else if VAIS_SelectedInput == VAIS_AudioEndInput {
 		// enforce number types
@@ -159,31 +116,17 @@ func VaiskeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glf
 			VaisEndInputEnteredTxt = VaisEndInputEnteredTxt[:len(VaisEndInputEnteredTxt)-1]
 		}
 
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-
-		aEINputRS := VaisObjCoords[VAIS_AudioEndInput]
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(aEINputRS.OriginX), float64(aEINputRS.OriginY),
-			float64(aEINputRS.Width), float64(aEINputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(VaisEndInputEnteredTxt, float64(aEINputRS.OriginX+10), float64(aEINputRS.OriginY)+20)
+		aEIRect := VaisObjCoords[VAIS_AudioEndInput]
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VaisObjCoords)
+		theCtx.drawInput(VAIS_AudioEndInput, aEIRect.OriginX, aEIRect.OriginY, aEIRect.Width, VaisEndInputEnteredTxt, true)
 
 		// send the frame to glfw window
 		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 	}
 
 }
@@ -196,7 +139,6 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 	wWidth, wHeight := window.GetSize()
 
 	if VAV_SelectedInput == VAV_BeginInput {
-		beginInputRS := VavObjCoords[VAV_BeginInput]
 
 		// enforce number types, semicolon and backspace
 		if IsKeyNumeric(key) {
@@ -207,33 +149,19 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 			BeginInputEnteredTxt = BeginInputEnteredTxt[:len(BeginInputEnteredTxt)-1]
 		}
 
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(beginInputRS.OriginX), float64(beginInputRS.OriginY), float64(beginInputRS.Width),
-			float64(beginInputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(BeginInputEnteredTxt, float64(beginInputRS.OriginX+10), float64(beginInputRS.OriginY)+FontSize)
+		bIRect := VavObjCoords[VAV_BeginInput]
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VavObjCoords)
+		theCtx.drawInput(VAV_BeginInput, bIRect.OriginX, bIRect.OriginY, bIRect.Width, BeginInputEnteredTxt, true)
 
 		// send the frame to glfw window
 		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	} else if VAV_SelectedInput == VAV_EndInput {
-		endInputRS := VavObjCoords[VAV_EndInput]
-
 		// enforce number types, semicolon and backspace
 		if IsKeyNumeric(key) {
 			EndInputEnteredTxt += glfw.GetKeyName(key, scancode)
@@ -243,29 +171,17 @@ func VavkeyCallback(window *glfw.Window, key glfw.Key, scancode int, action glfw
 			EndInputEnteredTxt = EndInputEnteredTxt[:len(EndInputEnteredTxt)-1]
 		}
 
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(endInputRS.OriginX), float64(endInputRS.OriginY), float64(endInputRS.Width),
-			float64(endInputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(EndInputEnteredTxt, float64(endInputRS.OriginX+10), float64(endInputRS.OriginY)+FontSize)
+		eIRect := VavObjCoords[VAV_EndInput]
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VavObjCoords)
+		theCtx.drawInput(VAV_EndInput, eIRect.OriginX, eIRect.OriginY, eIRect.Width, EndInputEnteredTxt, true)
 
 		// send the frame to glfw window
 		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	}
 }

@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	FPS      = 24
-	FontSize = 20
-	PageSize = 20
+	FPS       = 24
+	FontSize  = 20
+	fontColor = "#444"
+	PageSize  = 20
 
 	AddImgBtn      = 101
 	AddImgSoundBtn = 102

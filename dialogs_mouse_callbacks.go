@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	g143 "github.com/bankole7782/graphics143"
-	"github.com/disintegration/imaging"
 	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
@@ -54,25 +53,18 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			return
 		}
 		VaiInputsStore["image"] = filename
+		rootPath, _ := GetRootPath()
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
 
-		// show picked image
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-
-		img, _ := imaging.Open(filename)
-		img = imaging.Fit(img, widgetRS.Width-20, widgetRS.Height-20, imaging.Lanczos)
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY), float64(widgetRS.Width),
-			float64(widgetRS.Height), 10)
-		ggCtx.Fill()
-		ggCtx.DrawImage(img, widgetRS.OriginX+10, widgetRS.OriginY+10)
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VaiObjCoords)
+		theCtx.drawFileInput(VAI_SelectImg, widgetRS.OriginX, widgetRS.OriginY, widgetRS.Width, displayFilename)
 
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAI_AddBtn:
 
@@ -189,25 +181,16 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 			return
 		}
 		VaisInputsStore["image"] = filename
-
-		// show picked image
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-
-		img, _ := imaging.Open(filename)
-		img = imaging.Fit(img, widgetRS.Width-20, widgetRS.Height-20, imaging.Lanczos)
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY), float64(widgetRS.Width),
-			float64(widgetRS.Height), 10)
-		ggCtx.Fill()
-		ggCtx.DrawImage(img, widgetRS.OriginX+10, widgetRS.OriginY+10)
+		displayFilename := strings.ReplaceAll(filename, rootPath, "")
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VaisObjCoords)
+		theCtx.drawFileInput(VAIS_SelectImg, widgetRS.OriginX, widgetRS.OriginY, widgetRS.Width, displayFilename)
 
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAIS_SelectAudio:
 		filename := PickAudioFile()
@@ -216,44 +199,23 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 		}
 		VaisInputsStore["audio"] = filename
 
-		// write audio name
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY),
-			float64(widgetRS.Width), float64(widgetRS.Height), 10)
-		ggCtx.Fill()
-
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VaisObjCoords)
 		displayFilename := strings.ReplaceAll(filename, rootPath, "")
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(displayFilename, float64(widgetRS.OriginX)+10, float64(widgetRS.OriginY)+20)
+		theCtx.drawFileInput(VAIS_SelectAudio, widgetRS.OriginX, widgetRS.OriginY, widgetRS.Width, displayFilename)
 
 		// update end str
 		ffprobe := GetFFPCommand()
-		endInputRS := VaisObjCoords[VAIS_AudioEndInput]
+		eIRect := VaisObjCoords[VAIS_AudioEndInput]
 		videoLength := LengthOfVideo(filename, ffprobe)
 		VaisEndInputEnteredTxt = videoLength
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(endInputRS.OriginX), float64(endInputRS.OriginY),
-			float64(endInputRS.Width), float64(endInputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(videoLength, float64(endInputRS.OriginX)+10, float64(endInputRS.OriginY+FontSize))
+		theCtx.drawInput(VAIS_AudioEndInput, eIRect.OriginX, eIRect.OriginY, eIRect.Width, VaisEndInputEnteredTxt, true)
 
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAIS_AudioBeginInput:
 		VAIS_SelectedInput = VAIS_AudioBeginInput
@@ -428,45 +390,24 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 			return
 		}
 		VavInputsStore["video"] = filename
-
-		// write audio name
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-		// load font
-		fontPath := GetDefaultFontPath()
-		err := ggCtx.LoadFontFace(fontPath, 20)
-		if err != nil {
-			panic(err)
-		}
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(widgetRS.OriginX), float64(widgetRS.OriginY),
-			float64(widgetRS.Width), float64(widgetRS.Height), 10)
-		ggCtx.Fill()
-
 		displayFilename := strings.ReplaceAll(filename, rootPath, "")
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(displayFilename, float64(widgetRS.OriginX+10), float64(widgetRS.OriginY+20))
+
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VavObjCoords)
+		theCtx.drawFileInput(VAV_PickVideo, widgetRS.OriginX, widgetRS.OriginY, widgetRS.Width, displayFilename)
 
 		// update end str
 		ffprobe := GetFFPCommand()
-		endInputRS := VavObjCoords[VAV_EndInput]
+		eIRect := VavObjCoords[VAV_EndInput]
 		videoLength := LengthOfVideo(filename, ffprobe)
 		EndInputEnteredTxt = videoLength
-
-		ggCtx.SetHexColor("#eee")
-		ggCtx.DrawRoundedRectangle(float64(endInputRS.OriginX), float64(endInputRS.OriginY),
-			float64(endInputRS.Width), float64(endInputRS.Height), 10)
-		ggCtx.Fill()
-
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(videoLength, float64(endInputRS.OriginX)+10, float64(endInputRS.OriginY+FontSize))
+		theCtx.drawFileInput(VAV_EndInput, eIRect.OriginX, eIRect.OriginY, eIRect.Width, EndInputEnteredTxt)
 
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAV_BeginInput:
 		VAV_SelectedInput = VAV_BeginInput
@@ -506,62 +447,39 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 		CurrentWindowFrame = ggCtx.Image()
 
 	case VAV_SpeedUpCheckbox:
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
-
-		suRS := VavObjCoords[VAV_SpeedUpCheckbox]
 		if VAV_SpeedUpCheckboxSelected {
-			ggCtx.SetHexColor("#fff")
-			ggCtx.DrawRectangle(float64(suRS.OriginX)+2, float64(suRS.OriginY)+2, float64(suRS.Width)-4,
-				float64(suRS.Height)-4)
-			ggCtx.Fill()
-
 			VAV_SpeedUpCheckboxSelected = false
 		} else {
-
-			ggCtx.SetHexColor("#444")
-			ggCtx.DrawRectangle(float64(suRS.OriginX)+4, float64(suRS.OriginY)+4, float64(suRS.Width)-8,
-				float64(suRS.Height)-8)
-			ggCtx.Fill()
-
 			VAV_SpeedUpCheckboxSelected = true
 		}
 
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VavObjCoords)
+		theCtx.drawCheckbox(VAV_SpeedUpCheckbox, widgetRS.OriginX, widgetRS.OriginY, VAV_SpeedUpCheckboxSelected)
+
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAV_BlackAndWhiteCheckbox:
-		ggCtx := gg.NewContextForImage(CurrentWindowFrame)
 
-		bwRS := VavObjCoords[VAV_BlackAndWhiteCheckbox]
 		if VAV_BlackAndWhiteCheckboxSelected {
-			ggCtx.SetHexColor("#fff")
-			ggCtx.DrawRectangle(float64(bwRS.OriginX)+2, float64(bwRS.OriginY)+2, float64(bwRS.Width)-4,
-				float64(bwRS.Height)-4)
-			ggCtx.Fill()
-
 			VAV_BlackAndWhiteCheckboxSelected = false
 		} else {
-
-			ggCtx.SetHexColor("#444")
-			ggCtx.DrawRectangle(float64(bwRS.OriginX)+4, float64(bwRS.OriginY)+4, float64(bwRS.Width)-8,
-				float64(bwRS.Height)-8)
-			ggCtx.Fill()
-
 			VAV_BlackAndWhiteCheckboxSelected = true
 		}
 
+		theCtx := Continue2dCtx(CurrentWindowFrame, &VavObjCoords)
+		theCtx.drawCheckbox(VAV_BlackAndWhiteCheckbox, widgetRS.OriginX, widgetRS.OriginY, VAV_BlackAndWhiteCheckboxSelected)
+
 		// send the frame to glfw window
-		windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-		g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+		g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), theCtx.windowRect())
 		window.SwapBuffers()
 
 		// save the frame
-		CurrentWindowFrame = ggCtx.Image()
+		CurrentWindowFrame = theCtx.ggCtx.Image()
 
 	case VAV_AddBtn:
 

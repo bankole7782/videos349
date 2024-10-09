@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	g143 "github.com/bankole7782/graphics143"
-	"github.com/fogleman/gg"
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
@@ -13,98 +12,55 @@ func DrawBeginView(window *glfw.Window) {
 	ProjObjCoords = make(map[int]g143.Rect)
 	wWidth, wHeight := window.GetSize()
 
-	// frame buffer
-	ggCtx := gg.NewContext(wWidth, wHeight)
+	theCtx := New2dCtx(wWidth, wHeight, &ProjObjCoords)
 
-	// background rectangle
-	ggCtx.DrawRectangle(0, 0, float64(wWidth), float64(wHeight))
-	ggCtx.SetHexColor("#ffffff")
-	ggCtx.Fill()
-
-	// load font
 	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 30)
-	if err != nil {
-		panic(err)
-	}
+	theCtx.ggCtx.LoadFontFace(fontPath, 30)
 
-	// first column
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("New Project", 30, 30+30)
+	theCtx.ggCtx.SetHexColor(fontColor)
+	theCtx.ggCtx.DrawString("New Project", 20, 10+30)
 
-	// project name input
-	ggCtx.LoadFontFace(fontPath, 20)
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawRectangle(30, 90, 420, 40)
-	ggCtx.Fill()
-	pniRS := g143.NewRect(30, 90, 420, 40)
-	ProjObjCoords[PROJ_NameInput] = pniRS
+	theCtx.ggCtx.LoadFontFace(fontPath, 20)
+	pnIRect := theCtx.drawInput(PROJ_NameInput, 40, 60, 420, "enter project name", false)
+	pnBtnX, pnBtnY := nextHorizontalCoords(pnIRect, 30)
+	theCtx.drawButtonA(PROJ_NewProject, pnBtnX, pnBtnY, "New Project", fontColor, "#B3AE97")
 
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawRectangle(33, 93, 420-6, 40-6)
-	ggCtx.Fill()
+	// second row border
+	_, borderY := nextVerticalCoords(pnIRect, 10)
+	theCtx.ggCtx.SetHexColor("#999")
+	theCtx.ggCtx.DrawRoundedRectangle(10, float64(borderY), float64(wWidth)-20, 2, 2)
+	theCtx.ggCtx.Fill()
 
-	// placeholder
-	ggCtx.SetHexColor("#aaa")
-	ggCtx.DrawString("enter project name", 38, 95+FontSize)
-
-	npStr := "New Project"
-	npStrW, _ := ggCtx.MeasureString(npStr)
-	npBtnW := npStrW + 40
-	ggCtx.SetHexColor("#B3AE97")
-	ggCtx.DrawRectangle(200, 140, npBtnW, 50)
-	ggCtx.Fill()
-	ProjObjCoords[PROJ_NewProject] = g143.NewRect(200, 140, int(npBtnW), 50)
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString(npStr, 200+20, 150+20)
-
-	// second column
-	ggCtx.SetHexColor("#999")
-	ggCtx.DrawRoundedRectangle(500, 30, 4, 700, 2)
-	ggCtx.Fill()
-
-	ggCtx.LoadFontFace(fontPath, 40)
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("Continue Projects", 550, 30+30)
-
-	ggCtx.SetHexColor("#444")
-	ggCtx.LoadFontFace(fontPath, 20)
+	theCtx.ggCtx.LoadFontFace(fontPath, 30)
+	theCtx.ggCtx.SetHexColor(fontColor)
+	theCtx.ggCtx.DrawString("Continue Projects", 20, float64(borderY)+12+30)
+	theCtx.ggCtx.LoadFontFace(fontPath, 20)
 
 	projectFiles := GetProjectFiles()
-	currentX := 550
-	currentY := 60
+	currentX := 40
+	currentY := borderY + 22 + 30 + 10
 	for i, pf := range projectFiles {
-		pfStrW, _ := ggCtx.MeasureString(pf.Name)
 
-		ggCtx.SetHexColor("#5F699F")
-		ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, pfStrW+20, FontSize+10)
-		ggCtx.Fill()
+		btnId := 1000 + (i + 1)
+		pfRect := theCtx.drawButtonA(btnId, currentX, currentY, pf.Name, "#fff", "#5F699F")
 
-		pfRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
-			Width: int(pfStrW) + 20, Height: FontSize + 10}
-		ProjObjCoords[1000+(i+1)] = pfRS
-
-		ggCtx.SetHexColor("#fff")
-		ggCtx.DrawString(pf.Name, float64(currentX)+10, float64(currentY)+FontSize+30)
-
-		newX := currentX + int(pfStrW) + 30
-		if newX > (wWidth - int(pfStrW)) {
-			currentY += 40
-			currentX = 550
+		newX := currentX + pfRect.Width + 10
+		if newX > (wWidth - pfRect.Width) {
+			currentY += 50
+			currentX = 40
 		} else {
-			currentX += int(pfStrW) + 20 + 10
+			currentX += pfRect.Width + 10
 		}
 
 	}
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
 	// save the frame
-	CurrentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = theCtx.ggCtx.Image()
 }
 
 func DrawWorkView(window *glfw.Window, page int) {
@@ -115,166 +71,52 @@ func DrawWorkView(window *glfw.Window, page int) {
 	ObjCoords = make(map[int]g143.Rect)
 
 	wWidth, wHeight := window.GetSize()
+	theCtx := New2dCtx(wWidth, wHeight, &ObjCoords)
 
-	// frame buffer
-	ggCtx := gg.NewContext(wWidth, wHeight)
+	// draw top buttons
+	aIBRect := theCtx.drawButtonB(AddImgBtn, 50, 10, "Add Image", "#fff", "#5C909C", "#286775")
+	aISX, aISY := nextHorizontalCoords(aIBRect, 10)
+	aIBSRect := theCtx.drawButtonB(AddImgSoundBtn, aISX, aISY, "Add Image + Audio", "#fff", "#5C909C", "#286775")
+	aVBX, aVBY := nextHorizontalCoords(aIBSRect, 10)
+	aVBRect := theCtx.drawButtonB(AddVidBtn, aVBX, aVBY, "Add Video", "#fff", "#81577F", "#633260")
+	oDBX, oDBY := nextHorizontalCoords(aVBRect, 10)
+	oDBRect := theCtx.drawButtonB(OpenWDBtn, oDBX, oDBY, "Open Working Directory", "#fff", "#56845A", "#56845A")
+	rBX, rBY := nextHorizontalCoords(oDBRect, 10)
+	theCtx.drawButtonB(RenderBtn, rBX, rBY, "Render", "#fff", "#B19644", "#DECC6E")
 
-	// background rectangle
-	ggCtx.DrawRectangle(0, 0, float64(wWidth), float64(wHeight))
-	ggCtx.SetHexColor("#ffffff")
-	ggCtx.Fill()
-
-	// // intro text
-	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 20)
-	if err != nil {
-		panic(err)
-	}
-
-	// add image button
-	addImgStr := "Add Image"
-	addImgStrWidth, addImgStrHeight := ggCtx.MeasureString(addImgStr)
-	addImgBtnWidth := addImgStrWidth + 80
-	addImgBtnHeight := addImgStrHeight + 30
-	ggCtx.SetHexColor("#5C909C")
-	ggCtx.DrawRectangle(10, 10, addImgBtnWidth, addImgBtnHeight)
-	ggCtx.Fill()
-
-	addImgBtnRS := g143.Rect{Width: int(addImgBtnWidth), Height: int(addImgBtnHeight),
-		OriginX: 10, OriginY: 10}
-	ObjCoords[AddImgBtn] = addImgBtnRS
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(addImgStr, 30, 10+addImgStrHeight+15)
-
-	ggCtx.SetHexColor("#286775")
-	ggCtx.DrawCircle(10+addImgBtnWidth-40, 10+addImgBtnHeight/2, 10)
-	ggCtx.Fill()
-
-	// Add Image + Audio Button
-	aisStr := "Add Image + Audio"
-	aisStrWidth, aisStrHeight := ggCtx.MeasureString(aisStr)
-	aisBtnWidth := aisStrWidth + 80
-	aisBtnHeight := aisStrHeight + 30
-	ggCtx.SetHexColor("#5C909C")
-	aisBtnOriginX := float64(addImgBtnRS.Width+addImgBtnRS.OriginX) + 10 // gutter
-	ggCtx.DrawRectangle(aisBtnOriginX, 10, aisBtnWidth, aisBtnHeight)
-	ggCtx.Fill()
-
-	aisBtnRS := g143.Rect{Width: int(aisBtnWidth), Height: int(aisBtnHeight),
-		OriginX: int(aisBtnOriginX), OriginY: 10}
-	ObjCoords[AddImgSoundBtn] = aisBtnRS
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(aisStr, 30+float64(aisBtnRS.OriginX), 10+addImgStrHeight+15)
-
-	ggCtx.SetHexColor("#286775")
-	ggCtx.DrawCircle(float64(aisBtnRS.OriginX)+aisBtnWidth-30, 10+aisBtnHeight/2, 10)
-	ggCtx.Fill()
-
-	// Add Video Button
-	addVidStr := "Add Video"
-	addVidStrWidth, addVidStrHeight := ggCtx.MeasureString(addVidStr)
-	addVidBtnWidth := addVidStrWidth + 80
-	addVidBtnHeight := addVidStrHeight + 30
-	ggCtx.SetHexColor("#81577F")
-	addVidBtnOriginX := float64(aisBtnRS.Width+aisBtnRS.OriginX) + 10 // gutter
-	ggCtx.DrawRectangle(addVidBtnOriginX, 10, addVidBtnWidth, addVidBtnHeight)
-	ggCtx.Fill()
-
-	addVidBtnRS := g143.Rect{Width: int(addVidBtnWidth), Height: int(addVidBtnHeight),
-		OriginX: int(addVidBtnOriginX), OriginY: 10}
-	ObjCoords[AddVidBtn] = addVidBtnRS
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(addVidStr, 30+float64(addVidBtnRS.OriginX), 10+addImgStrHeight+15)
-
-	ggCtx.SetHexColor("#633260")
-	ggCtx.DrawCircle(float64(addVidBtnRS.OriginX)+addVidBtnWidth-30, 10+addVidBtnHeight/2, 10)
-	ggCtx.Fill()
-
-	// Open Working Directory button
-	owdStr := "Open Working Directory"
-	owdStrWidth, owdStrHeight := ggCtx.MeasureString(owdStr)
-	openWDBtnWidth := owdStrWidth + 60
-	openWDBtnHeight := owdStrHeight + 30
-	ggCtx.SetHexColor("#56845A")
-	openWDBtnOriginX := float64(addVidBtnRS.OriginX+addVidBtnRS.Width) + 40
-	ggCtx.DrawRectangle(openWDBtnOriginX, 10, openWDBtnWidth, openWDBtnHeight)
-	ggCtx.Fill()
-
-	openWDBtnRS := g143.Rect{Width: int(openWDBtnWidth), Height: int(openWDBtnHeight),
-		OriginX: int(openWDBtnOriginX), OriginY: 10}
-	ObjCoords[OpenWDBtn] = openWDBtnRS
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(owdStr, 30+float64(openWDBtnRS.OriginX), 10+owdStrHeight+15)
-
-	// Render button
-	rbStr := "Render Video"
-	rbStrW, rbStrH := ggCtx.MeasureString(rbStr)
-	renderBtnW := rbStrW + 60
-	renderBtnH := rbStrH + 30
-	ggCtx.SetHexColor("#B19644")
-	renderBtnX := openWDBtnRS.OriginX + openWDBtnRS.Width + 20
-	ggCtx.DrawRectangle(float64(renderBtnX), 10, renderBtnW, renderBtnH)
-	ggCtx.Fill()
-
-	rbRS := g143.Rect{OriginX: renderBtnX, OriginY: 10, Width: int(renderBtnW),
-		Height: int(renderBtnH)}
-	ObjCoords[RenderBtn] = rbRS
-
-	ggCtx.SetHexColor("#fff")
-	ggCtx.DrawString(rbStr, float64(rbRS.OriginX)+30, 10+rbStrH+15)
 	// draw end of topbar demarcation
-	ggCtx.SetHexColor("#999")
-	ggCtx.DrawRectangle(10, float64(openWDBtnRS.OriginY+openWDBtnRS.Height+10), float64(wWidth)-20, 3)
-	ggCtx.Fill()
+	_, demarcY := nextVerticalCoords(oDBRect, 10)
+	theCtx.ggCtx.SetHexColor("#aaa")
+	theCtx.ggCtx.DrawRectangle(10, float64(demarcY), float64(wWidth)-20, 3)
+	theCtx.ggCtx.Fill()
 
-	currentY := openWDBtnRS.OriginY + openWDBtnRS.Height + 10 + 10
-	currentX := 20
 	// show instructions
+	currentY := demarcY + 10
+	currentX := 10
 	shortInstrs := GetPageInstructions(page)
 	for j, instr := range shortInstrs {
 		// for i, instr := range Instructions {
 		i := (PageSize * (page - 1)) + j
 		kStr := strconv.Itoa(i+1) + "  [" + instr["kind"] + "]"
-		kStrW, _ := ggCtx.MeasureString(kStr)
+		kStrW, _ := theCtx.ggCtx.MeasureString(kStr)
 
-		ggCtx.SetHexColor("#444")
-		ggCtx.DrawString(kStr, float64(currentX), float64(currentY)+FontSize)
+		theCtx.ggCtx.SetHexColor("#444")
+		theCtx.ggCtx.DrawString(kStr, float64(currentX), float64(currentY)+FontSize)
 
-		ggCtx.SetHexColor("#5A8A5E")
-		ggCtx.DrawRectangle(float64(currentX)+kStrW+50, float64(currentY), FontSize, FontSize)
-		ggCtx.Fill()
-		editRS := g143.NewRect(currentX+int(kStrW)+50, currentY, FontSize, FontSize)
-		ObjCoords[4000+(i+1)] = editRS
+		eBtnId := 4000 + (i + 1)
+		editBtnX := currentX + int(kStrW) + 50
+		eDBRect := theCtx.drawButtonC(eBtnId, editBtnX, currentY, "#5A8A5E")
+		delBtnX, _ := nextHorizontalCoords(eDBRect, 10)
+		delBtnId := 5000 + (i + 1)
+		theCtx.drawButtonC(delBtnId, delBtnX, currentY, "#A84E4E")
 
-		ggCtx.SetHexColor("#A84E4E")
-		ggCtx.DrawRectangle(float64(currentX)+kStrW+50+30, float64(currentY), FontSize, FontSize)
-		ggCtx.Fill()
-		delRS := g143.NewRect(currentX+int(kStrW)+50+30, currentY, FontSize, FontSize)
-		ObjCoords[5000+(i+1)] = delRS
-
-		viaStr := "View Image Asset #" + strconv.Itoa(i+1)
-		viaStrW, _ := ggCtx.MeasureString(viaStr)
-
+		vBtnW := 0
 		if instr["kind"] == "image" {
-			// view image asset
-			viaStr = "View Image Asset #" + strconv.Itoa(i+1)
-			viaStrW, _ := ggCtx.MeasureString(viaStr)
-
-			ggCtx.SetHexColor("#5F699F")
-			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
-			ggCtx.Fill()
-
-			viabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
-				Width: int(viaStrW) + 20, Height: FontSize + 10}
-			ObjCoords[1000+(i+1)] = viabRS
-
-			ggCtx.SetHexColor("#fff")
-			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+FontSize+30)
-
+			viaStr := "View Image Asset #" + strconv.Itoa(i+1)
+			vBtnId := 1000 + (i + 1)
+			vBtnRect := theCtx.drawButtonA(vBtnId, currentX, currentY+30, viaStr, "#fff", "#5F699F")
+			vBtnW = vBtnRect.Width
+			_, durStrY := nextVerticalCoords(vBtnRect, 5)
 			// duration
 			var durStr string
 			if _, ok := instr["audio"]; ok {
@@ -283,69 +125,52 @@ func DrawWorkView(window *glfw.Window, page int) {
 				durStr = "duration: " + instr["duration"]
 			}
 
-			ggCtx.SetHexColor("#444")
-			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
+			theCtx.ggCtx.SetHexColor("#444")
+			theCtx.ggCtx.DrawString(durStr, float64(currentX), float64(durStrY)+FontSize)
 
 			// view audio asset
 			if _, ok := instr["audio"]; ok && instr["audio"] != "" {
+				vaaBtnId := 2000 + (i + 1)
 				vaaStr := "View Audio Asset #" + strconv.Itoa(i+1)
-				vaaStrW, _ := ggCtx.MeasureString(vaaStr)
-				ggCtx.SetHexColor("#74A299")
-
-				ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30+65, vaaStrW+20, FontSize+10)
-				ggCtx.Fill()
-				vaabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30 + 65,
-					Width: int(vaaStrW) + 20, Height: FontSize + 10}
-				ObjCoords[2000+(i+1)] = vaabRS
-
-				ggCtx.SetHexColor("#fff")
-				ggCtx.DrawString(vaaStr, float64(currentX)+10, float64(currentY)+FontSize+30+65)
+				vaaY := durStrY + FontSize + 10
+				theCtx.drawButtonA(vaaBtnId, currentX, vaaY, vaaStr, "#fff", "#74A299")
 			}
 
 		} else if instr["kind"] == "video" {
-			// view video asset
-			viaStr = "View Video Asset #" + strconv.Itoa(i+1)
-			viaStrW, _ := ggCtx.MeasureString(viaStr)
-
-			ggCtx.SetHexColor("#5F699F")
-			ggCtx.DrawRectangle(float64(currentX), float64(currentY)+30, viaStrW+20, FontSize+10)
-			ggCtx.Fill()
-			vvabRS := g143.Rect{OriginX: currentX, OriginY: currentY + 30,
-				Width: int(viaStrW) + 20, Height: FontSize + 10}
-			ObjCoords[3000+(i+1)] = vvabRS
-
-			ggCtx.SetHexColor("#fff")
-			ggCtx.DrawString(viaStr, float64(currentX)+10, float64(currentY)+FontSize+30)
+			viaStr := "View Video Asset #" + strconv.Itoa(i+1)
+			vVBtnId := 3000 + (i + 1)
+			vVBtnRect := theCtx.drawButtonA(vVBtnId, currentX, currentY+30, viaStr, "#fff", "#5F699F")
+			vBtnW = vVBtnRect.Width
 
 			// duration
 			durStr := "begin: " + instr["begin"] + " | end: " + instr["end"]
-			ggCtx.SetHexColor("#444")
-			ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
+			theCtx.ggCtx.SetHexColor("#444")
+			theCtx.ggCtx.DrawString(durStr, float64(currentX), float64(currentY)+FontSize+30+15+FontSize)
 		}
 
-		newX := currentX + int(viaStrW) + 20
-		if newX > (wWidth - int(viaStrW)) {
+		newX := currentX + vBtnW + 10
+		if newX > (wWidth - vBtnW) {
 			currentY += 160
 			currentX = 20
 		} else {
-			currentX += int(viaStrW) + 20 + 10
+			currentX += vBtnW + 20
 		}
 	}
 
 	// draw our site below
-	ggCtx.SetHexColor("#444")
+	theCtx.ggCtx.SetHexColor("#444")
 	msg := fmt.Sprintf("VideoLength: %s  Total Pages: %d  Current Page: %d", TotalVideoLength(), TotalPages(), CurrentPage)
-	fromAddrWidth, fromAddrHeight := ggCtx.MeasureString(msg)
+	fromAddrWidth, fromAddrHeight := theCtx.ggCtx.MeasureString(msg)
 	fromAddrOriginX := (wWidth - int(fromAddrWidth)) / 2
-	ggCtx.DrawString(msg, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
+	theCtx.ggCtx.DrawString(msg, float64(fromAddrOriginX), float64(wHeight-int(fromAddrHeight)))
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}
-	g143.DrawImage(wWidth, wHeight, ggCtx.Image(), windowRS)
+	g143.DrawImage(wWidth, wHeight, theCtx.ggCtx.Image(), windowRS)
 	window.SwapBuffers()
 
 	// save the frame
-	CurrentWindowFrame = ggCtx.Image()
+	CurrentWindowFrame = theCtx.ggCtx.Image()
 }
 
 var scrollEventCount = 0
