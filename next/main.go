@@ -25,9 +25,7 @@ func main() {
 	InChannel = make(chan bool)
 
 	window := g143.NewWindow(1200, 800, ProgTitle, false)
-	// DrawBeginView(window)
-	DrawWorkView(window, 1)
-	DrawViewAddVideo(window, CurrentWindowFrame)
+	DrawBeginView(window)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()
@@ -40,11 +38,11 @@ func main() {
 	}()
 
 	// respond to the mouse
-	// window.SetMouseButtonCallback(projViewMouseCallback)
+	window.SetMouseButtonCallback(projViewMouseCallback)
 	// respond to the keyboard
-	// window.SetKeyCallback(ProjKeyCallback)
+	window.SetKeyCallback(ProjKeyCallback)
 	// save the project file
-	// window.SetCloseCallback(SaveProjectCloseCallback)
+	window.SetCloseCallback(SaveProjectCloseCallback)
 	// quick hover effect
 	window.SetCursorPosCallback(getHoverCB(ProjObjCoords))
 
@@ -52,19 +50,19 @@ func main() {
 		t := time.Now()
 		glfw.PollEvents()
 
-		// if ClearAfterRender {
-		// 	// clear the UI and redraw
-		// 	// Instructions = make([]map[string]string, 0)
-		// 	DrawWorkView(window, 1)
-		// 	DrawEndRenderView(window, CurrentWindowFrame)
-		// 	time.Sleep(5 * time.Second)
-		// 	DrawWorkView(window, 1)
-		// 	// register the ViewMain mouse callback
-		// 	window.SetMouseButtonCallback(workViewMouseBtnCallback)
-		// 	// quick hover effect
-		// 	window.SetCursorPosCallback(getHoverCB(ObjCoords))
-		// 	ClearAfterRender = false
-		// }
+		if ClearAfterRender {
+			// clear the UI and redraw
+			// Instructions = make([]map[string]string, 0)
+			DrawWorkView(window, 1)
+			DrawEndRenderView(window, CurrentWindowFrame)
+			time.Sleep(5 * time.Second)
+			DrawWorkView(window, 1)
+			// register the ViewMain mouse callback
+			window.SetMouseButtonCallback(workViewMouseBtnCallback)
+			// quick hover effect
+			window.SetCursorPosCallback(getHoverCB(ObjCoords))
+			ClearAfterRender = false
+		}
 
 		time.Sleep(time.Second/time.Duration(FPS) - time.Since(t))
 	}

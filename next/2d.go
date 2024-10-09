@@ -11,7 +11,6 @@ type Ctx struct {
 	WindowWidth  int
 	WindowHeight int
 	ggCtx        *gg.Context
-	OldFrame     image.Image
 	ObjCoords    *map[int]g143.Rect
 }
 
@@ -163,6 +162,10 @@ func (ctx *Ctx) drawCheckbox(inputId, originX, originY int, isSelected bool) g14
 		ctx.ggCtx.Fill()
 	}
 	return entryRect
+}
+
+func (ctx *Ctx) windowRect() g143.Rect {
+	return g143.NewRect(0, 0, ctx.WindowWidth, ctx.WindowHeight)
 }
 
 func nextHorizontalCoords(aRect g143.Rect, margin int) (int, int) {

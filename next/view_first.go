@@ -1,10 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strconv"
 
 	g143 "github.com/bankole7782/graphics143"
@@ -93,15 +90,6 @@ func DrawWorkView(window *glfw.Window, page int) {
 	theCtx.ggCtx.DrawRectangle(10, float64(demarcY), float64(wWidth)-20, 3)
 	theCtx.ggCtx.Fill()
 
-	// load instructions
-	obj := make([]map[string]string, 0)
-	rootPath, _ := GetRootPath()
-	inPath := filepath.Join(rootPath, ProjectName)
-	rawBytes, _ := os.ReadFile(inPath)
-	json.Unmarshal(rawBytes, &obj)
-
-	Instructions = append(Instructions, obj...)
-
 	// show instructions
 	currentY := demarcY + 10
 	currentX := 10
@@ -126,9 +114,9 @@ func DrawWorkView(window *glfw.Window, page int) {
 		if instr["kind"] == "image" {
 			viaStr := "View Image Asset #" + strconv.Itoa(i+1)
 			vBtnId := 1000 + (i + 1)
-			vBtnRect := theCtx.drawButtonA(vBtnId, currentX, currentY, viaStr, "#fff", "#5F699F")
+			vBtnRect := theCtx.drawButtonA(vBtnId, currentX, currentY+30, viaStr, "#fff", "#5F699F")
 			vBtnW = vBtnRect.Width
-			_, durStrY := nextVerticalCoords(vBtnRect, 10)
+			_, durStrY := nextVerticalCoords(vBtnRect, 5)
 			// duration
 			var durStr string
 			if _, ok := instr["audio"]; ok {

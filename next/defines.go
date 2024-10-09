@@ -50,11 +50,10 @@ var (
 	ObjCoords          map[int]g143.Rect
 	CurrentWindowFrame image.Image
 	Instructions       []map[string]string
-	// ProjectName        string
-	ProjectName      string = "1. talks.v3p"
-	ToUpdateInstrNum int    // for updating an instruction
-	IsUpdateDialog   bool
-	CurrentPage      int
+	ProjectName        string
+	ToUpdateInstrNum   int // for updating an instruction
+	IsUpdateDialog     bool
+	CurrentPage        int
 
 	// tmpFrame image.Image
 	InChannel        chan bool
