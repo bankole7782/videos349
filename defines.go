@@ -55,6 +55,9 @@ var (
 	IsUpdateDialog     bool
 	CurrentPage        int
 
+	ToInsertBefore       int // for inbetween dialogs
+	IsInsertBeforeDialog bool
+
 	// tmpFrame image.Image
 	InChannel        chan bool
 	ClearAfterRender bool

@@ -97,6 +97,19 @@ func DrawWorkView(window *glfw.Window, page int) {
 	for j, instr := range shortInstrs {
 		// for i, instr := range Instructions {
 		i := (PageSize * (page - 1)) + j
+
+		// inbetween buttons
+		iAIBtnId := 6000 + (i + 1)
+		iAIBtnRect := theCtx.drawButtonC(iAIBtnId, currentX, currentY+20, "#5C909C")
+		_, iAISBtnY := nextVerticalCoords(iAIBtnRect, 10)
+		iAISBtnId := 7000 + (i + 1)
+		iAISBtnRect := theCtx.drawButtonC(iAISBtnId, currentX, iAISBtnY, "#5C909C")
+		iAVBtnId := 8000 + (i + 1)
+		_, iAVBtnY := nextVerticalCoords(iAISBtnRect, 10)
+		theCtx.drawButtonC(iAVBtnId, currentX, iAVBtnY, "#81577F")
+
+		currentX += 40
+
 		kStr := strconv.Itoa(i+1) + "  [" + instr["kind"] + "]"
 		kStrW, _ := theCtx.ggCtx.MeasureString(kStr)
 

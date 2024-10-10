@@ -1,6 +1,7 @@
 package main
 
 import (
+	"slices"
 	"strconv"
 	"strings"
 
@@ -94,11 +95,22 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 				VAI_DurationEnteredTxt = ""
 			}
 
-			Instructions = append(Instructions, map[string]string{
-				"kind":     "image",
-				"image":    VaiInputsStore["image"],
-				"duration": VaiInputsStore["duration"],
-			})
+			if IsInsertBeforeDialog {
+				item := map[string]string{
+					"kind":     "image",
+					"image":    VaiInputsStore["image"],
+					"duration": VaiInputsStore["duration"],
+				}
+				Instructions = slices.Insert(Instructions, ToInsertBefore, item)
+				IsInsertBeforeDialog = false
+			} else {
+				Instructions = append(Instructions, map[string]string{
+					"kind":     "image",
+					"image":    VaiInputsStore["image"],
+					"duration": VaiInputsStore["duration"],
+				})
+
+			}
 
 		}
 
@@ -301,13 +313,26 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 				VaisEndInputEnteredTxt = ""
 			}
 
-			Instructions = append(Instructions, map[string]string{
-				"kind":        "image",
-				"image":       VaisInputsStore["image"],
-				"audio":       VaisInputsStore["audio"],
-				"audio_begin": VaisInputsStore["audio_begin"],
-				"audio_end":   VaisInputsStore["audio_end"],
-			})
+			if IsInsertBeforeDialog {
+				item := map[string]string{
+					"kind":        "image",
+					"image":       VaisInputsStore["image"],
+					"audio":       VaisInputsStore["audio"],
+					"audio_begin": VaisInputsStore["audio_begin"],
+					"audio_end":   VaisInputsStore["audio_end"],
+				}
+				Instructions = slices.Insert(Instructions, ToInsertBefore, item)
+				IsInsertBeforeDialog = false
+			} else {
+				Instructions = append(Instructions, map[string]string{
+					"kind":        "image",
+					"image":       VaisInputsStore["image"],
+					"audio":       VaisInputsStore["audio"],
+					"audio_begin": VaisInputsStore["audio_begin"],
+					"audio_end":   VaisInputsStore["audio_end"],
+				})
+
+			}
 
 		}
 
@@ -513,14 +538,28 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 				return
 			}
 
-			Instructions = append(Instructions, map[string]string{
-				"kind":       "video",
-				"video":      VavInputsStore["video"],
-				"begin":      BeginInputEnteredTxt,
-				"end":        EndInputEnteredTxt,
-				"speedup":    strconv.FormatBool(VAV_SpeedUpCheckboxSelected),
-				"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
-			})
+			if IsInsertBeforeDialog {
+				item := map[string]string{
+					"kind":       "video",
+					"video":      VavInputsStore["video"],
+					"begin":      BeginInputEnteredTxt,
+					"end":        EndInputEnteredTxt,
+					"speedup":    strconv.FormatBool(VAV_SpeedUpCheckboxSelected),
+					"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
+				}
+				Instructions = slices.Insert(Instructions, ToInsertBefore, item)
+				IsInsertBeforeDialog = false
+			} else {
+				Instructions = append(Instructions, map[string]string{
+					"kind":       "video",
+					"video":      VavInputsStore["video"],
+					"begin":      BeginInputEnteredTxt,
+					"end":        EndInputEnteredTxt,
+					"speedup":    strconv.FormatBool(VAV_SpeedUpCheckboxSelected),
+					"blackwhite": strconv.FormatBool(VAV_BlackAndWhiteCheckboxSelected),
+				})
+
+			}
 
 		}
 

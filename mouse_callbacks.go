@@ -183,7 +183,7 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 			window.SetCursorPosCallback(getHoverCB(VavObjCoords))
 
 		}
-	} else if widgetCode > 5000 {
+	} else if widgetCode > 5000 && widgetCode < 6000 {
 		// delete from instructions slice
 		instrNum := widgetCode - 5000 - 1
 		Instructions = slices.Delete(Instructions, instrNum, instrNum+1)
@@ -191,6 +191,33 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		ObjCoords = make(map[int]g143.Rect)
 		DrawWorkView(window, CurrentPage)
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
+	} else if widgetCode > 6000 && widgetCode < 7000 {
+		instrNum := widgetCode - 6000 - 1
+		IsInsertBeforeDialog = true
+		ToInsertBefore = instrNum
+
+		DrawViewAddImage(window, CurrentWindowFrame)
+		window.SetMouseButtonCallback(viewAddImageMouseCallback)
+		window.SetKeyCallback(VaikeyCallback)
+		window.SetCursorPosCallback(getHoverCB(VaiObjCoords))
+	} else if widgetCode > 7000 && widgetCode < 8000 {
+		instrNum := widgetCode - 7000 - 1
+		IsInsertBeforeDialog = true
+		ToInsertBefore = instrNum
+
+		DrawViewAIS(window, CurrentWindowFrame)
+		window.SetMouseButtonCallback(viewAISMouseCallback)
+		window.SetKeyCallback(VaiskeyCallback)
+		window.SetCursorPosCallback(getHoverCB(VaisObjCoords))
+	} else if widgetCode > 8000 && widgetCode < 9000 {
+		instrNum := widgetCode - 8000 - 1
+		IsInsertBeforeDialog = true
+		ToInsertBefore = instrNum
+
+		DrawViewAddVideo(window, CurrentWindowFrame)
+		window.SetMouseButtonCallback(viewAddVideoMouseCallback)
+		window.SetKeyCallback(VavkeyCallback)
+		window.SetCursorPosCallback(getHoverCB(VavObjCoords))
 	}
 
 }
