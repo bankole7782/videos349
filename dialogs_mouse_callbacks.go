@@ -40,6 +40,9 @@ func viewAddImageMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case VAI_CloseBtn:
+		IsUpdateDialog = false
+		IsInsertBeforeDialog = false
+
 		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
@@ -179,6 +182,9 @@ func viewAISMouseCallback(window *glfw.Window, button glfw.MouseButton, action g
 
 	switch widgetCode {
 	case VAIS_CloseBtn:
+		IsUpdateDialog = false
+		IsInsertBeforeDialog = false
+
 		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
@@ -401,6 +407,9 @@ func viewAddVideoMouseCallback(window *glfw.Window, button glfw.MouseButton, act
 
 	switch widgetCode {
 	case VAV_CloseBtn:
+		IsUpdateDialog = false
+		IsInsertBeforeDialog = false
+
 		DrawWorkView(window, CurrentPage)
 		// register the ViewMain mouse callback
 		window.SetMouseButtonCallback(workViewMouseBtnCallback)
