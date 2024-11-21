@@ -18,6 +18,7 @@ func main() {
 
 	outPath := filepath.Join(rootPath, "renders")
 	os.MkdirAll(outPath, 0777)
+	os.MkdirAll(filepath.Join(rootPath, "errors"), 0777)
 
 	runtime.LockOSThread()
 
@@ -32,7 +33,11 @@ func main() {
 	go func() {
 		for {
 			<-InChannel
-			Render(Instructions, ffmpegPath, ffprobePath)
+			_, err := Render(Instructions, ffmpegPath, ffprobePath)
+			if err != nil {
+				RenderErrorHappened = true
+				RenderErrorMsg = err.Error()
+			}
 			ClearAfterRender = true
 		}
 	}()
@@ -50,7 +55,20 @@ func main() {
 		t := time.Now()
 		glfw.PollEvents()
 
-		if ClearAfterRender {
+		if ClearAfterRender && RenderErrorHappened {
+			DrawWorkView(window, 1)
+			DrawEndRenderView(window, CurrentWindowFrame)
+
+			time.Sleep(15 * time.Second)
+			DrawWorkView(window, 1)
+			// register the ViewMain mouse callback
+			window.SetMouseButtonCallback(workViewMouseBtnCallback)
+			// quick hover effect
+			window.SetCursorPosCallback(getHoverCB(ObjCoords))
+			ClearAfterRender = false
+			RenderErrorHappened = false
+
+		} else if ClearAfterRender {
 			// clear the UI and redraw
 			// Instructions = make([]map[string]string, 0)
 			DrawWorkView(window, 1)

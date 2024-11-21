@@ -10,9 +10,10 @@ import (
 	"time"
 
 	"github.com/disintegration/imaging"
+	"github.com/pkg/errors"
 )
 
-func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
+func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, error) {
 	rootPath, _ := GetRootPath()
 
 	defer func() {
@@ -44,27 +45,25 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 			for seconds := 0; seconds < endSeconds; seconds++ {
 				img, err := imaging.Open(instructionDesc["image"])
 				if err != nil {
-					panic(err)
+					return "", errors.New(err.Error())
 				}
 				outPath := filepath.Join(tmpFramesPath, strconv.Itoa(seconds)+".png")
 				imaging.Save(img, outPath)
 			}
 
 			tmpImageVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-			_, err := exec.Command(ffmpeg, "-framerate", "1", "-i", filepath.Join(tmpFramesPath, "%d.png"),
+			out, err := exec.Command(ffmpeg, "-framerate", "1", "-i", filepath.Join(tmpFramesPath, "%d.png"),
 				"-pix_fmt", "yuv420p", tmpImageVideoPath).CombinedOutput()
 			if err != nil {
-				fmt.Println(err)
-				return "error occured."
+				return "", errors.New(string(out) + "\n" + err.Error())
 			}
 
 			// convert to 24 fps
 			tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-			out, err := exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-filter:v",
+			out, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-filter:v",
 				"fps=24", tmpVideoPath).CombinedOutput()
 			if err != nil {
-				fmt.Println(out)
-				return "error occurred."
+				return "", errors.New(string(out) + "\n" + err.Error())
 			}
 
 			tmpImageVideoPath = tmpVideoPath
@@ -76,10 +75,9 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 				// do conversion to mp3 if necessary
 				if strings.HasSuffix(instructionDesc["audio"], ".wav") || strings.HasSuffix(instructionDesc["audio"], ".flac") {
 					tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
-					_, err := exec.Command(ffmpeg, "-i", instructionDesc["audio"], tmpAudioPath).CombinedOutput()
+					out, err := exec.Command(ffmpeg, "-i", instructionDesc["audio"], tmpAudioPath).CombinedOutput()
 					if err != nil {
-						fmt.Println(err)
-						return "error occured."
+						return "", errors.New(string(out) + "\n" + err.Error())
 					}
 
 					startAudioPath = tmpAudioPath
@@ -93,29 +91,27 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 					out, err := exec.Command(ffmpeg, "-ss", instructionDesc["audio_begin"], "-to",
 						instructionDesc["audio_end"], "-i", startAudioPath, "-c", "copy", tmpAudioPath2).CombinedOutput()
 					if err != nil {
-						fmt.Println(string(out))
-						return "error occured"
+						return "", errors.New(string(out) + "\n" + err.Error())
 					}
 
 					startAudioPath = tmpAudioPath2
 				}
 
 				tmpImageVideoPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				_, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", startAudioPath,
+				out, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", startAudioPath,
 					"-pix_fmt", "yuv420p", tmpImageVideoPath2).CombinedOutput()
 				if err != nil {
-					return "error occured"
+					return "", errors.New(string(out) + "\n" + err.Error())
 				}
 				tmpImageVideoPath = tmpImageVideoPath2
 
 			} else {
 
 				tmp2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				_, err = exec.Command(ffmpeg, "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+				out, err = exec.Command(ffmpeg, "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
 					"-i", tmpImageVideoPath, "-shortest", "-c:v", "copy", "-c:a", "aac", tmp2).CombinedOutput()
 				if err != nil {
-					fmt.Println(err)
-					return "error occured"
+					return "", errors.New(string(out) + "\n" + err.Error())
 				}
 
 				tmpImageVideoPath = tmp2
@@ -132,9 +128,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 				out, err := exec.Command(ffmpeg, "-i", videoPath, "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
 				if err != nil {
-					fmt.Println(string(out))
-					fmt.Println(err)
-					return "error occurred"
+					return "", errors.New(string(out) + "\n" + err.Error())
 				}
 
 				videoPath = tmpVideoPath
@@ -148,9 +142,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 				out, err := exec.Command(ffmpeg, "-ss", instructionDesc["begin"], "-to", instructionDesc["end"],
 					"-i", videoPath, "-c", "copy", "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
 				if err != nil {
-					fmt.Println(string(out))
-					fmt.Println(err)
-					return "error occurred"
+					return "", errors.New(string(out) + "\n" + err.Error())
 				}
 
 				videoPath = tmpVideoPath
@@ -189,9 +181,8 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) string {
 	out, err := exec.Command(ffmpeg, "-f", "concat", "-safe", "0",
 		"-i", tmpVideosTxtPath, "-c", "copy", finalPath).CombinedOutput()
 	if err != nil {
-		fmt.Println(string(out))
-		return "error occurred"
+		return "", errors.New(string(out) + "\n" + err.Error())
 	}
 
-	return finalPath
+	return finalPath, nil
 }

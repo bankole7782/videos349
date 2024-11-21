@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"image"
+	"os"
+	"path/filepath"
 
 	g143 "github.com/bankole7782/graphics143"
 	"github.com/disintegration/imaging"
@@ -62,10 +65,7 @@ func DrawEndRenderView(window *glfw.Window, currentFrame image.Image) {
 
 	// load font
 	fontPath := GetDefaultFontPath()
-	err := ggCtx.LoadFontFace(fontPath, 20)
-	if err != nil {
-		panic(err)
-	}
+	ggCtx.LoadFontFace(fontPath, 20)
 
 	// dialog rectangle
 	dialogWidth := 600
@@ -78,9 +78,19 @@ func DrawEndRenderView(window *glfw.Window, currentFrame image.Image) {
 	ggCtx.DrawRectangle(float64(dialogOriginX), float64(dialogOriginY), float64(dialogWidth), float64(dialogHeight))
 	ggCtx.Fill()
 
-	// Add Image
-	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("Done Rendering! Open the Working Directory", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
+	if RenderErrorHappened {
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString("An error occurred", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
+
+		rootPath, _ := GetRootPath()
+		logsPath := filepath.Join(rootPath, "errors", UntestedRandomString(10)+"_log.txt")
+		os.WriteFile(logsPath, []byte(RenderErrorMsg), 0777)
+
+		ggCtx.DrawString(fmt.Sprintf("View log %s", logsPath), float64(dialogOriginX)+20, float64(dialogOriginY)+40+30)
+	} else {
+		ggCtx.SetHexColor("#444")
+		ggCtx.DrawString("Done Rendering! Open the Working Directory", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
+	}
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

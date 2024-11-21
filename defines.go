@@ -93,6 +93,10 @@ var (
 	NameInputEnteredTxt string
 
 	cursorEventsCount = 0
+
+	// Render errors
+	RenderErrorHappened bool
+	RenderErrorMsg      string
 )
 
 type ToSortProject struct {
