@@ -151,13 +151,19 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 			// check and do speed up
 			if instructionDesc["speedup"] == "true" {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				hastenVideo(videoPath, tmpVideoPath, ffmpeg)
+				err := hastenVideo(videoPath, tmpVideoPath, ffmpeg)
+				if err != nil {
+					return "", err
+				}
 				videoPath = tmpVideoPath
 			}
 
 			if instructionDesc["blackwhite"] == "true" {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				blackAndWhiteVideo(videoPath, tmpVideoPath, ffmpeg)
+				err := blackAndWhiteVideo(videoPath, tmpVideoPath, ffmpeg)
+				if err != nil {
+					return "", err
+				}
 				videoPath = tmpVideoPath
 			}
 
