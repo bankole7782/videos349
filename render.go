@@ -30,7 +30,6 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 
 	videoParts := make([]string, 0)
 	for i, instructionDesc := range instructions {
-		fmt.Println("instruction #", i+1)
 		// treat images
 		if instructionDesc["kind"] == "image" {
 			tmpFramesPath := filepath.Join(rootPath, "."+UntestedRandomString(10))

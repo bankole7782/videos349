@@ -45,7 +45,7 @@ parts:
 
   ff-part:
     plugin: dump
-    source: https://storage.googleapis.com/saenuma_public/allff.tar.xz
+    source: https://storage.googleapis.com/saenuma_public/allff2.tar.xz
     organize:
       ffmpeg: bin/
       ffprobe: bin/
