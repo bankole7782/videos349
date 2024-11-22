@@ -58,8 +58,15 @@ func hastenVideo(inVideoPath, outVideoPath, ffmpegCmd string) error {
 		copy.Copy(oldPath, newPath)
 	}
 
+	tmp2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 	out, err := exec.Command(ffmpegCmd, "-framerate", "24", "-i", filepath.Join(tmpPath2, "%d.png"),
-		outVideoPath).CombinedOutput()
+		tmp2).CombinedOutput()
+	if err != nil {
+		return errors.New(string(out) + "\n" + err.Error())
+	}
+
+	out, err = exec.Command(ffmpegCmd, "-f", "lavfi", "-i", "anullsrc=channel_layout=stereo:sample_rate=44100",
+		"-i", tmp2, "-shortest", "-c:v", "copy", "-c:a", "aac", outVideoPath).CombinedOutput()
 	if err != nil {
 		return errors.New(string(out) + "\n" + err.Error())
 	}
