@@ -12,7 +12,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func DrawRenderView(window *glfw.Window, currentFrame image.Image) {
+func DrawRenderView(window *glfw.Window, currentFrame image.Image, percentage float64) {
 	wWidth, wHeight := window.GetSize()
 
 	// frame buffer
@@ -43,6 +43,11 @@ func DrawRenderView(window *glfw.Window, currentFrame image.Image) {
 	// Add Image
 	ggCtx.SetHexColor("#444")
 	ggCtx.DrawString("Rendering! Please Wait", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
+
+	widthOfProgress := float64(dialogWidth-40) * percentage
+	ggCtx.SetHexColor("#A05B9D")
+	ggCtx.DrawRectangle(float64(dialogOriginX)+20, float64(dialogOriginY)+40+20, widthOfProgress, 20)
+	ggCtx.Fill()
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

@@ -139,7 +139,8 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		if len(Instructions) == 0 {
 			return
 		}
-		DrawRenderView(window, CurrentWindowFrame)
+		SavedWorkViewFrame = CurrentWindowFrame
+		DrawRenderView(window, CurrentWindowFrame, 0.0)
 		window.SetMouseButtonCallback(nil)
 		window.SetKeyCallback(nil)
 		window.SetScrollCallback(nil)

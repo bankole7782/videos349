@@ -49,6 +49,7 @@ const (
 var (
 	ObjCoords          map[int]g143.Rect
 	CurrentWindowFrame image.Image
+	SavedWorkViewFrame image.Image
 	Instructions       []map[string]string
 	ProjectName        string
 	ToUpdateInstrNum   int // for updating an instruction
@@ -97,6 +98,8 @@ var (
 	// Render errors
 	RenderErrorHappened bool
 	RenderErrorMsg      string
+	RenderProgress      int
+	IsRendering         bool
 )
 
 type ToSortProject struct {

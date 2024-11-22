@@ -29,7 +29,8 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 	}()
 
 	videoParts := make([]string, 0)
-	for _, instructionDesc := range instructions {
+	for i, instructionDesc := range instructions {
+		fmt.Println("instruction #", i+1)
 		// treat images
 		if instructionDesc["kind"] == "image" {
 			tmpFramesPath := filepath.Join(rootPath, "."+UntestedRandomString(10))
@@ -53,7 +54,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 
 			tmpImageVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 			out, err := exec.Command(ffmpeg, "-framerate", "1", "-i", filepath.Join(tmpFramesPath, "%d.png"),
-				"-pix_fmt", "yuv420p", tmpImageVideoPath).CombinedOutput()
+				tmpImageVideoPath).CombinedOutput()
 			if err != nil {
 				return "", errors.New(string(out) + "\n" + err.Error())
 			}
@@ -99,7 +100,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 
 				tmpImageVideoPath2 := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 				out, err = exec.Command(ffmpeg, "-i", tmpImageVideoPath, "-i", startAudioPath,
-					"-pix_fmt", "yuv420p", tmpImageVideoPath2).CombinedOutput()
+					tmpImageVideoPath2).CombinedOutput()
 				if err != nil {
 					return "", errors.New(string(out) + "\n" + err.Error())
 				}
@@ -126,7 +127,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 			videoPath := instructionDesc["video"]
 			if !strings.HasSuffix(videoPath, ".mp4") {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
-				out, err := exec.Command(ffmpeg, "-i", videoPath, "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
+				out, err := exec.Command(ffmpeg, "-i", videoPath, tmpVideoPath).CombinedOutput()
 				if err != nil {
 					return "", errors.New(string(out) + "\n" + err.Error())
 				}
@@ -140,7 +141,7 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 			if instructionDesc["begin"] != "0:00" || instructionDesc["end"] != videoLength {
 				tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 				out, err := exec.Command(ffmpeg, "-ss", instructionDesc["begin"], "-to", instructionDesc["end"],
-					"-i", videoPath, "-c", "copy", "-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
+					"-i", videoPath, "-c", "copy", tmpVideoPath).CombinedOutput()
 				if err != nil {
 					return "", errors.New(string(out) + "\n" + err.Error())
 				}
@@ -163,6 +164,8 @@ func Render(instructions []map[string]string, ffmpeg, ffprobe string) (string, e
 
 			videoParts = append(videoParts, videoPath)
 		}
+
+		RenderProgress = i + 1
 	}
 
 	tmpVideosTxtPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".txt")

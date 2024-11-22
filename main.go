@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -33,11 +34,13 @@ func main() {
 	go func() {
 		for {
 			<-InChannel
+			IsRendering = true
 			_, err := Render(Instructions, ffmpegPath, ffprobePath)
 			if err != nil {
 				RenderErrorHappened = true
-				RenderErrorMsg = err.Error()
+				RenderErrorMsg = fmt.Sprintf("%+v", err)
 			}
+			IsRendering = false
 			ClearAfterRender = true
 		}
 	}()
@@ -55,11 +58,16 @@ func main() {
 		t := time.Now()
 		glfw.PollEvents()
 
+		if IsRendering {
+			percentageRendered := float64(RenderProgress) / float64(len(Instructions))
+			DrawRenderView(window, SavedWorkViewFrame, percentageRendered)
+		}
+
 		if ClearAfterRender && RenderErrorHappened {
 			DrawWorkView(window, 1)
 			DrawEndRenderView(window, CurrentWindowFrame)
 
-			time.Sleep(15 * time.Second)
+			time.Sleep(5 * time.Second)
 			DrawWorkView(window, 1)
 			// register the ViewMain mouse callback
 			window.SetMouseButtonCallback(workViewMouseBtnCallback)

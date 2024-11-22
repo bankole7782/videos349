@@ -65,7 +65,7 @@ func hastenVideo(inVideoPath, outVideoPath, ffmpegCmd string) {
 	}
 
 	out, err := exec.Command(ffmpegCmd, "-framerate", "24", "-i", filepath.Join(tmpPath2, "%d.png"),
-		"-pix_fmt", "yuv420p", outVideoPath).CombinedOutput()
+		outVideoPath).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
 		panic(err)
@@ -137,7 +137,7 @@ func blackAndWhiteVideo(inVideoPath, outVideoPath, ffmpegCmd string) {
 	tmpVideoPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp4")
 
 	out, err := exec.Command(ffmpegCmd, "-framerate", "24", "-i", filepath.Join(tmpPath2, "%d.png"),
-		"-pix_fmt", "yuv420p", tmpVideoPath).CombinedOutput()
+		tmpVideoPath).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
 		panic(err)
@@ -145,14 +145,13 @@ func blackAndWhiteVideo(inVideoPath, outVideoPath, ffmpegCmd string) {
 
 	// extract audio from original video
 	tmpAudioPath := filepath.Join(rootPath, "."+UntestedRandomString(10)+".mp3")
-	out, err = exec.Command(ffmpegCmd, "-i", inVideoPath, "-q:a", "0", "-map", "a", tmpAudioPath).CombinedOutput()
+	out, err = exec.Command(ffmpegCmd, "-i", inVideoPath, tmpAudioPath).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
 		panic(err)
 	}
 
-	_, err = exec.Command(ffmpegCmd, "-i", tmpVideoPath, "-i", tmpAudioPath,
-		"-pix_fmt", "yuv420p", outVideoPath).CombinedOutput()
+	_, err = exec.Command(ffmpegCmd, "-i", tmpVideoPath, "-i", tmpAudioPath, outVideoPath).CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
 		panic(err)
