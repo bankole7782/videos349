@@ -1,7 +1,6 @@
 package main
 
 import (
-	_ "embed"
 	"log"
 	"os"
 	"path/filepath"
@@ -9,38 +8,18 @@ import (
 	"github.com/sqweek/dialog"
 )
 
-//go:embed "ffmpeg/ffmpeg.exe"
-var ffmpegBytes []byte
-
-//go:embed "ffmpeg/ffprobe.exe"
-var ffprobeBytes []byte
-
 func GetFFMPEGCommand() string {
-	homeDir, _ := os.UserHomeDir()
+	execPath, _ := os.Executable()
+	cmdPath := filepath.Join(filepath.Dir(execPath), "ffmpeg.exe")
 
-	ffmegDir := filepath.Join(homeDir, ".v349")
-	outPath := filepath.Join(ffmegDir, "ffmpeg.exe")
-	if !DoesPathExists(outPath) {
-		os.MkdirAll(ffmegDir, 0777)
-
-		os.WriteFile(outPath, ffmpegBytes, 0777)
-	}
-
-	return outPath
+	return cmdPath
 }
 
 func GetFFPCommand() string {
-	homeDir, _ := os.UserHomeDir()
+	execPath, _ := os.Executable()
+	cmdPath := filepath.Join(filepath.Dir(execPath), "ffprobe.exe")
 
-	ffmegDir := filepath.Join(homeDir, ".v349")
-	outPath := filepath.Join(ffmegDir, "ffprobe.exe")
-	if !DoesPathExists(outPath) {
-		os.MkdirAll(ffmegDir, 0777)
-
-		os.WriteFile(outPath, ffprobeBytes, 0777)
-	}
-
-	return outPath
+	return cmdPath
 }
 
 func PickVideoFile() string {
