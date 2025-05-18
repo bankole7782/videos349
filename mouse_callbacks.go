@@ -113,6 +113,24 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 	}
 
 	switch widgetCode {
+	case BackBtn:
+		// clear some variables
+		Instructions = make([]map[string]string, 0)
+		ProjectName = ""
+
+		// save work
+		jsonBytes, _ := json.Marshal(Instructions)
+		rootPath, _ := GetRootPath()
+		outPath := filepath.Join(rootPath, ProjectName)
+		os.WriteFile(outPath, jsonBytes, 0777)
+
+		// redraw
+		DrawBeginView(window)
+		window.SetMouseButtonCallback(projViewMouseCallback)
+		window.SetKeyCallback(ProjKeyCallback)
+		window.SetCursorPosCallback(getHoverCB(ProjObjCoords))
+		window.SetScrollCallback(nil)
+
 	case AddImgBtn:
 		// tmpFrame = CurrentWindowFrame
 		DrawViewAddImage(window, CurrentWindowFrame)

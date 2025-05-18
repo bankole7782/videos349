@@ -18,6 +18,7 @@ const (
 	AddVidBtn      = 103
 	OpenWDBtn      = 104
 	RenderBtn      = 105
+	BackBtn        = 106
 
 	VAI_SelectImg  = 21
 	VAI_DurInput   = 23

@@ -118,10 +118,12 @@ func LengthOfVideo(p, ffprobePath string) string {
 }
 
 func SaveProjectCloseCallback(w *glfw.Window) {
-	jsonBytes, _ := json.Marshal(Instructions)
-	rootPath, _ := GetRootPath()
-	outPath := filepath.Join(rootPath, ProjectName)
-	os.WriteFile(outPath, jsonBytes, 0777)
+	if ProjectName != "" {
+		jsonBytes, _ := json.Marshal(Instructions)
+		rootPath, _ := GetRootPath()
+		outPath := filepath.Join(rootPath, ProjectName)
+		os.WriteFile(outPath, jsonBytes, 0777)
+	}
 }
 
 func GetProjectFiles() []ToSortProject {

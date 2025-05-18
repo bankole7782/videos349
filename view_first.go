@@ -76,7 +76,9 @@ func DrawWorkView(window *glfw.Window, page int) {
 	theCtx := New2dCtx(wWidth, wHeight, &ObjCoords)
 
 	// draw top buttons
-	aIBRect := theCtx.drawButtonB(AddImgBtn, 50, 10, "Add Image", "#fff", "#5C909C", "#286775")
+	bBRect := theCtx.drawButtonB(BackBtn, 50, 10, "Back", "#fff", "#845B5B", "#845B5B")
+	aIBX, aIBY := nextHorizontalCoords(bBRect, 40)
+	aIBRect := theCtx.drawButtonB(AddImgBtn, aIBX, aIBY, "Add Image", "#fff", "#5C909C", "#286775")
 	aISX, aISY := nextHorizontalCoords(aIBRect, 10)
 	aIBSRect := theCtx.drawButtonB(AddImgSoundBtn, aISX, aISY, "Add Image + Audio", "#fff", "#5C909C", "#286775")
 	aVBX, aVBY := nextHorizontalCoords(aIBSRect, 10)
