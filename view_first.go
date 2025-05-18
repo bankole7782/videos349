@@ -21,9 +21,11 @@ func DrawBeginView(window *glfw.Window) {
 	theCtx.ggCtx.DrawString("New Project", 20, 10+30)
 
 	theCtx.ggCtx.LoadFontFace(fontPath, 20)
-	pnIRect := theCtx.drawInput(PROJ_NameInput, 40, 60, 420, "enter project name", false)
+	pnIRect := theCtx.drawInput(PROJ_NameInput, 20, 60, 420, "enter project name", false)
 	pnBtnX, pnBtnY := nextHorizontalCoords(pnIRect, 30)
-	theCtx.drawButtonA(PROJ_NewProject, pnBtnX, pnBtnY, "New Project", fontColor, "#B3AE97")
+	nPRS := theCtx.drawButtonA(PROJ_NewProject, pnBtnX, pnBtnY, "New Project", fontColor, "#B3AE97")
+	oWDBX, _ := nextHorizontalCoords(nPRS, 40)
+	theCtx.drawButtonB(OpenWDBtn, oWDBX, 10, "Open Working Directory", "#fff", "#56845A", "#56845A")
 
 	// second row border
 	_, borderY := nextVerticalCoords(pnIRect, 10)
@@ -79,13 +81,11 @@ func DrawWorkView(window *glfw.Window, page int) {
 	aIBSRect := theCtx.drawButtonB(AddImgSoundBtn, aISX, aISY, "Add Image + Audio", "#fff", "#5C909C", "#286775")
 	aVBX, aVBY := nextHorizontalCoords(aIBSRect, 10)
 	aVBRect := theCtx.drawButtonB(AddVidBtn, aVBX, aVBY, "Add Video", "#fff", "#81577F", "#633260")
-	oDBX, oDBY := nextHorizontalCoords(aVBRect, 10)
-	oDBRect := theCtx.drawButtonB(OpenWDBtn, oDBX, oDBY, "Open Working Directory", "#fff", "#56845A", "#56845A")
-	rBX, rBY := nextHorizontalCoords(oDBRect, 10)
+	rBX, rBY := nextHorizontalCoords(aVBRect, 10)
 	theCtx.drawButtonB(RenderBtn, rBX, rBY, "Render", "#fff", "#B19644", "#DECC6E")
 
 	// draw end of topbar demarcation
-	_, demarcY := nextVerticalCoords(oDBRect, 10)
+	_, demarcY := nextVerticalCoords(aVBRect, 10)
 	theCtx.ggCtx.SetHexColor("#aaa")
 	theCtx.ggCtx.DrawRectangle(10, float64(demarcY), float64(wWidth)-20, 3)
 	theCtx.ggCtx.Fill()

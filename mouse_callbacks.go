@@ -56,6 +56,10 @@ func projViewMouseCallback(window *glfw.Window, button glfw.MouseButton, action 
 		window.SetScrollCallback(FirstUIScrollCallback)
 		// quick hover effect
 		window.SetCursorPosCallback(getHoverCB(ObjCoords))
+
+	case PROJ_OpenWDBtn:
+		rootPath, _ := GetRootPath()
+		ExternalLaunch(rootPath)
 	}
 
 	if widgetCode > 1000 && widgetCode < 2000 {
@@ -130,10 +134,6 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 		window.SetKeyCallback(VavkeyCallback)
 		window.SetScrollCallback(nil)
 		window.SetCursorPosCallback(getHoverCB(VavObjCoords))
-
-	case OpenWDBtn:
-		rootPath, _ := GetRootPath()
-		ExternalLaunch(rootPath)
 
 	case RenderBtn:
 		if len(Instructions) == 0 {
