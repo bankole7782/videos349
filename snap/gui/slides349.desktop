@@ -1,0 +1,6 @@
+[Desktop Entry]
+Version=1.3.0
+Type=Application
+Name=Slides349
+Exec=videos349.slides349
+Icon=${SNAP}/meta/gui/videos349.png

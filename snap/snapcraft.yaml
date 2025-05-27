@@ -26,6 +26,19 @@ parts:
       - xorg-dev
       - libc6-dev
 
+  slides-part:
+    # See 'snapcraft plugins'
+    plugin: go
+    source: https://github.com/saenuma/slides349.git
+    build-snaps:
+      - go
+    build-packages:
+      - build-essential
+      - gcc
+      - libgl1-mesa-dev
+      - xorg-dev
+      - libc6-dev
+
   pickers:
     # See 'snapcraft plugins'
     plugin: go
@@ -56,3 +69,7 @@ apps:
     command: bin/videos349
     extensions: [gnome]
   
+  slides349:
+    command: bin/slides349
+    extensions: [gnome]
+    
