@@ -114,15 +114,16 @@ func workViewMouseBtnCallback(window *glfw.Window, button glfw.MouseButton, acti
 
 	switch widgetCode {
 	case BackBtn:
-		// clear some variables
-		Instructions = make([]map[string]string, 0)
-		ProjectName = ""
-
 		// save work
 		jsonBytes, _ := json.Marshal(Instructions)
 		rootPath, _ := GetRootPath()
 		outPath := filepath.Join(rootPath, ProjectName)
 		os.WriteFile(outPath, jsonBytes, 0777)
+
+		// clear some variables
+		Instructions = make([]map[string]string, 0)
+		ProjectName = ""
+		window.SetTitle(ProgTitle)
 
 		// redraw
 		DrawBeginView(window)
