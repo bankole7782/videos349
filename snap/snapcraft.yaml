@@ -11,6 +11,7 @@ confinement: strict # use 'strict' once you have the right plugs and slots
 
 platforms:
   amd64:
+  arm64:
 
 parts:
   my-part:
@@ -53,12 +54,31 @@ parts:
       - libc6-dev
 
   ff-part:
-    plugin: dump
-    source: https://storage.googleapis.com/saenuma_public/allff2.tar.xz
-    organize:
-      ffmpeg: bin/
-      ffprobe: bin/
-
+    plugin: nil
+    build-packages:
+      - wget
+      - tar
+      - unzip
+    override-build: |
+      set -xe
+      ARCH=$(uname -m)
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin/
+      
+      if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+        echo "Building for ARM64 architecture"
+        wget https://storage.googleapis.com/saenuma_public/ff_arm64.tar.xz
+        tar xvf ff_amd64.tar.xz -C $SNAPCRAFT_PART_INSTALL/bin/
+      else
+        # Check if the architecture is AMD64
+        if [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "amd64" ]; then
+          echo "Building for AMD64 architecture"
+          wget https://storage.googleapis.com/saenuma_public/ff_amd64.tar.xz
+          tar xvf ff_amd64.tar.xz -C $SNAPCRAFT_PART_INSTALL/bin/
+        else
+          echo "Unsupported architecture: $ARCH"
+          exit 1
+        fi
+      fi
       
 apps: 
   videos349:
