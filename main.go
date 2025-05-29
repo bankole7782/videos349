@@ -27,7 +27,7 @@ func main() {
 	InChannel = make(chan bool)
 
 	window := g143.NewWindow(1200, 800, ProgTitle, false)
-	DrawBeginView(window)
+	drawFirstView(window)
 
 	ffmpegPath := GetFFMPEGCommand()
 	ffprobePath := GetFFPCommand()
@@ -46,9 +46,9 @@ func main() {
 	}()
 
 	// respond to the mouse
-	window.SetMouseButtonCallback(projViewMouseCallback)
+	window.SetMouseButtonCallback(fVMouseCB)
 	// respond to the keyboard
-	window.SetKeyCallback(ProjKeyCallback)
+	window.SetKeyCallback(fVKeyCB)
 	// save the project file
 	window.SetCloseCallback(SaveProjectCloseCallback)
 	// quick hover effect
@@ -64,13 +64,13 @@ func main() {
 		}
 
 		if ClearAfterRender && RenderErrorHappened {
-			DrawWorkView(window, 1)
+			drawItemsView(window, 1)
 			DrawEndRenderView(window, CurrentWindowFrame)
 
 			time.Sleep(5 * time.Second)
-			DrawWorkView(window, 1)
+			drawItemsView(window, 1)
 			// register the ViewMain mouse callback
-			window.SetMouseButtonCallback(workViewMouseBtnCallback)
+			window.SetMouseButtonCallback(iVMouseBtnCB)
 			// quick hover effect
 			window.SetCursorPosCallback(getHoverCB(ObjCoords))
 			ClearAfterRender = false
@@ -79,12 +79,12 @@ func main() {
 		} else if ClearAfterRender {
 			// clear the UI and redraw
 			// Instructions = make([]map[string]string, 0)
-			DrawWorkView(window, 1)
+			drawItemsView(window, 1)
 			DrawEndRenderView(window, CurrentWindowFrame)
 			time.Sleep(5 * time.Second)
-			DrawWorkView(window, 1)
+			drawItemsView(window, 1)
 			// register the ViewMain mouse callback
-			window.SetMouseButtonCallback(workViewMouseBtnCallback)
+			window.SetMouseButtonCallback(iVMouseBtnCB)
 			// quick hover effect
 			window.SetCursorPosCallback(getHoverCB(ObjCoords))
 			ClearAfterRender = false

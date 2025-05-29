@@ -66,23 +66,23 @@ var (
 	ClearAfterRender bool
 
 	// view add image
-	VaiObjCoords             map[int]g143.Rect
-	VaiInputsStore           map[string]string
+	VAIObjCoords             map[int]g143.Rect
+	VAIInputsStore           map[string]string
 	VAI_DurationEnteredTxt   string
 	VAI_SelectedInput        int
 	VAI_AudioBeginEnteredTxt string = "0:00"
 
 	// view add image + sound
-	VaisObjCoords   map[int]g143.Rect
-	VaisInputsStore map[string]string
+	VAISObjCoords   map[int]g143.Rect
+	VAISInputsStore map[string]string
 
-	VaisBeginInputEnteredTxt string = "0:00"
-	VaisEndInputEnteredTxt   string = "0:00"
+	VAISBeginInputEnteredTxt string = "0:00"
+	VAISEndInputEnteredTxt   string = "0:00"
 	VAIS_SelectedInput       int
 
 	// view add video
-	VavObjCoords   map[int]g143.Rect
-	VavInputsStore map[string]string
+	VAVObjCoords   map[int]g143.Rect
+	VAVInputsStore map[string]string
 
 	BeginInputEnteredTxt              string = "0:00"
 	EndInputEnteredTxt                string = "0:00"
@@ -96,6 +96,7 @@ var (
 	NameInputEnteredTxt string
 
 	cursorEventsCount = 0
+	scrollEventCount  = 0
 
 	// Render errors
 	RenderErrorHappened bool
