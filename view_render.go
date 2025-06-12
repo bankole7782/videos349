@@ -42,12 +42,28 @@ func DrawRenderView(window *glfw.Window, currentFrame image.Image, percentage fl
 
 	// Add Image
 	ggCtx.SetHexColor("#444")
-	ggCtx.DrawString("Rendering! Please Wait", float64(dialogOriginX)+20, float64(dialogOriginY)+20+20)
+	ggCtx.DrawString("Rendering! Please Wait", float64(dialogOriginX)+20, float64(dialogOriginY)+FontSize+20)
 
-	widthOfProgress := float64(dialogWidth-40) * percentage
-	ggCtx.SetHexColor("#A05B9D")
-	ggCtx.DrawRectangle(float64(dialogOriginX)+20, float64(dialogOriginY)+40+20, widthOfProgress, 20)
+	progressX := float64(dialogOriginX) + 20
+	progressY := float64(dialogOriginY) + 80
+	widthOfBar := 600 - 40
+
+	// background rectangle
+	ggCtx.SetHexColor("#eee")
+	ggCtx.DrawRectangle(progressX, progressY, float64(widthOfBar), 20)
 	ggCtx.Fill()
+
+	// progress rectangle
+	progressBarX := progressX + 5 + float64(50*LastIndicatorIndex)
+	ggCtx.SetHexColor("#444")
+	ggCtx.DrawRectangle(progressBarX, progressY+5, 100, 10)
+	ggCtx.Fill()
+
+	if LastIndicatorIndex == MaxIndicatorIndex {
+		LastIndicatorIndex = 0
+	} else {
+		LastIndicatorIndex += 1
+	}
 
 	// send the frame to glfw window
 	windowRS := g143.Rect{Width: wWidth, Height: wHeight, OriginX: 0, OriginY: 0}

@@ -16,7 +16,6 @@ const (
 	AddImgBtn      = 101
 	AddImgSoundBtn = 102
 	AddVidBtn      = 103
-	OpenWDBtn      = 104
 	RenderBtn      = 105
 	BackBtn        = 106
 
@@ -99,10 +98,14 @@ var (
 	scrollEventCount  = 0
 
 	// Render errors
-	RenderErrorHappened bool
-	RenderErrorMsg      string
-	RenderProgress      int
-	IsRendering         bool
+	RenderErrorHappened            bool
+	RenderErrorMsg                 string
+	RenderProgress                 int
+	IsRendering                    bool
+	LastIndicatorIndex             = 0
+	MaxIndicatorIndex              = 8
+	RefreshProgressBarIndicator    = 0
+	MaxRefreshProgressBarIndicator = 4
 )
 
 type ToSortProject struct {

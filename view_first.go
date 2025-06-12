@@ -26,7 +26,7 @@ func drawFirstView(window *glfw.Window) {
 	pnBtnX, pnBtnY := nextHorizontalCoords(pnIRect, 30)
 	nPRS := theCtx.drawButtonA(PROJ_NewProject, pnBtnX, pnBtnY, "New Project", fontColor, "#B3AE97")
 	oWDBX, _ := nextHorizontalCoords(nPRS, 40)
-	theCtx.drawButtonB(OpenWDBtn, oWDBX, 10, "Open Working Directory", "#fff", "#56845A", "#56845A")
+	theCtx.drawButtonB(PROJ_OpenWDBtn, oWDBX, 10, "Videos349 Directory", "#fff", "#56845A", "#8FC18B")
 
 	// second row border
 	_, borderY := nextVerticalCoords(pnIRect, 10)
